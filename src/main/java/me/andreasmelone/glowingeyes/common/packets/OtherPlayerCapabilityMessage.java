@@ -22,7 +22,14 @@ public class OtherPlayerCapabilityMessage extends MessageBase<OtherPlayerCapabil
         IGlowingEyesCapability capability = message.eyes;
         EntityPlayer thisPlayer = player.world.getPlayerEntityByUUID(message.playerUUID);
 
+        StringBuilder playerListString = new StringBuilder();
+        for (EntityPlayer p : player.world.playerEntities) {
+            playerListString.append(p.getName());
+            if(player.world.playerEntities.indexOf(p) != player.world.playerEntities.size() - 1) playerListString.append(", ");
+        }
+        GlowingEyes.logger.info("Player list in world " + player.world.getProviderName() + ": " + playerListString.toString());
         GlowingEyes.logger.info("Client received packet 'OtherPlayerCapabilityMessage' from server. Player uuid: " + message.playerUUID);
+        GlowingEyes.logger.info("Player: " + thisPlayer);
 
         if (thisPlayer != null) {
             GlowingEyes.logger.info("Player is not null, player name: " + thisPlayer.getName());
@@ -46,9 +53,9 @@ public class OtherPlayerCapabilityMessage extends MessageBase<OtherPlayerCapabil
         if(buf.isReadable()) {
             int length = buf.readInt();
             GlowingEyes.logger.info("Reading packet 'OtherPlayerCapabilityMessage' from client. Length: " + length);
-            String playerUuid = buf.readBytes(length).toString(StandardCharsets.UTF_8);
-            GlowingEyes.logger.info("Player uuid: " + playerUuid);
-            this.playerUUID = UUID.fromString(playerUuid);
+            UUID playerUUID1 = UUID.fromString(buf.readBytes(length).toString(StandardCharsets.UTF_8));
+            GlowingEyes.logger.info("Player uuid: " + playerUUID1);
+            this.playerUUID = playerUUID1;
             eyes.setHasGlowingEyes(buf.readBoolean());
             eyes.setGlowingEyesType(buf.readInt());
         }
@@ -57,7 +64,7 @@ public class OtherPlayerCapabilityMessage extends MessageBase<OtherPlayerCapabil
     @Override
     public void toBytes(ByteBuf buf) {
         byte[] uuid = player.getUniqueID().toString().getBytes(StandardCharsets.UTF_8);
-        GlowingEyes.logger.info("Sending packet 'OtherPlayerCapabilityMessage' to client. Player uuid: " + player.getUniqueID());
+        GlowingEyes.logger.info("Sending packet 'OtherPlayerCapabilityMessage' to client. Player uuid: " + player.getName());
         GlowingEyes.logger.info("in bytes: " + uuid.length);
 
         buf.writeInt(uuid.length);

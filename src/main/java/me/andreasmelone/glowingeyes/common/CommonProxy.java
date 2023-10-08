@@ -13,8 +13,13 @@ import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 
-public abstract class CommonProxy {
+import java.util.HashMap;
+import java.util.List;
+import java.util.UUID;
+
+public class CommonProxy {
     private DataSaveFile dataSaveFile;
+    private HashMap<EntityPlayer, List<UUID>> playersTracking = new HashMap<>();
 
     public void preInit(FMLPreInitializationEvent e) {
     }
@@ -30,9 +35,20 @@ public abstract class CommonProxy {
     public void postInit(FMLPostInitializationEvent e) {
     }
 
-    public abstract EntityPlayer getPlayer();
+    public EntityPlayer getPlayer() {
+        return null;
+    }
+    public boolean isClient() {
+        return false;
+    }
 
     public DataSaveFile getDataSaveFile() {
         return dataSaveFile;
+    }
+    public HashMap<EntityPlayer, List<UUID>> getPlayersTracking() {
+        return playersTracking;
+    }
+    public void setPlayersTracking(HashMap<EntityPlayer, List<UUID>> playersTracking) {
+        this.playersTracking = playersTracking;
     }
 }

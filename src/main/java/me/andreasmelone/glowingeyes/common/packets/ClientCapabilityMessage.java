@@ -9,6 +9,8 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.util.EnumFacing;
 
+import java.util.UUID;
+
 public class ClientCapabilityMessage extends MessageBase<ClientCapabilityMessage> {
     public IGlowingEyesCapability cap = new GlowingEyesCapability();
     public EntityPlayer player;
@@ -34,9 +36,10 @@ public class ClientCapabilityMessage extends MessageBase<ClientCapabilityMessage
         old.setHasGlowingEyes(capibility.hasGlowingEyes());
         old.setGlowingEyesType(capibility.getGlowingEyesType());
 
-        for(EntityPlayer p : player.getEntityWorld().playerEntities) {
-            if(p == player) continue;
-            NetworkHandler.sendToClient(new OtherPlayerCapabilityMessage(player, capibility), (EntityPlayerMP) p);
+        for(UUID pUUID : GlowingEyes.proxy.getPlayersTracking().get(player)) {
+            EntityPlayerMP p = playerMP.getServer().getPlayerList().getPlayerByUUID(pUUID);
+            if(p == null) return;
+            NetworkHandler.sendToClient(new OtherPlayerCapabilityMessage(player, old), p);
         }
     }
 

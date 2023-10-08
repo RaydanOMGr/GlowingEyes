@@ -45,6 +45,10 @@ public class ClientProxy extends CommonProxy {
     public EntityPlayer getPlayer() {
         return Minecraft.getMinecraft().player;
     }
+    @Override
+    public boolean isClient() {
+        return true;
+    }
 
     @Override
     public DataSaveFile getDataSaveFile() {

@@ -2,13 +2,13 @@
 {
   "modid": "glowingeyes",
   "name": "Glowing Eyes",
-  "description": "Make your eyes glow (Shaders recommended)",
+  "description": "Make your eyes glow as if you were a vampire! (Shaders recommended)",
   "version": "${version}",
   "mcversion": "${mcversion}",
   "url": "",
   "updateUrl": "",
   "authorList": ["AndreasMelone"],
-  "credits": "maxanier, Cheaterpaul and 1LiterZinalco for making the Vampirism mod I've ripped the code from :) ",
+  "credits": "The vampirism mod for providing inspiration and code :)",
   "logoFile": "",
   "screenshots": [],
   "dependencies": []
