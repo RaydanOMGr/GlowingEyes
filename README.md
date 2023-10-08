@@ -9,4 +9,4 @@ To change the type of your eyes, type `/eyes type <number>` where `<number>` can
 ## Known Issues
 When joining a server that has the mod, other people do not see your eyes and you do not see their eyes, until a change occurs.
 
-**The eye textures and some code has been taken from the (Vampirism)[https://github.com/TeamLapen/Vampirism] mod, make sure to check it out!**
+**The eye textures and some code has been taken from the [Vampirism](https://github.com/TeamLapen/Vampirism) mod, make sure to check it out!**
