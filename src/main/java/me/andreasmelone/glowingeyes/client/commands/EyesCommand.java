@@ -40,13 +40,13 @@ public class EyesCommand implements ICommand {
 
     @Override
     public List<String> getAliases() {
-        List<String> aliases = Lists.<String>newArrayList();
+        List<String> aliases = Lists.newArrayList();
         aliases.add("/eyes");
         return aliases;
     }
 
     @Override
-    public void execute(MinecraftServer server, ICommandSender sender, String[] args) throws CommandException {
+    public void execute(MinecraftServer server, ICommandSender sender, String[] args) {
         if(GlowingEyes.serverHasMod) {
             if (!(sender instanceof EntityPlayer)) {
                 sender.sendMessage(format(TextFormatting.RED, "Only players can use this command!"));
@@ -136,7 +136,6 @@ public class EyesCommand implements ICommand {
                 dataSaveFile.setHasGlowingEyes(toggleValue);
 
                 sender.sendMessage(format(TextFormatting.GREEN, "Your glowing eyes are now " + (toggleValue ? "enabled" : "disabled") + "!"));
-                return;
             } else if (args[0].equalsIgnoreCase("type")) {
                 int type;
                 try {

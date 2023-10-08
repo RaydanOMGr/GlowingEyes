@@ -8,5 +8,4 @@ public class ModInfo {
 
     public static final String CLIENT_PROXY = "me.andreasmelone.glowingeyes.client.ClientProxy";
     public static final String COMMON_PROXY = "me.andreasmelone.glowingeyes.common.CommonProxy";
-    public static final String SERVER_PROXY = "me.andreasmelone.glowingeyes.server.ServerProxy";
 }

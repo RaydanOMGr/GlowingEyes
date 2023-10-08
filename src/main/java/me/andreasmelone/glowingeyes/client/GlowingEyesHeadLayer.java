@@ -14,6 +14,7 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
+// THIS CLASS HAS BEEN PARTIALLY COPIED FROM THE VAMPIRISM MOD!!!
 @SideOnly(Side.CLIENT)
 public class GlowingEyesHeadLayer implements LayerRenderer<AbstractClientPlayer> {
     private final RenderPlayer playerRenderer;
@@ -67,11 +68,5 @@ public class GlowingEyesHeadLayer implements LayerRenderer<AbstractClientPlayer>
 
     public boolean shouldCombineTextures() {
         return true;
-    }
-
-
-    private void renderNormalEyes(int eyeType, float scale) {
-        this.playerRenderer.bindTexture(eyeOverlays[eyeType]);
-        this.playerRenderer.getMainModel().bipedHead.render(scale);
     }
 }
