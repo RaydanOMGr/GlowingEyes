@@ -7,6 +7,7 @@ import me.andreasmelone.glowingeyes.common.capability.GlowingEyesProvider;
 import me.andreasmelone.glowingeyes.common.capability.IGlowingEyesCapability;
 import me.andreasmelone.glowingeyes.common.packets.ClientCapabilityMessage;
 import me.andreasmelone.glowingeyes.common.packets.NetworkHandler;
+import me.andreasmelone.glowingeyes.common.util.ModInfo;
 import net.minecraft.command.ICommand;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.player.EntityPlayer;
@@ -91,7 +92,7 @@ public class EyesCommand implements ICommand {
                     return;
                 }
 
-                if (type < 0 || type > 15) {
+                if (type < 0 || type > ModInfo.EYE_TYPE_COUNT - 1) {
                     type = 0;
                 }
 
@@ -144,7 +145,7 @@ public class EyesCommand implements ICommand {
                     return;
                 }
 
-                if (type < 0 || type > 15) {
+                if (type < 0 || type > ModInfo.EYE_TYPE_COUNT - 1) {
                     type = 0;
                 }
 
@@ -161,6 +162,7 @@ public class EyesCommand implements ICommand {
         return true;
     }
 
+    // This does not work and idk why, if anyone knows please tell me
     @Override
     public List<String> getTabCompletions(MinecraftServer server, ICommandSender sender, String[] args, BlockPos targetPos) {
         if(args.length == 0) {
