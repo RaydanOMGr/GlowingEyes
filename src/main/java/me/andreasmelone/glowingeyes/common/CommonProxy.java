@@ -1,6 +1,6 @@
 package me.andreasmelone.glowingeyes.common;
 
-import me.andreasmelone.glowingeyes.client.modless.DataSaveFile;
+import me.andreasmelone.glowingeyes.client.data.DataSaveFile;
 import me.andreasmelone.glowingeyes.common.capability.CapabilityHandler;
 import me.andreasmelone.glowingeyes.common.capability.GlowingEyesCapability;
 import me.andreasmelone.glowingeyes.common.capability.GlowingEyesStorage;

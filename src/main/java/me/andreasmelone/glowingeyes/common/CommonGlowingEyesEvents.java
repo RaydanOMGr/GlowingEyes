@@ -1,5 +1,6 @@
 package me.andreasmelone.glowingeyes.common;
 
+import jdk.nashorn.internal.ir.annotations.Ignore;
 import me.andreasmelone.glowingeyes.GlowingEyes;
 import me.andreasmelone.glowingeyes.common.capability.GlowingEyesProvider;
 import me.andreasmelone.glowingeyes.common.capability.IGlowingEyesCapability;
@@ -10,7 +11,6 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.util.EnumFacing;
 import net.minecraftforge.event.entity.player.PlayerEvent;
-import net.minecraftforge.fml.common.gameevent.PlayerEvent.PlayerLoggedInEvent;
 import net.minecraftforge.fml.common.gameevent.PlayerEvent.PlayerChangedDimensionEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
@@ -20,33 +20,13 @@ import java.util.List;
 import java.util.UUID;
 
 public class CommonGlowingEyesEvents {
-//    @SubscribeEvent
-//    public void onPlayerLoggedIn(PlayerLoggedInEvent event) {
-//        EntityPlayer player = event.player;
-//        IGlowingEyesCapability eyes = player.getCapability(GlowingEyesProvider.CAPABILITY, EnumFacing.UP);
-//
-//        if (eyes == null) return;
-//
-//        NetworkHandler.sendToClient(new ClientCapabilityMessage(eyes, player), (EntityPlayerMP) player);
-//        for (EntityPlayer p : player.getEntityWorld().playerEntities) {
-//            if (p == player) continue;
-//            NetworkHandler.sendToClient(new OtherPlayerCapabilityMessage(player, eyes), (EntityPlayerMP) p);
-//
-//            IGlowingEyesCapability otherEyes = p.getCapability(GlowingEyesProvider.CAPABILITY, EnumFacing.UP);
-//            if (otherEyes == null) continue;
-//            NetworkHandler.sendToClient(new OtherPlayerCapabilityMessage(p, otherEyes), (EntityPlayerMP) player);
-//        }
-//    }
-
     @SubscribeEvent
     // AAAAAAAAAAAAAAAAAAAAAAAAA I HATE THIS STUPID EVENT
     public void onStartTracking(PlayerEvent.StartTracking event) {
-        GlowingEyes.logger.info("Start tracking, entity: " + event.getTarget().getName());
+        // Lets pretend I know what I am doing and this works, okay?
         if(!(event.getTarget() instanceof EntityPlayer)) return;
         EntityPlayer player = event.getEntityPlayer();
-        GlowingEyes.logger.info("Start tracking, player: " + player.getName());
         EntityPlayer target = (EntityPlayer) event.getTarget();
-        GlowingEyes.logger.info("Start tracking, target: " + target.getName());
 
         HashMap<EntityPlayer, List<UUID>> playersTracking = GlowingEyes.proxy.getPlayersTracking();
         if(playersTracking.containsKey(player)) {
@@ -62,10 +42,7 @@ public class CommonGlowingEyesEvents {
 
         IGlowingEyesCapability eyes = target.getCapability(GlowingEyesProvider.CAPABILITY, EnumFacing.UP);
 
-        GlowingEyes.logger.info("Start tracking, Checking if eyes are null");
         if(eyes == null) return;
-        GlowingEyes.logger.info("Start tracking, eyes are not null");
-        GlowingEyes.logger.info("Start tracking, has eyes: " + eyes.hasGlowingEyes() + ", type: " + eyes.getGlowingEyesType());
 
         NetworkHandler.sendToClient(new OtherPlayerCapabilityMessage(target, eyes), (EntityPlayerMP) player);
     }

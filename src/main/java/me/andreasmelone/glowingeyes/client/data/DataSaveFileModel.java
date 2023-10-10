@@ -1,4 +1,4 @@
-package me.andreasmelone.glowingeyes.client.modless;
+package me.andreasmelone.glowingeyes.client.data;
 
 public class DataSaveFileModel {
     public boolean hasGlowingEyes;

@@ -2,12 +2,11 @@ package me.andreasmelone.glowingeyes.client.commands;
 
 import com.google.common.collect.Lists;
 import me.andreasmelone.glowingeyes.GlowingEyes;
-import me.andreasmelone.glowingeyes.client.modless.DataSaveFile;
+import me.andreasmelone.glowingeyes.client.data.DataSaveFile;
 import me.andreasmelone.glowingeyes.common.capability.GlowingEyesProvider;
 import me.andreasmelone.glowingeyes.common.capability.IGlowingEyesCapability;
 import me.andreasmelone.glowingeyes.common.packets.ClientCapabilityMessage;
 import me.andreasmelone.glowingeyes.common.packets.NetworkHandler;
-import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommand;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.player.EntityPlayer;
@@ -82,7 +81,6 @@ public class EyesCommand implements ICommand {
                 NetworkHandler.sendToServer(new ClientCapabilityMessage(cap, player));
 
                 sender.sendMessage(format(TextFormatting.GREEN, "Your glowing eyes are now " + (toggleValue ? "enabled" : "disabled") + "!"));
-                return;
             } else if (args[0].equalsIgnoreCase("type")) {
                 int type;
                 try {

@@ -1,7 +1,7 @@
 package me.andreasmelone.glowingeyes.client;
 
 import me.andreasmelone.glowingeyes.client.commands.EyesCommand;
-import me.andreasmelone.glowingeyes.client.modless.DataSaveFile;
+import me.andreasmelone.glowingeyes.client.data.DataSaveFile;
 import me.andreasmelone.glowingeyes.common.CommonProxy;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.entity.RenderManager;

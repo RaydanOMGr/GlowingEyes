@@ -9,6 +9,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.util.EnumFacing;
 
+import java.util.List;
 import java.util.UUID;
 
 public class ClientCapabilityMessage extends MessageBase<ClientCapabilityMessage> {
@@ -19,11 +20,14 @@ public class ClientCapabilityMessage extends MessageBase<ClientCapabilityMessage
     public void handleClientSide(ClientCapabilityMessage message, EntityPlayer player) {
         IGlowingEyesCapability capability = message.cap;
 
+        GlowingEyes.logger.info("Player: " + player);
         if (player != null) {
+            GlowingEyes.logger.info("Player not null, player: " + player.getName());
             IGlowingEyesCapability old = player.getCapability(GlowingEyesProvider.CAPABILITY, EnumFacing.UP);
 
             old.setHasGlowingEyes(capability.hasGlowingEyes());
             old.setGlowingEyesType(capability.getGlowingEyesType());
+            GlowingEyes.logger.info("Has glowing eyes: " + old.hasGlowingEyes() + ", type: " + old.getGlowingEyesType());
         }
     }
 
@@ -36,7 +40,9 @@ public class ClientCapabilityMessage extends MessageBase<ClientCapabilityMessage
         old.setHasGlowingEyes(capibility.hasGlowingEyes());
         old.setGlowingEyesType(capibility.getGlowingEyesType());
 
-        for(UUID pUUID : GlowingEyes.proxy.getPlayersTracking().get(player)) {
+        List<UUID> playersTracking = GlowingEyes.proxy.getPlayersTracking().get(player);
+        if(playersTracking == null) return;
+        for(UUID pUUID : playersTracking) {
             EntityPlayerMP p = playerMP.getServer().getPlayerList().getPlayerByUUID(pUUID);
             if(p == null) return;
             NetworkHandler.sendToClient(new OtherPlayerCapabilityMessage(player, old), p);
