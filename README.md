@@ -13,7 +13,7 @@ To change the type of your eyes, type `/eyes type <number>` where `<number>` can
 Suggest your ideas in the issues section!
 
 ## Known Issues
-No currently known issues.
+Some users have issues with their skins faces when the eyes are on, it seems
 
 
 **The eye textures and some code has been taken from the [Vampirism](https://github.com/TeamLapen/Vampirism) mod, make sure to check it out!**
