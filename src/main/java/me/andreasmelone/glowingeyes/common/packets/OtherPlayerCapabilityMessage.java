@@ -19,6 +19,8 @@ public class OtherPlayerCapabilityMessage extends MessageBase<OtherPlayerCapabil
 
     @Override
     public void handleClientSide(OtherPlayerCapabilityMessage message, EntityPlayer player) {
+        // this wasn't working at first, I almost kms because it didn't work and then it turned out...
+        // I have to run it on the main thread, I hate this game
         Minecraft.getMinecraft().addScheduledTask(() -> {
 
             IGlowingEyesCapability capability = message.eyes;
@@ -36,7 +38,10 @@ public class OtherPlayerCapabilityMessage extends MessageBase<OtherPlayerCapabil
     @Override
     public void handleServerSide(OtherPlayerCapabilityMessage message, EntityPlayer player) {
         player.sendMessage(
-                new TextComponentString("§4§lYour client is trying to send an invalid packet to the server!")
+                new TextComponentString("§4§lYour client is trying to send a 'OtherPlayerCapabilityPacket' packet to the server")
+        );
+        player.sendMessage(
+                new TextComponentString("§4§lThis packet can only be sent from the server to a client!")
         );
     }
 

@@ -20,14 +20,11 @@ public class ClientCapabilityMessage extends MessageBase<ClientCapabilityMessage
     public void handleClientSide(ClientCapabilityMessage message, EntityPlayer player) {
         IGlowingEyesCapability capability = message.cap;
 
-        GlowingEyes.logger.info("Player: " + player);
         if (player != null) {
-            GlowingEyes.logger.info("Player not null, player: " + player.getName());
             IGlowingEyesCapability old = player.getCapability(GlowingEyesProvider.CAPABILITY, EnumFacing.UP);
 
             old.setHasGlowingEyes(capability.hasGlowingEyes());
             old.setGlowingEyesType(capability.getGlowingEyesType());
-            GlowingEyes.logger.info("Has glowing eyes: " + old.hasGlowingEyes() + ", type: " + old.getGlowingEyesType());
         }
     }
 
@@ -52,24 +49,15 @@ public class ClientCapabilityMessage extends MessageBase<ClientCapabilityMessage
     @Override
     public void fromBytes(ByteBuf buf) {
         if(buf.isReadable()) {
-            int hasGlowingEyes = buf.readInt();
-            cap.setHasGlowingEyes(hasGlowingEyes == 1);
-            GlowingEyes.logger.info("Buffer integer: " + hasGlowingEyes);
-            GlowingEyes.logger.info("Has glowing eyes: " + cap.hasGlowingEyes() + " in number: " + (cap.hasGlowingEyes() ? 1 : 0));
-
-            int glowingEyesType = buf.readInt();
-            cap.setGlowingEyesType(glowingEyesType);
-            GlowingEyes.logger.info("Buffer integer: " + glowingEyesType);
-            GlowingEyes.logger.info("Glowing eyes type: " + cap.getGlowingEyesType());
+            cap.setHasGlowingEyes(buf.readBoolean());
+            cap.setGlowingEyesType(buf.readInt());
         }
     }
 
     @Override
     public void toBytes(ByteBuf buf) {
-        buf.writeInt(cap.hasGlowingEyes() ? 1 : 0);
-        GlowingEyes.logger.info("Has glowing eyes: " + cap.hasGlowingEyes() + " in number: " + (cap.hasGlowingEyes() ? 1 : 0));
+        buf.writeBoolean(cap.hasGlowingEyes());
         buf.writeInt(cap.getGlowingEyesType());
-        GlowingEyes.logger.info("Glowing eyes type: " + cap.getGlowingEyesType());
     }
 
     public ClientCapabilityMessage(IGlowingEyesCapability cap, EntityPlayer player) {

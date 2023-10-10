@@ -11,6 +11,7 @@ public class NetworkHandler {
     private static SimpleNetworkWrapper INSTANCE;
     private static SimpleNetworkWrapper INSTANCE_2;
 
+    // I should change this later, this is really messy and looks wrong
     public static void init() {
         int i = 0;
         int j = 0;
