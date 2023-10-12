@@ -37,6 +37,9 @@ public class ClientCapabilityMessage extends MessageBase<ClientCapabilityMessage
         old.setHasGlowingEyes(capibility.hasGlowingEyes());
         old.setGlowingEyesType(capibility.getGlowingEyesType());
 
+        // This is done to be compatible with replaymod, but it doesn't work and Idk why
+        NetworkHandler.sendToClient(new ClientCapabilityMessage(capibility, player), playerMP);
+
         List<UUID> playersTracking = GlowingEyes.proxy.getPlayersTracking().get(player);
         if(playersTracking == null) return;
         for(UUID pUUID : playersTracking) {

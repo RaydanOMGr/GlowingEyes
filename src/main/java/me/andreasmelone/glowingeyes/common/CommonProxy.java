@@ -25,6 +25,8 @@ public class CommonProxy {
     }
 
     public void init(FMLInitializationEvent e) {
+        MinecraftForge.EVENT_BUS.register(new CommonGlowingEyesEvents());
+
         CapabilityManager.INSTANCE.register(IGlowingEyesCapability.class, new GlowingEyesStorage(), GlowingEyesCapability::new);
         MinecraftForge.EVENT_BUS.register(new CapabilityHandler());
 

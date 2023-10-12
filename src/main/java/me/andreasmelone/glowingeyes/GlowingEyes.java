@@ -21,16 +21,15 @@ public class GlowingEyes {
 
     @Mod.EventHandler
     public void preInit(FMLPreInitializationEvent event) {
+        event.getModLog().info(ModInfo.NAME + " is starting pre initialization!");
         logger = event.getModLog();
-        logger.info(ModInfo.NAME + " is in pre initialization!");
         proxy.preInit(event);
+        logger.info(ModInfo.NAME + " has finished pre initialization!");
     }
 
     @Mod.EventHandler
     public void init(FMLInitializationEvent event) {
         logger.info(ModInfo.NAME + " is starting initialization!");
-        MinecraftForge.EVENT_BUS.register(new CommonGlowingEyesEvents());
-
         proxy.init(event);
         logger.info(ModInfo.NAME + " has finished initialization!");
     }

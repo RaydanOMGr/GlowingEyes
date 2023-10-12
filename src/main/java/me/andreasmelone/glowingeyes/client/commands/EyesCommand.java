@@ -3,6 +3,7 @@ package me.andreasmelone.glowingeyes.client.commands;
 import com.google.common.collect.Lists;
 import me.andreasmelone.glowingeyes.GlowingEyes;
 import me.andreasmelone.glowingeyes.client.data.DataSaveFile;
+import me.andreasmelone.glowingeyes.common.capability.GlowingEyesCapability;
 import me.andreasmelone.glowingeyes.common.capability.GlowingEyesProvider;
 import me.andreasmelone.glowingeyes.common.capability.IGlowingEyesCapability;
 import me.andreasmelone.glowingeyes.common.packets.ClientCapabilityMessage;
@@ -42,6 +43,8 @@ public class EyesCommand implements ICommand {
     public List<String> getAliases() {
         List<String> aliases = Lists.newArrayList();
         aliases.add("/eyes");
+        aliases.add("/eye");
+        aliases.add("/glowingeyes");
         return aliases;
     }
 
@@ -53,7 +56,7 @@ public class EyesCommand implements ICommand {
                 return;
             }
             EntityPlayer player = (EntityPlayer) sender;
-            IGlowingEyesCapability cap = player.getCapability(GlowingEyesProvider.CAPABILITY, EnumFacing.UP);
+            IGlowingEyesCapability cap = new GlowingEyesCapability();
 
             if (args.length < 1) {
                 sender.sendMessage(new TextComponentString("Eyes enabled: " + cap.hasGlowingEyes()));
