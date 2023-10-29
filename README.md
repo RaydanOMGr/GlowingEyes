@@ -17,6 +17,7 @@ Suggest your ideas in the issues section!
 ## Known Issues
 - Some users have issues with their skins faces when the eyes are on
 - It seems ReplayMod doesn't record the glowing eyes, but I don't see it as crucial for now. In case more people want this feature, I'll try to fix it
+- Holding an item changes your face texture to some random junk of block textures
 
 ## Thanks!
 Thanks to the [Vampirism](https://github.com/TeamLapen/Vampirism) mod and its authors,
