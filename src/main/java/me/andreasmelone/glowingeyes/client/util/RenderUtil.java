@@ -1,4 +1,4 @@
-package me.andreasmelone.glowingeyes.common.util;
+package me.andreasmelone.glowingeyes.client.util;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.ModelRenderer;
@@ -13,6 +13,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 // THIS CLASS HAS BEEN PARTIALLY COPIED FROM THE VAMPIRISM MOD!!!
 @SideOnly(Side.CLIENT)
 public class RenderUtil {
+    // Tbf I have no idea what this does, but it's needed for the glowing eyes to work so I'll just leave it here
 
     /**
      * Render the given model part using the given texture with a glowing lightmap (like vanilla spider)

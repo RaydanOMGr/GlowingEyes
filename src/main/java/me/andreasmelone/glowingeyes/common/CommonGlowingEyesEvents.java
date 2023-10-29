@@ -1,6 +1,5 @@
 package me.andreasmelone.glowingeyes.common;
 
-import jdk.nashorn.internal.ir.annotations.Ignore;
 import me.andreasmelone.glowingeyes.GlowingEyes;
 import me.andreasmelone.glowingeyes.common.capability.GlowingEyesProvider;
 import me.andreasmelone.glowingeyes.common.capability.IGlowingEyesCapability;
@@ -49,8 +48,6 @@ public class CommonGlowingEyesEvents {
 
     @SubscribeEvent
     public void onStopTracking(PlayerEvent.StopTracking event) {
-        GlowingEyes.logger.info("Stop tracking, entity: " + event.getTarget().getName());
-
         HashMap<EntityPlayer, List<UUID>> playersTracking = GlowingEyes.proxy.getPlayersTracking();
         if(!(event.getTarget() instanceof EntityPlayer)) return;
 
@@ -65,8 +62,6 @@ public class CommonGlowingEyesEvents {
         if(tracking.size() == 0) playersTracking.remove(player);
         else playersTracking.put(player, tracking);
         GlowingEyes.proxy.setPlayersTracking(playersTracking);
-
-        GlowingEyes.logger.info("Stop tracking, player: " + player.getName());
     }
 
     @SubscribeEvent

@@ -1,10 +1,10 @@
 package me.andreasmelone.glowingeyes.client;
 
 import me.andreasmelone.glowingeyes.GlowingEyes;
+import me.andreasmelone.glowingeyes.client.util.RenderUtil;
 import me.andreasmelone.glowingeyes.common.capability.GlowingEyesProvider;
 import me.andreasmelone.glowingeyes.common.capability.IGlowingEyesCapability;
 import me.andreasmelone.glowingeyes.common.util.ModInfo;
-import me.andreasmelone.glowingeyes.common.util.RenderUtil;
 import net.minecraft.client.entity.AbstractClientPlayer;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.entity.RenderPlayer;
@@ -49,21 +49,22 @@ public class GlowingEyesHeadLayer implements LayerRenderer<AbstractClientPlayer>
             glowingEyesType = 0;
         }
 
-        if (hasGlowingEyes) {
-            int eyeType = Math.max(
-                    0, Math.min(glowingEyesType, eyeOverlays.length - 1)
-            );
-            GlStateManager.pushMatrix();
-            if (player.isSneaking()) {
-                GlStateManager.translate(0.0F, 0.2F, 0.0F);
-            }
+        int eyeType = Math.max(
+                0, Math.min(glowingEyesType, eyeOverlays.length - 1)
+        );
+        GlStateManager.pushMatrix();
+        if (player.isSneaking()) {
+            GlStateManager.translate(0.0F, 0.2F, 0.0F);
+        }
 
-            this.playerRenderer.getMainModel().bipedHead.render(scale);
+        // here something goes wrong; I'd guess
+        //this.playerRenderer.getMainModel().bipedHead.render(scale);
+        // commenting this out just works for some reason, well, if it works, it works
 
+        if (hasGlowingEyes)
             RenderUtil.renderGlowing(playerRenderer, playerRenderer.getMainModel().bipedHead, eyeOverlays[eyeType], 240f, player, scale);
 
-            GlStateManager.popMatrix();
-        }
+        GlStateManager.popMatrix();
     }
 
     public boolean shouldCombineTextures() {

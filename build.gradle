@@ -1,19 +1,23 @@
-buildscript {
-    repositories {
-        maven { url = 'https://maven.minecraftforge.net/' }
-        mavenCentral()
-    }
-    dependencies {
-        classpath 'net.minecraftforge.gradle:ForgeGradle:3.+'
+plugins {
+    id 'eclipse'
+    id 'maven-publish'
+    id 'net.minecraftforge.gradle' version '5.1.+'
+    id 'wtf.gofancy.fancygradle' version '1.1.+'
+}
+
+fancyGradle {
+    patches {
+        resources
+        coremods
+        codeChickenLib
+        asm
+        mergetool
     }
 }
-        
-apply plugin: 'net.minecraftforge.gradle'
-// Only edit below this line, the above code adds and enables the necessary things for Forge to be setup.
-apply plugin: 'eclipse'
-apply plugin: 'maven-publish'
 
-version = '1.1'
+def minecraft_version = '1.12.2'
+
+version = '1.1.1' // Major version 1, minor version 1, patch 1
 group = 'me.andreasmelone' // http://maven.apache.org/guides/mini/guide-naming-conventions.html
 archivesBaseName = 'glowingeyes'
 
@@ -64,7 +68,6 @@ dependencies {
     // You may put jars on which you depend on in ./libs or you may define them like so..
     // compile "some.group:artifact:version:classifier"
     // compile "some.group:artifact:version"
-    compile 'com.google.code.gson:gson:2.10'
 
     // Real examples
     // compile 'com.mod-buildcraft:buildcraft:6.0.8:dev'  // adds buildcraft to the dev env
@@ -82,18 +85,21 @@ dependencies {
 
 }
 
-// I have no idea what this code does, I found it online and I hope it properly replaces the version
+//// I have no idea what this code does, I found it online and I hope it properly replaces the version
 processResources {
+    // it complained about not having a duplicates strategy, so I added this
+    duplicatesStrategy = DuplicatesStrategy.INCLUDE
+
     // this will ensure that this task is redone when the versions change.
     inputs.property "version", project.version
-    inputs.property "mcversion", "1.12.2"
+    inputs.property "mcversion", minecraft_version
 
     // replace stuff in mcmod.info, nothing else
     from(sourceSets.main.resources.srcDirs) {
         include 'mcmod.info'
 
         // replace version and mcversion
-        expand 'version':project.version, 'mcversion':"1.12.2"
+        expand 'version':project.version, 'mcversion': minecraft_version
     }
 
     // copy everything else except the mcmod.info
