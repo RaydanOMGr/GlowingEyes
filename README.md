@@ -1,6 +1,5 @@
 # Glowing Eyes
 A minecraft mod to make your eyes glow, inspired by the mod [Vampirism](https://github.com/TeamLapen/Vampirism)<br>
-I was once playing SkyBlock with my friend and I suddenly had the urge to install [Vampirism](https://github.com/TeamLapen/Vampirism) and get myself a pair of glowing eyes, but the modpack wasn't made for [Vampirism](https://github.com/TeamLapen/Vampirism), so I decided to create a separate mod adding exclusively the glowing eyes!
 
 ## How to download
 You can download it on [CurseForge](https://www.curseforge.com/minecraft/mc-mods/glowing-eyes)
