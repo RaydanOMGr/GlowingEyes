@@ -60,7 +60,9 @@ public class GlowingEyesHeadLayer implements LayerRenderer<AbstractClientPlayer>
         // here something goes wrong; I'd guess
         //this.playerRenderer.getMainModel().bipedHead.render(scale);
         // commenting this out just works for some reason, well, if it works, it works
-
+        // okay, I know what it was. Vampirism has the fang rendering in this class too
+        // it had a texture bind before which I removed, but I didn't remove the render part causing an issue
+        
         if (hasGlowingEyes)
             RenderUtil.renderGlowing(playerRenderer, playerRenderer.getMainModel().bipedHead, eyeOverlays[eyeType], 240f, player, scale);
 
