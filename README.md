@@ -1,6 +1,6 @@
 # Glowing Eyes
 A minecraft mod to make your eyes glow, inspired by the mod [Vampirism](https://github.com/TeamLapen/Vampirism)<br>
-
+ 
 ## How to download
 You can download it on [CurseForge](https://www.curseforge.com/minecraft/mc-mods/glowing-eyes)
 
