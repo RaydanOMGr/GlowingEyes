@@ -6,6 +6,8 @@ import me.andreasmelone.glowingeyes.common.capability.GlowingEyesCapability;
 import me.andreasmelone.glowingeyes.common.capability.GlowingEyesStorage;
 import me.andreasmelone.glowingeyes.common.capability.IGlowingEyesCapability;
 import me.andreasmelone.glowingeyes.common.packets.NetworkHandler;
+import me.andreasmelone.glowingeyes.common.scheduler.Scheduler;
+import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.capabilities.CapabilityManager;
@@ -13,15 +15,18 @@ import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 
+import java.awt.*;
 import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
 
 public class CommonProxy {
+    private Scheduler scheduler;
     private DataSaveFile dataSaveFile;
     private HashMap<EntityPlayer, List<UUID>> playersTracking = new HashMap<>();
 
     public void preInit(FMLPreInitializationEvent e) {
+        scheduler = new Scheduler();
     }
 
     public void init(FMLInitializationEvent e) {
@@ -40,6 +45,7 @@ public class CommonProxy {
     public EntityPlayer getPlayer() {
         return null;
     }
+
     public boolean isClient() {
         return false;
     }
@@ -47,10 +53,23 @@ public class CommonProxy {
     public DataSaveFile getDataSaveFile() {
         return dataSaveFile;
     }
+
     public HashMap<EntityPlayer, List<UUID>> getPlayersTracking() {
         return playersTracking;
     }
+
     public void setPlayersTracking(HashMap<EntityPlayer, List<UUID>> playersTracking) {
         this.playersTracking = playersTracking;
+    }
+
+    public void openGui(GuiScreen gui) {
+    }
+
+    public Scheduler getScheduler() {
+        return scheduler;
+    }
+
+    public HashMap<Point, Color> getPixelMap() {
+        return null;
     }
 }

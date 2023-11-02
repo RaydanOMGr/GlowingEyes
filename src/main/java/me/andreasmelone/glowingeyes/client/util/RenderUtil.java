@@ -5,10 +5,14 @@ import net.minecraft.client.model.ModelRenderer;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.client.renderer.entity.RenderLivingBase;
+import net.minecraft.client.renderer.texture.TextureUtil;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+
+import java.awt.image.BufferedImage;
+import java.io.IOException;
 
 // THIS CLASS HAS BEEN PARTIALLY COPIED FROM THE VAMPIRISM MOD!!!
 @SideOnly(Side.CLIENT)
@@ -48,5 +52,14 @@ public class RenderUtil {
         int k = brightnessForRender / 65536;
         OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, (float) j, (float) k);
         GlStateManager.disableBlend();
+    }
+
+    public static BufferedImage getBufferedImageFromResourceLocation(ResourceLocation resourceLocation) {
+        try {
+            return TextureUtil.readBufferedImage(Minecraft.getMinecraft().getResourceManager().getResource(resourceLocation).getInputStream());
+        } catch (IOException e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 }

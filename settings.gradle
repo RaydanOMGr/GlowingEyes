@@ -9,5 +9,11 @@ pluginManagement {
             name 'Garden of Fancy'
             url 'https://maven.gofancy.wtf/releases'
         }
+        maven {
+            url "https://cursemaven.com"
+            content {
+                includeGroup "curse.maven"
+            }
+        }
     }
 }

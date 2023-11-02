@@ -17,7 +17,7 @@ fancyGradle {
 
 def minecraft_version = '1.12.2'
 
-version = '1.1.1' // Major version 1, minor version 1, patch 1
+version = '1.2.0' // Major version 1, minor version 2, patch 0
 group = 'me.andreasmelone' // http://maven.apache.org/guides/mini/guide-naming-conventions.html
 archivesBaseName = 'glowingeyes'
 

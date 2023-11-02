@@ -3,12 +3,15 @@ package me.andreasmelone.glowingeyes.client.commands;
 import com.google.common.collect.Lists;
 import me.andreasmelone.glowingeyes.GlowingEyes;
 import me.andreasmelone.glowingeyes.client.data.DataSaveFile;
+import me.andreasmelone.glowingeyes.client.ui.EyesEditScreen;
 import me.andreasmelone.glowingeyes.common.capability.GlowingEyesCapability;
 import me.andreasmelone.glowingeyes.common.capability.GlowingEyesProvider;
 import me.andreasmelone.glowingeyes.common.capability.IGlowingEyesCapability;
 import me.andreasmelone.glowingeyes.common.packets.ClientCapabilityMessage;
 import me.andreasmelone.glowingeyes.common.packets.NetworkHandler;
+import me.andreasmelone.glowingeyes.common.scheduler.ScheduledTask;
 import me.andreasmelone.glowingeyes.common.util.ModInfo;
+import net.minecraft.client.Minecraft;
 import net.minecraft.command.ICommand;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.player.EntityPlayer;
@@ -50,6 +53,13 @@ public class EyesCommand implements ICommand {
 
     @Override
     public void execute(MinecraftServer server, ICommandSender sender, String[] args) {
+        GlowingEyes.proxy.getScheduler().scheduleTask(new ScheduledTask() {
+            @Override
+            public void run() {
+                GlowingEyes.proxy.openGui(new EyesEditScreen(Minecraft.getMinecraft()));
+            }
+        }.runIn(1));
+
         if(GlowingEyes.serverHasMod) {
             if (!(sender instanceof EntityPlayer)) {
                 sender.sendMessage(format(TextFormatting.RED, "Only players can use this command!"));
