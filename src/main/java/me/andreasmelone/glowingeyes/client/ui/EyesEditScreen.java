@@ -3,6 +3,7 @@ package me.andreasmelone.glowingeyes.client.ui;
 import me.andreasmelone.glowingeyes.GlowingEyes;
 import me.andreasmelone.glowingeyes.client.ui.buttons.GuiButtonColorPicker;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.renderer.texture.TextureUtil;
 import net.minecraft.util.ResourceLocation;
@@ -134,8 +135,7 @@ public class EyesEditScreen extends GuiScreen {
 
         if(mouseButton == 0) {
             if (x >= 0 && x < bufferedImage.getWidth() && y >= 0 && y < bufferedImage.getHeight() && !pixelMap.containsKey(new Point(x, y))) {
-                Color color = new Color(125, 0, 0, 210);
-                pixelMap.put(new Point(x, y), color);
+                pixelMap.put(new Point(x, y), GlowingEyes.proxy.getPixelColor());
             }
         } else if(mouseButton == 1) {
             if (x >= 0 && x < bufferedImage.getWidth() && y >= 0 && y < bufferedImage.getHeight()) {
@@ -147,6 +147,15 @@ public class EyesEditScreen extends GuiScreen {
             super.mouseClicked(mouseX, mouseY, mouseButton);
         } catch (IOException e) {
             e.printStackTrace();
+        }
+    }
+
+    // on button pressed
+    @Override
+    protected void actionPerformed(GuiButton button) {
+        if (button.id == 1) {
+            // open the color picker
+            mc.displayGuiScreen(new ColorPickerScreen(this));
         }
     }
 }

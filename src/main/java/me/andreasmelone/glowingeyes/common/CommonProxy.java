@@ -72,4 +72,9 @@ public class CommonProxy {
     public HashMap<Point, Color> getPixelMap() {
         return null;
     }
+    public Color getPixelColor() {
+        return null;
+    }
+    public void setPixelColor(Color color) {
+    }
 }

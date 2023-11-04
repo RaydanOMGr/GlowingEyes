@@ -3,6 +3,7 @@ package me.andreasmelone.glowingeyes.client;
 import me.andreasmelone.glowingeyes.client.commands.EyesCommand;
 import me.andreasmelone.glowingeyes.client.data.DataSaveFile;
 import me.andreasmelone.glowingeyes.common.CommonProxy;
+import me.andreasmelone.glowingeyes.common.util.ModInfo;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.renderer.entity.RenderManager;
@@ -18,7 +19,8 @@ import java.awt.*;
 import java.util.HashMap;
 
 public class ClientProxy extends CommonProxy {
-    private HashMap<Point, Color> pixelMap = new HashMap<>();
+    HashMap<Point, Color> pixelMap = new HashMap<>();
+    Color color = ModInfo.DEFAULT_EYE_COLOR;
     DataSaveFile dataSaveFile;
 
     @Override
@@ -69,5 +71,15 @@ public class ClientProxy extends CommonProxy {
     @Override
     public HashMap<Point, Color> getPixelMap() {
         return pixelMap;
+    }
+
+    @Override
+    public Color getPixelColor() {
+        return color;
+    }
+
+    @Override
+    public void setPixelColor(Color color) {
+        this.color = color;
     }
 }
