@@ -9,8 +9,6 @@ import net.minecraft.client.gui.GuiButton;
 import me.andreasmelone.glowingeyes.client.ui.labels.GuiLabel;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.GuiTextField;
-import net.minecraft.client.gui.inventory.GuiChest;
-import net.minecraft.client.gui.inventory.GuiInventory;
 import org.lwjgl.input.Keyboard;
 import java.awt.*;
 import java.io.IOException;

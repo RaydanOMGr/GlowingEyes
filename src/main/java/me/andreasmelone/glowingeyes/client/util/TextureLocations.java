@@ -1,7 +1,6 @@
 package me.andreasmelone.glowingeyes.client.util;
 
 import me.andreasmelone.glowingeyes.common.util.ModInfo;
-import net.minecraft.client.gui.GuiButton;
 import net.minecraft.util.ResourceLocation;
 
 public class TextureLocations {

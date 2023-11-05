@@ -41,22 +41,7 @@ public class GlowingEyesHeadLayer implements LayerRenderer<AbstractClientPlayer>
         IGlowingEyesCapability glowingEyes = player.getCapability(GlowingEyesProvider.CAPABILITY, EnumFacing.UP);
 
         boolean serverHasMod = GlowingEyes.serverHasMod;
-        boolean hasGlowingEyes;
-        int glowingEyesType;
-        if(serverHasMod) {
-            hasGlowingEyes = glowingEyes.hasGlowingEyes();
-            glowingEyesType = glowingEyes.getGlowingEyesType();
-        } else if(player == GlowingEyes.proxy.getPlayer()) {
-            hasGlowingEyes = GlowingEyes.proxy.getDataSaveFile().getHasGlowingEyes();
-            glowingEyesType = GlowingEyes.proxy.getDataSaveFile().getGlowingEyesType();
-        } else {
-            hasGlowingEyes = false;
-            glowingEyesType = 0;
-        }
 
-        int eyeType = Math.max(
-                0, Math.min(glowingEyesType, eyeOverlays.length - 1)
-        );
         GlStateManager.pushMatrix();
         if (player.isSneaking()) {
             GlStateManager.translate(0.0F, 0.2F, 0.0F);
@@ -69,12 +54,11 @@ public class GlowingEyesHeadLayer implements LayerRenderer<AbstractClientPlayer>
 
         BufferedImage eyeOverlayTexture = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
         HashMap<Point, Color> pixelMap = GlowingEyes.proxy.getPixelMap();
-        if (hasGlowingEyes) {
-            for (Point point : pixelMap.keySet()) {
-                Color color = pixelMap.get(point);
-                eyeOverlayTexture.setRGB(point.x + (width / 8), point.y + (height / 8), color.getRGB());
-            }
+        for (Point point : pixelMap.keySet()) {
+            Color color = pixelMap.get(point);
+            eyeOverlayTexture.setRGB(point.x + (width / 8), point.y + (height / 8), color.getRGB());
         }
+
 
         DynamicTexture eyeOverlay = new DynamicTexture(eyeOverlayTexture);
         ResourceLocation eyeOverlayResource = playerRenderer.getRenderManager().renderEngine
@@ -86,8 +70,7 @@ public class GlowingEyesHeadLayer implements LayerRenderer<AbstractClientPlayer>
         // okay, I know what it was. Vampirism has the fang rendering in this class too
         // it had a texture bind before which I removed, but I didn't remove the render part causing an issue
         
-        if (hasGlowingEyes)
-            RenderUtil.renderGlowing(playerRenderer, playerRenderer.getMainModel().bipedHead, eyeOverlayResource, 240f, player, scale);
+        RenderUtil.renderGlowing(playerRenderer, playerRenderer.getMainModel().bipedHead, eyeOverlayResource, 240f, player, scale);
 
         GlStateManager.popMatrix();
     }

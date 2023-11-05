@@ -1,10 +1,9 @@
 package me.andreasmelone.glowingeyes.common.capability;
 
-public interface IGlowingEyesCapability {
-    int getGlowingEyesType();
-    boolean hasGlowingEyes();
-    void setGlowingEyesType(int type);
-    void setHasGlowingEyes(boolean hasGlowingEyes);
+import java.awt.*;
+import java.util.HashMap;
 
-    String getRawString();
+public interface IGlowingEyesCapability {
+    HashMap<Point, Color> getGlowingEyesMap();
+    void setGlowingEyesMap(HashMap<Point, Color> glowingEyesMap);
 }

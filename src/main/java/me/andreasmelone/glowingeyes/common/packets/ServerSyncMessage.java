@@ -12,9 +12,10 @@ import net.minecraft.util.text.TextComponentString;
 public class ServerSyncMessage extends MessageBase<ServerSyncMessage> {
     @Override
     public void handleClientSide(ServerSyncMessage message, EntityPlayer player) {
-        player.sendMessage(
-                new TextComponentString("The server has Glowing Eyes installed. You can use the /eyes command to toggle your glowing eyes.")
-        );
+        // fucking annoying message, go fuck yourself
+//        player.sendMessage(
+//                new TextComponentString("The server has Glowing Eyes installed. You can use the /eyes command to toggle your glowing eyes.")
+//        );
         GlowingEyes.serverHasMod = true;
     }
 

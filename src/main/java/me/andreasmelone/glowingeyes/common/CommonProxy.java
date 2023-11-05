@@ -1,6 +1,5 @@
 package me.andreasmelone.glowingeyes.common;
 
-import me.andreasmelone.glowingeyes.client.data.DataSaveFile;
 import me.andreasmelone.glowingeyes.common.capability.CapabilityHandler;
 import me.andreasmelone.glowingeyes.common.capability.GlowingEyesCapability;
 import me.andreasmelone.glowingeyes.common.capability.GlowingEyesStorage;
@@ -22,7 +21,6 @@ import java.util.UUID;
 
 public class CommonProxy {
     private Scheduler scheduler;
-    private DataSaveFile dataSaveFile;
     private HashMap<EntityPlayer, List<UUID>> playersTracking = new HashMap<>();
 
     public void preInit(FMLPreInitializationEvent e) {
@@ -35,7 +33,6 @@ public class CommonProxy {
         CapabilityManager.INSTANCE.register(IGlowingEyesCapability.class, new GlowingEyesStorage(), GlowingEyesCapability::new);
         MinecraftForge.EVENT_BUS.register(new CapabilityHandler());
 
-        dataSaveFile = null;
         NetworkHandler.init();
     }
 
@@ -48,10 +45,6 @@ public class CommonProxy {
 
     public boolean isClient() {
         return false;
-    }
-
-    public DataSaveFile getDataSaveFile() {
-        return dataSaveFile;
     }
 
     public HashMap<EntityPlayer, List<UUID>> getPlayersTracking() {
@@ -71,6 +64,8 @@ public class CommonProxy {
 
     public HashMap<Point, Color> getPixelMap() {
         return null;
+    }
+    public void setPixelMap(HashMap<Point, Color> pixelMap) {
     }
     public Color getPixelColor() {
         return null;

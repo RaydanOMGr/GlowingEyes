@@ -4,10 +4,6 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.util.ResourceLocation;
 
-import java.awt.*;
-import java.awt.image.BufferedImage;
-import java.util.HashMap;
-
 public class GuiUtil {
     /**
      * Draw the background texture
@@ -21,10 +17,5 @@ public class GuiUtil {
         Minecraft.getMinecraft().getTextureManager().bindTexture(backgroundTexture);
         // Draw the background texture
         Gui.drawModalRectWithCustomSizedTexture(x, y, 0, 0, width, height, 256, 256);
-    }
-
-    public static int calculateY(int guiTop, int defaultOffset, int yDifference, int labels,
-                                 int fields, int height, int buttons, int buttonHeight, int defaultButtonOffset) {
-        return guiTop + defaultOffset + yDifference * labels + fields * height + buttons * (buttonHeight + yDifference) + buttons == 0 ? defaultButtonOffset : 0;
     }
 }

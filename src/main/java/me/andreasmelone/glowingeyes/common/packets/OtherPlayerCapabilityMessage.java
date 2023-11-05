@@ -9,6 +9,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.text.TextComponentString;
 
+import java.awt.*;
 import java.nio.charset.StandardCharsets;
 import java.util.UUID;
 
@@ -19,18 +20,16 @@ public class OtherPlayerCapabilityMessage extends MessageBase<OtherPlayerCapabil
 
     @Override
     public void handleClientSide(OtherPlayerCapabilityMessage message, EntityPlayer player) {
-        // this wasn't working at first, I almost kms because it didn't work and then it turned out...
+        // this wasn't working at first, I almost kms because it didn't work, and then it turned out...
         // I have to run it on the main thread, I hate this game
         Minecraft.getMinecraft().addScheduledTask(() -> {
-
             IGlowingEyesCapability capability = message.eyes;
             EntityPlayer thisPlayer = Minecraft.getMinecraft().player.world.getPlayerEntityByUUID(message.playerUUID);
 
             if (thisPlayer != null) {
                 IGlowingEyesCapability old = thisPlayer.getCapability(GlowingEyesProvider.CAPABILITY, EnumFacing.UP);
 
-                old.setHasGlowingEyes(capability.hasGlowingEyes());
-                old.setGlowingEyesType(capability.getGlowingEyesType());
+                old.setGlowingEyesMap(capability.getGlowingEyesMap());
             }
         });
     }
@@ -50,8 +49,20 @@ public class OtherPlayerCapabilityMessage extends MessageBase<OtherPlayerCapabil
         if(buf.isReadable()) {
             int length = buf.readInt();
             this.playerUUID = UUID.fromString(buf.readBytes(length).toString(StandardCharsets.UTF_8));
-            eyes.setHasGlowingEyes(buf.readBoolean());
-            eyes.setGlowingEyesType(buf.readInt());
+
+            int lengthBytes = buf.getInt(0);
+            byte[] bytes = new byte[lengthBytes];
+            buf.readBytes(bytes);
+
+            for(int i = 0; i < lengthBytes; i += 6) {
+                int x = bytes[i];
+                int y = bytes[i + 1];
+                int red = bytes[i + 2];
+                int green = bytes[i + 3];
+                int blue = bytes[i + 4];
+                int alpha = bytes[i + 5];
+                eyes.getGlowingEyesMap().put(new Point(x, y), new Color(red, green, blue, alpha));
+            }
         }
     }
 
@@ -61,8 +72,15 @@ public class OtherPlayerCapabilityMessage extends MessageBase<OtherPlayerCapabil
 
         buf.writeInt(uuid.length);
         buf.writeBytes(uuid);
-        buf.writeBoolean(eyes.hasGlowingEyes());
-        buf.writeInt(eyes.getGlowingEyesType());
+        buf.writeInt(eyes.getGlowingEyesMap().size() * 6);
+        for(Point point : eyes.getGlowingEyesMap().keySet()) {
+            buf.writeInt(point.x);
+            buf.writeInt(point.y);
+            buf.writeInt(eyes.getGlowingEyesMap().get(point).getRed());
+            buf.writeInt(eyes.getGlowingEyesMap().get(point).getGreen());
+            buf.writeInt(eyes.getGlowingEyesMap().get(point).getBlue());
+            buf.writeInt(eyes.getGlowingEyesMap().get(point).getAlpha());
+        }
     }
 
     public OtherPlayerCapabilityMessage(EntityPlayer player, IGlowingEyesCapability eyes) {

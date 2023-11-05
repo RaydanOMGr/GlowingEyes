@@ -2,6 +2,7 @@ package me.andreasmelone.glowingeyes.common.packets;
 
 import io.netty.buffer.ByteBuf;
 import me.andreasmelone.glowingeyes.GlowingEyes;
+import me.andreasmelone.glowingeyes.client.data.ByteArray;
 import me.andreasmelone.glowingeyes.common.capability.GlowingEyesCapability;
 import me.andreasmelone.glowingeyes.common.capability.GlowingEyesProvider;
 import me.andreasmelone.glowingeyes.common.capability.IGlowingEyesCapability;
@@ -9,6 +10,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.util.EnumFacing;
 
+import java.awt.*;
 import java.util.List;
 import java.util.UUID;
 
@@ -23,8 +25,7 @@ public class ClientCapabilityMessage extends MessageBase<ClientCapabilityMessage
         if (player != null) {
             IGlowingEyesCapability old = player.getCapability(GlowingEyesProvider.CAPABILITY, EnumFacing.UP);
 
-            old.setHasGlowingEyes(capability.hasGlowingEyes());
-            old.setGlowingEyesType(capability.getGlowingEyesType());
+            old.setGlowingEyesMap(capability.getGlowingEyesMap());
         }
     }
 
@@ -34,8 +35,7 @@ public class ClientCapabilityMessage extends MessageBase<ClientCapabilityMessage
         IGlowingEyesCapability capibility = message.cap;
         IGlowingEyesCapability old = playerMP.getCapability(GlowingEyesProvider.CAPABILITY, EnumFacing.UP);
 
-        old.setHasGlowingEyes(capibility.hasGlowingEyes());
-        old.setGlowingEyesType(capibility.getGlowingEyesType());
+        old.setGlowingEyesMap(capibility.getGlowingEyesMap());
 
         // This is done to be compatible with replaymod, but it doesn't work and Idk why
         NetworkHandler.sendToClient(new ClientCapabilityMessage(capibility, player), playerMP);
@@ -52,15 +52,33 @@ public class ClientCapabilityMessage extends MessageBase<ClientCapabilityMessage
     @Override
     public void fromBytes(ByteBuf buf) {
         if(buf.isReadable()) {
-            cap.setHasGlowingEyes(buf.readBoolean());
-            cap.setGlowingEyesType(buf.readInt());
+            int length = buf.getInt(0);
+            byte[] bytes = new byte[length];
+            buf.readBytes(bytes);
+
+            for(int i = 0; i < length; i += 6) {
+                int x = bytes[i];
+                int y = bytes[i + 1];
+                int red = bytes[i + 2];
+                int green = bytes[i + 3];
+                int blue = bytes[i + 4];
+                int alpha = bytes[i + 5];
+                cap.getGlowingEyesMap().put(new Point(x, y), new Color(red, green, blue, alpha));
+            }
         }
     }
 
     @Override
     public void toBytes(ByteBuf buf) {
-        buf.writeBoolean(cap.hasGlowingEyes());
-        buf.writeInt(cap.getGlowingEyesType());
+        buf.writeInt(cap.getGlowingEyesMap().size() * 6);
+        for(Point point : cap.getGlowingEyesMap().keySet()) {
+            buf.writeInt(point.x);
+            buf.writeInt(point.y);
+            buf.writeInt(cap.getGlowingEyesMap().get(point).getRed());
+            buf.writeInt(cap.getGlowingEyesMap().get(point).getGreen());
+            buf.writeInt(cap.getGlowingEyesMap().get(point).getBlue());
+            buf.writeInt(cap.getGlowingEyesMap().get(point).getAlpha());
+        }
     }
 
     public ClientCapabilityMessage(IGlowingEyesCapability cap, EntityPlayer player) {

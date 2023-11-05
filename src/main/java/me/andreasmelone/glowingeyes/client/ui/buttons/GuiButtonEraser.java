@@ -1,6 +1,5 @@
 package me.andreasmelone.glowingeyes.client.ui.buttons;
 
-import me.andreasmelone.glowingeyes.GlowingEyes;
 import me.andreasmelone.glowingeyes.client.util.TextureLocations;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;

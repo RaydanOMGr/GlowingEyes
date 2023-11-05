@@ -1,12 +1,15 @@
 package me.andreasmelone.glowingeyes.client.ui;
 
 import me.andreasmelone.glowingeyes.GlowingEyes;
+import me.andreasmelone.glowingeyes.client.data.ByteArray;
 import me.andreasmelone.glowingeyes.client.ui.buttons.GuiButtonBrush;
 import me.andreasmelone.glowingeyes.client.ui.buttons.GuiButtonColorPicker;
 import me.andreasmelone.glowingeyes.client.ui.buttons.GuiButtonEraser;
 import me.andreasmelone.glowingeyes.client.ui.buttons.GuiButtonFill;
 import me.andreasmelone.glowingeyes.client.util.GuiUtil;
 import me.andreasmelone.glowingeyes.client.util.TextureLocations;
+import me.andreasmelone.glowingeyes.common.packets.ClientCapabilityMessage;
+import me.andreasmelone.glowingeyes.common.packets.NetworkHandler;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
@@ -17,10 +20,7 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.Queue;
 
-// uhh, I'm still trying to implement this, don't mind me
 public class EyesEditScreen extends GuiScreen {
     private int guiLeft;
     private int guiTop;
@@ -252,6 +252,13 @@ public class EyesEditScreen extends GuiScreen {
             fillButton.setSelected(true);
         }
         GlowingEyes.logger.info("Fill button selected: " + fillButton.isSelected());
+    }
+
+    @Override
+    public void onGuiClosed() {
+        if(GlowingEyes.serverHasMod) {
+            NetworkHandler.sendToServer(new ClientCapabilityMessage());
+        }
     }
 
     enum Mode {

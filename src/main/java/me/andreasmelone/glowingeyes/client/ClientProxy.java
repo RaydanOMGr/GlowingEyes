@@ -1,7 +1,6 @@
 package me.andreasmelone.glowingeyes.client;
 
 import me.andreasmelone.glowingeyes.client.commands.EyesCommand;
-import me.andreasmelone.glowingeyes.client.data.DataSaveFile;
 import me.andreasmelone.glowingeyes.common.CommonProxy;
 import me.andreasmelone.glowingeyes.common.util.ModInfo;
 import net.minecraft.client.Minecraft;
@@ -21,7 +20,6 @@ import java.util.HashMap;
 public class ClientProxy extends CommonProxy {
     HashMap<Point, Color> pixelMap = new HashMap<>();
     Color color = ModInfo.DEFAULT_EYE_COLOR;
-    DataSaveFile dataSaveFile;
 
     @Override
     public void preInit(FMLPreInitializationEvent e) {
@@ -36,9 +34,6 @@ public class ClientProxy extends CommonProxy {
     public void init(FMLInitializationEvent e) {
         super.init(e);
         MinecraftForge.EVENT_BUS.register(new ClientGlowingEyesEvents());
-
-        dataSaveFile = new DataSaveFile();
-        dataSaveFile.init();
     }
 
     @Override
@@ -59,11 +54,6 @@ public class ClientProxy extends CommonProxy {
     }
 
     @Override
-    public DataSaveFile getDataSaveFile() {
-        return dataSaveFile;
-    }
-
-    @Override
     public void openGui(GuiScreen gui) {
         Minecraft.getMinecraft().displayGuiScreen(gui);
     }
@@ -71,6 +61,11 @@ public class ClientProxy extends CommonProxy {
     @Override
     public HashMap<Point, Color> getPixelMap() {
         return pixelMap;
+    }
+
+    @Override
+    public void setPixelMap(HashMap<Point, Color> pixelMap) {
+        this.pixelMap = pixelMap;
     }
 
     @Override

@@ -71,8 +71,7 @@ public class CommonGlowingEyesEvents {
         IGlowingEyesCapability oldEyes = event.getOriginal().getCapability(GlowingEyesProvider.CAPABILITY, EnumFacing.UP);
 
         if(eyes == null || oldEyes == null) return;
-        eyes.setHasGlowingEyes(oldEyes.hasGlowingEyes());
-        eyes.setGlowingEyesType(oldEyes.getGlowingEyesType());
+        eyes.setGlowingEyesMap(oldEyes.getGlowingEyesMap());
 
         NetworkHandler.sendToClient(new ClientCapabilityMessage(eyes, player), (EntityPlayerMP) player);
 //        for(EntityPlayer p : player.getEntityWorld().playerEntities) {
