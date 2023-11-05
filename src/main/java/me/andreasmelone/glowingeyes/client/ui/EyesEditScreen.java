@@ -81,6 +81,7 @@ public class EyesEditScreen extends GuiScreen {
 
         ResourceLocation location = Minecraft.getMinecraft().player.getLocationSkin();
         try {
+            // WHY DOES THIS SHIT ERROR WHEN THE USER IS USING A CUSTOM SKIN AAAAAAAAAAAAAAAAAAAAH
             bufferedImage = TextureUtil.readBufferedImage(mc.getResourceManager().getResource(location).getInputStream());
             int x = bufferedImage.getWidth() / 8;
             int y = bufferedImage.getHeight() / 8;
@@ -218,9 +219,6 @@ public class EyesEditScreen extends GuiScreen {
     // on button pressed
     @Override
     protected void actionPerformed(GuiButton button) {
-        GlowingEyes.logger.info("Button pressed: " + button.id);
-        GlowingEyes.logger.info("Mode: " + mode);
-
         if (button.id == 0) {
             // open the color picker
             mc.displayGuiScreen(new ColorPickerScreen(this, this.doesGuiPauseGame()));
@@ -233,7 +231,6 @@ public class EyesEditScreen extends GuiScreen {
             eraserButton.setSelected(false);
             fillButton.setSelected(false);
         }
-        GlowingEyes.logger.info("Brush button selected: " + brushButton.isSelected());
 
         if(button.id == 2 && !eraserButton.isSelected()) {
             // change the mode to eraser
@@ -242,7 +239,6 @@ public class EyesEditScreen extends GuiScreen {
             eraserButton.setSelected(true);
             fillButton.setSelected(false);
         }
-        GlowingEyes.logger.info("Eraser button selected: " + eraserButton.isSelected());
 
         if(button.id == 3 && !fillButton.isSelected()) {
             // change the mode to fill
@@ -251,7 +247,6 @@ public class EyesEditScreen extends GuiScreen {
             eraserButton.setSelected(false);
             fillButton.setSelected(true);
         }
-        GlowingEyes.logger.info("Fill button selected: " + fillButton.isSelected());
     }
 
     @Override
