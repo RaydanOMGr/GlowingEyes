@@ -62,12 +62,17 @@ public class GlowingEyesHeadLayer implements LayerRenderer<AbstractClientPlayer>
             GlStateManager.translate(0.0F, 0.2F, 0.0F);
         }
 
-        BufferedImage eyeOverlayTexture = new BufferedImage(64, 64, BufferedImage.TYPE_INT_ARGB);
+        ResourceLocation skin = player.getLocationSkin();
+        BufferedImage skinImage = RenderUtil.getBufferedImageFromResourceLocation(skin);
+        int width = skinImage == null ? 64 : skinImage.getWidth();
+        int height = skinImage == null ? 64 : skinImage.getHeight();
+
+        BufferedImage eyeOverlayTexture = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
         HashMap<Point, Color> pixelMap = GlowingEyes.proxy.getPixelMap();
         if (hasGlowingEyes) {
             for (Point point : pixelMap.keySet()) {
                 Color color = pixelMap.get(point);
-                eyeOverlayTexture.setRGB(point.x + 8, point.y + 8, color.getRGB());
+                eyeOverlayTexture.setRGB(point.x + (width / 8), point.y + (height / 8), color.getRGB());
             }
         }
 
