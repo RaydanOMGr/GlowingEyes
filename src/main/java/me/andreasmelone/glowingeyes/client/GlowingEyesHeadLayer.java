@@ -5,11 +5,14 @@ import me.andreasmelone.glowingeyes.client.util.RenderUtil;
 import me.andreasmelone.glowingeyes.common.capability.GlowingEyesProvider;
 import me.andreasmelone.glowingeyes.common.capability.IGlowingEyesCapability;
 import me.andreasmelone.glowingeyes.common.util.ModInfo;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.AbstractClientPlayer;
 import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.client.renderer.ThreadDownloadImageData;
 import net.minecraft.client.renderer.entity.RenderPlayer;
 import net.minecraft.client.renderer.entity.layers.LayerRenderer;
 import net.minecraft.client.renderer.texture.DynamicTexture;
+import net.minecraft.client.renderer.texture.TextureUtil;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.relauncher.Side;
@@ -17,6 +20,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
+import java.io.IOException;
 import java.util.HashMap;
 
 // THIS CLASS HAS BEEN PARTIALLY COPIED FROM THE VAMPIRISM MOD!!!
@@ -47,18 +51,14 @@ public class GlowingEyesHeadLayer implements LayerRenderer<AbstractClientPlayer>
             GlStateManager.translate(0.0F, 0.2F, 0.0F);
         }
 
-        ResourceLocation skin = player.getLocationSkin();
-        BufferedImage skinImage = RenderUtil.getBufferedImageFromResourceLocation(skin);
-        int width = skinImage == null ? 64 : skinImage.getWidth();
-        int height = skinImage == null ? 64 : skinImage.getHeight();
 
-        BufferedImage eyeOverlayTexture = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
+
+        BufferedImage eyeOverlayTexture = new BufferedImage(64, 64, BufferedImage.TYPE_INT_ARGB);
         HashMap<Point, Color> pixelMap = GlowingEyes.proxy.getPixelMap();
         for (Point point : pixelMap.keySet()) {
             Color color = pixelMap.get(point);
-            eyeOverlayTexture.setRGB(point.x + (width / 8), point.y + (height / 8), color.getRGB());
+            eyeOverlayTexture.setRGB(point.x + (64 / 8), point.y + (64 / 8), color.getRGB());
         }
-
 
         DynamicTexture eyeOverlay = new DynamicTexture(eyeOverlayTexture);
         ResourceLocation eyeOverlayResource = playerRenderer.getRenderManager().renderEngine

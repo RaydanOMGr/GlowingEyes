@@ -11,14 +11,24 @@ import me.andreasmelone.glowingeyes.client.util.TextureLocations;
 import me.andreasmelone.glowingeyes.common.packets.ClientCapabilityMessage;
 import me.andreasmelone.glowingeyes.common.packets.NetworkHandler;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.entity.AbstractClientPlayer;
 import net.minecraft.client.gui.GuiButton;
+import net.minecraft.client.gui.GuiPlayerTabOverlay;
 import net.minecraft.client.gui.GuiScreen;
+import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.client.renderer.ThreadDownloadImageData;
+import net.minecraft.client.renderer.entity.Render;
+import net.minecraft.client.renderer.entity.RenderEntity;
+import net.minecraft.client.renderer.entity.RenderPlayer;
+import net.minecraft.client.renderer.texture.ITextureObject;
 import net.minecraft.client.renderer.texture.TextureUtil;
 import net.minecraft.util.ResourceLocation;
+import scala.tools.nsc.transform.SpecializeTypes;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
+import java.util.Base64;
 import java.util.HashMap;
 
 public class EyesEditScreen extends GuiScreen {
@@ -79,18 +89,29 @@ public class EyesEditScreen extends GuiScreen {
         );
         fillButton.setSelected(false);
 
-        ResourceLocation location = Minecraft.getMinecraft().player.getLocationSkin();
-        try {
-            // WHY DOES THIS SHIT ERROR WHEN THE USER IS USING A CUSTOM SKIN AAAAAAAAAAAAAAAAAAAAH
-            bufferedImage = TextureUtil.readBufferedImage(mc.getResourceManager().getResource(location).getInputStream());
-            int x = bufferedImage.getWidth() / 8;
-            int y = bufferedImage.getHeight() / 8;
+        ResourceLocation location = mc.player.getLocationSkin();
+        if(!mc.player.hasSkin()) {
+            try {
+                // WHY DOES THIS SHIT ERROR WHEN THE USER IS USING A CUSTOM SKIN AAAAAAAAAAAAAAAAAAAAH
+                bufferedImage = TextureUtil.readBufferedImage(mc.getResourceManager().getResource(location).getInputStream());
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        } else {
+            // if the texture isn't the default steve or alex that are present in the textures by default, the resourcelocation is a hash
+            // the hash is used to get the texture from minecrafts texture cdn, but this seems very inconsistent
 
-            // cut out the player's face
-            bufferedImage = bufferedImage.getSubimage(x, y, x, y);
-        } catch (IOException e) {
-            e.printStackTrace();
         }
+
+        if(bufferedImage == null) return;
+
+        // let's hope this works
+        // get the width and height
+        int x = bufferedImage.getWidth() / 8;
+        int y = bufferedImage.getHeight() / 8;
+
+        // cut out the player's face
+        bufferedImage = bufferedImage.getSubimage(x, y, x, y);
     }
 
     @Override
