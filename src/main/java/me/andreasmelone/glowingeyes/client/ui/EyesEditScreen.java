@@ -49,7 +49,6 @@ public class EyesEditScreen extends GuiScreen {
     private Mode mode = Mode.BRUSH;
 
     private final Minecraft mc;
-    private BufferedImage bufferedImage;
     private final HashMap<Point, Color> pixelMap = GlowingEyes.proxy.getPixelMap();
 
     public EyesEditScreen(Minecraft mc) {
@@ -88,30 +87,6 @@ public class EyesEditScreen extends GuiScreen {
                 fillButton = new GuiButtonFill(3, this.guiLeft + 8, this.guiTop + 120)
         );
         fillButton.setSelected(false);
-
-        ResourceLocation location = mc.player.getLocationSkin();
-        if(!mc.player.hasSkin()) {
-            try {
-                // WHY DOES THIS SHIT ERROR WHEN THE USER IS USING A CUSTOM SKIN AAAAAAAAAAAAAAAAAAAAH
-                bufferedImage = TextureUtil.readBufferedImage(mc.getResourceManager().getResource(location).getInputStream());
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        } else {
-            // if the texture isn't the default steve or alex that are present in the textures by default, the resourcelocation is a hash
-            // the hash is used to get the texture from minecrafts texture cdn, but this seems very inconsistent
-
-        }
-
-        if(bufferedImage == null) return;
-
-        // let's hope this works
-        // get the width and height
-        int x = bufferedImage.getWidth() / 8;
-        int y = bufferedImage.getHeight() / 8;
-
-        // cut out the player's face
-        bufferedImage = bufferedImage.getSubimage(x, y, x, y);
     }
 
     @Override
@@ -130,48 +105,17 @@ public class EyesEditScreen extends GuiScreen {
         this.drawDefaultBackground();
         GuiUtil.drawBackground(TextureLocations.UI_BACKGROUND_BROAD, this.guiLeft, this.guiTop, this.xSize, this.ySize);
 
-        // make an array of colours from the buffered image
-        int[] pixels = new int[bufferedImage.getWidth() * bufferedImage.getHeight()];
-        bufferedImage.getRGB(0, 0, bufferedImage.getWidth(),
-                bufferedImage.getHeight(), pixels, 0, bufferedImage.getWidth());
-
         // draw the player's face in the center of the screen and keep a little space around each pixel
-        int spaceBetweenPixels = 2; // Adjust this value as needed
-        int pixelSize = 16; // Adjust this value as needed
+        int spaceBetweenPixels = 2;
+        int pixelSize = 16;
 
         // first draw the background
-        int left = this.guiLeft + (this.xSize - (bufferedImage.getWidth() * pixelSize + (bufferedImage.getWidth() - 1) * spaceBetweenPixels)) / 2;
-        int top = this.guiTop + (this.ySize - (bufferedImage.getHeight() * pixelSize + (bufferedImage.getHeight() - 1) * spaceBetweenPixels)) / 2;
-
-        drawRect(left - spaceBetweenPixels,
-                top - spaceBetweenPixels,
-                left + bufferedImage.getWidth() * (pixelSize + spaceBetweenPixels),
-                top + bufferedImage.getHeight() * (pixelSize + spaceBetweenPixels),
-                0xFFA0A0A0
-        );
+        // some drawRect(...)
+        // don't draw the background
 
         // then draw the pixels
-        for (int i = 0; i < pixels.length; i++) {
-            int x = i % bufferedImage.getWidth();
-            int y = i / bufferedImage.getWidth();
-
-            int leftPixel = this.guiLeft + (this.xSize - (bufferedImage.getWidth() * pixelSize + (bufferedImage.getWidth() - 1) * spaceBetweenPixels)) / 2 + x * (pixelSize + spaceBetweenPixels);
-            int topPixel = this.guiTop + (this.ySize - (bufferedImage.getHeight() * pixelSize + (bufferedImage.getHeight() - 1) * spaceBetweenPixels)) / 2 + y * (pixelSize + spaceBetweenPixels);
-            int right = leftPixel + pixelSize;
-            int bottom = topPixel + pixelSize;
-
-            int color;
-            if(pixelMap.containsKey(new Point(x, y))) {
-                Color c = pixelMap.get(new Point(x, y));
-                color = new Color(c.getRed(), c.getGreen(), c.getBlue(), 160).getRGB();
-
-                drawRect(leftPixel, topPixel, right, bottom, pixels[i]);
-            } else {
-                color = pixels[i];
-            }
-
-            drawRect(leftPixel, topPixel, right, bottom, color);
-        }
+        // for loop
+        // or maybe not
 
         drawCenteredString(fontRenderer, "Glowing Eyes Editor",
                 middleX, guiTop + 8, 0xFFFFFF);
@@ -182,53 +126,7 @@ public class EyesEditScreen extends GuiScreen {
     @Override
     protected void mouseClicked(int mouseX, int mouseY, int mouseButton) {
         // when a pixel is clicked, change its colour to red
-        int x = (mouseX - this.guiLeft - (this.xSize - (bufferedImage.getWidth() * 16 + (bufferedImage.getWidth() - 1) * 2)) / 2) / 18;
-        int y = (mouseY - this.guiTop - (this.ySize - (bufferedImage.getHeight() * 16 + (bufferedImage.getHeight() - 1) * 2)) / 2) / 18;
-
-        if(mode == Mode.BRUSH) {
-            if(mouseButton == 0) {
-                if (x >= 0 && x < bufferedImage.getWidth() && y >= 0 && y < bufferedImage.getHeight() && !pixelMap.containsKey(new Point(x, y))) {
-                    pixelMap.put(new Point(x, y), GlowingEyes.proxy.getPixelColor());
-                }
-                if(x >= 0 && x < bufferedImage.getWidth() && y >= 0 && y < bufferedImage.getHeight() && pixelMap.containsKey(new Point(x, y))) {
-                    pixelMap.replace(new Point(x, y), GlowingEyes.proxy.getPixelColor());
-                }
-            } else if(mouseButton == 1) {
-                if (x >= 0 && x < bufferedImage.getWidth() && y >= 0 && y < bufferedImage.getHeight()) {
-                    pixelMap.remove(new Point(x, y));
-                }
-            }
-        } else if(mode == Mode.ERASER) {
-            if (x >= 0 && x < bufferedImage.getWidth() && y >= 0 && y < bufferedImage.getHeight()) {
-                pixelMap.remove(new Point(x, y));
-            }
-        } else if(mode == Mode.FILL) {
-            if (x >= 0 && x < bufferedImage.getWidth() && y >= 0 && y < bufferedImage.getHeight()) {
-                // get the color of the pixel that was clicked
-                Color clickedPixelColor = new Color(bufferedImage.getRGB(x, y));
-
-                // loop through all pixels on the BufferedImage and push the pixel to the map if it's not already there
-                if(mouseButton == 0) {
-                    for (int i = 0; i < bufferedImage.getWidth(); i++) {
-                        for (int j = 0; j < bufferedImage.getHeight(); j++) {
-                            Color currentPixelColor = new Color(bufferedImage.getRGB(i, j));
-                            if(!currentPixelColor.equals(clickedPixelColor)) continue;
-                            if (!pixelMap.containsKey(new Point(i, j))) {
-                                pixelMap.put(new Point(i, j), GlowingEyes.proxy.getPixelColor());
-                            }
-                        }
-                    }
-                } else if(mouseButton == 1) {
-                    for (int i = 0; i < bufferedImage.getWidth(); i++) {
-                        for (int j = 0; j < bufferedImage.getHeight(); j++) {
-                            Color currentPixelColor = new Color(bufferedImage.getRGB(i, j));
-                            if(!currentPixelColor.equals(clickedPixelColor)) continue;
-                            pixelMap.remove(new Point(i, j));
-                        }
-                    }
-                }
-            }
-        }
+        // if mode equals to something, then check mouse position, and do stuff
 
         try {
             super.mouseClicked(mouseX, mouseY, mouseButton);
