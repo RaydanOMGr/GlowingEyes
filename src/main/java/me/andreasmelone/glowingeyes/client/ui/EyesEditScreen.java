@@ -12,6 +12,7 @@ import me.andreasmelone.glowingeyes.common.packets.ClientCapabilityMessage;
 import me.andreasmelone.glowingeyes.common.packets.NetworkHandler;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.AbstractClientPlayer;
+import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiPlayerTabOverlay;
 import net.minecraft.client.gui.GuiScreen;
@@ -21,6 +22,7 @@ import net.minecraft.client.renderer.entity.Render;
 import net.minecraft.client.renderer.entity.RenderEntity;
 import net.minecraft.client.renderer.entity.RenderPlayer;
 import net.minecraft.client.renderer.texture.ITextureObject;
+import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.client.renderer.texture.TextureUtil;
 import net.minecraft.util.ResourceLocation;
 import scala.tools.nsc.transform.SpecializeTypes;
@@ -108,14 +110,19 @@ public class EyesEditScreen extends GuiScreen {
         // draw the player's face in the center of the screen and keep a little space around each pixel
         int spaceBetweenPixels = 2;
         int pixelSize = 16;
+        final int headSize = 8;
 
-        // first draw the background
-        // some drawRect(...)
-        // don't draw the background
+        int headX = this.guiLeft + (this.xSize - (headSize * pixelSize + (headSize - 1) * spaceBetweenPixels)) / 2;
+        int headY = this.guiTop + (this.ySize - (headSize * pixelSize + (headSize - 1) * spaceBetweenPixels)) / 2;
 
-        // then draw the pixels
-        // for loop
-        // or maybe not
+        TextureManager textureManager = mc.getTextureManager();
+        textureManager.bindTexture(mc.player.getLocationSkin());
+
+        for (int y = 0; y < headSize; y++) {
+            for (int x = 0; x < headSize; x++) {
+                Gui.drawScaledCustomSizeModalRect(headX + x * pixelSize + x * spaceBetweenPixels, headY + y * pixelSize + y * spaceBetweenPixels, 8f + x, 8f + y, 1, 1, pixelSize, pixelSize, 64, 64);
+            }
+        }
 
         drawCenteredString(fontRenderer, "Glowing Eyes Editor",
                 middleX, guiTop + 8, 0xFFFFFF);
