@@ -1,9 +1,13 @@
 package me.andreasmelone.glowingeyes.client.util;
 
+import jdk.nashorn.internal.objects.Global;
+import me.andreasmelone.glowingeyes.GlowingEyes;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.util.ResourceLocation;
+
+import java.awt.*;
 
 public class GuiUtil {
     /**

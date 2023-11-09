@@ -25,6 +25,7 @@ import net.minecraft.client.renderer.texture.ITextureObject;
 import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.client.renderer.texture.TextureUtil;
 import net.minecraft.util.ResourceLocation;
+import org.lwjgl.opengl.GL11;
 import scala.tools.nsc.transform.SpecializeTypes;
 
 import java.awt.*;
@@ -43,6 +44,11 @@ public class EyesEditScreen extends GuiScreen {
 
     private int middleX;
     private int middleY;
+
+    int headX;
+    int headY;
+    int endHeadX;
+    int endHeadY;
 
     GuiButtonBrush brushButton;
     GuiButtonEraser eraserButton;
@@ -112,15 +118,52 @@ public class EyesEditScreen extends GuiScreen {
         int pixelSize = 16;
         final int headSize = 8;
 
-        int headX = this.guiLeft + (this.xSize - (headSize * pixelSize + (headSize - 1) * spaceBetweenPixels)) / 2;
-        int headY = this.guiTop + (this.ySize - (headSize * pixelSize + (headSize - 1) * spaceBetweenPixels)) / 2;
+        // define variables
+        headX = this.guiLeft + (this.xSize - (headSize * pixelSize + (headSize - 1) * spaceBetweenPixels)) / 2;
+        headY = this.guiTop + (this.ySize - (headSize * pixelSize + (headSize - 1) * spaceBetweenPixels)) / 2;
+        endHeadX = headX + headSize * pixelSize + (headSize - 1) * spaceBetweenPixels;
+        endHeadY = headY + headSize * pixelSize + (headSize - 1) * spaceBetweenPixels;
+
+        // draw background
+        drawRect(
+                headX - spaceBetweenPixels, headY - spaceBetweenPixels,
+                endHeadX + spaceBetweenPixels, endHeadY + spaceBetweenPixels,
+                new Color(160, 160, 160, 255).getRGB() // why make a new color and stuff? Because it shows in the color in my IDE!
+        );
 
         TextureManager textureManager = mc.getTextureManager();
         textureManager.bindTexture(mc.player.getLocationSkin());
 
         for (int y = 0; y < headSize; y++) {
             for (int x = 0; x < headSize; x++) {
-                Gui.drawScaledCustomSizeModalRect(headX + x * pixelSize + x * spaceBetweenPixels, headY + y * pixelSize + y * spaceBetweenPixels, 8f + x, 8f + y, 1, 1, pixelSize, pixelSize, 64, 64);
+                GL11.glDisable(GL11.GL_DEPTH_TEST);
+                GL11.glEnable(GL11.GL_BLEND);
+                GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+                GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
+
+                drawScaledCustomSizeModalRect(
+                        headX + x * pixelSize + x * spaceBetweenPixels,
+                        headY + y * pixelSize + y * spaceBetweenPixels,
+                        8f + x, 8f + y,
+                        1, 1,
+                        pixelSize, pixelSize,
+                        64, 64
+                );
+
+                GL11.glDisable(GL11.GL_BLEND);
+                GL11.glEnable(GL11.GL_DEPTH_TEST);
+
+                // draw the pixel
+                if(pixelMap.containsKey(new Point(x, y))) {
+                    Color color = pixelMap.get(new Point(x, y));
+                    drawRect(
+                            headX + x * pixelSize + x * spaceBetweenPixels,
+                            headY + y * pixelSize + y * spaceBetweenPixels,
+                            headX + x * pixelSize + x * spaceBetweenPixels + pixelSize,
+                            headY + y * pixelSize + y * spaceBetweenPixels + pixelSize,
+                            color.getRGB()
+                    );
+                }
             }
         }
 
@@ -134,6 +177,37 @@ public class EyesEditScreen extends GuiScreen {
     protected void mouseClicked(int mouseX, int mouseY, int mouseButton) {
         // when a pixel is clicked, change its colour to red
         // if mode equals to something, then check mouse position, and do stuff
+        if(mouseX >= headX && mouseX <= endHeadX && mouseY >= headY && mouseY <= endHeadY) {
+            // get the pixel position
+            int spaceBetweenPixels = 2;
+            int pixelSize = 16;
+            int headSize = 8;
+
+            int x = (mouseX - headX) / (pixelSize + spaceBetweenPixels);
+            int y = (mouseY - headY) / (pixelSize + spaceBetweenPixels);
+
+            // do stuff
+            if(mode == Mode.BRUSH) {
+                if(mouseButton == 0) {
+                    // set the pixel to the selected color
+                    if(pixelMap.containsKey(new Point(x, y))) {
+                        pixelMap.replace(new Point(x, y), GlowingEyes.proxy.getPixelColor());
+                    } else {
+                        pixelMap.put(new Point(x, y), GlowingEyes.proxy.getPixelColor());
+                    }
+                } else if(mouseButton == 1) {
+                    // remove the pixel
+                    pixelMap.remove(new Point(x, y));
+                }
+            }
+
+            if(mode == Mode.ERASER) {
+                if(mouseButton == 0) {
+                    // remove the pixel
+                    pixelMap.remove(new Point(x, y));
+                }
+            }
+        }
 
         try {
             super.mouseClicked(mouseX, mouseY, mouseButton);

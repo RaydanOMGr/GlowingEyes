@@ -1,11 +1,8 @@
 package me.andreasmelone.glowingeyes.client;
 
-import javafx.scene.effect.Glow;
 import me.andreasmelone.glowingeyes.GlowingEyes;
-import me.andreasmelone.glowingeyes.client.data.ByteArray;
 import me.andreasmelone.glowingeyes.common.packets.NetworkHandler;
 import me.andreasmelone.glowingeyes.common.packets.ServerSyncMessage;
-import me.andreasmelone.glowingeyes.common.scheduler.ScheduledTask;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
