@@ -16,7 +16,11 @@ public class Scheduler {
             task.ticksLeft -= 1;
             if(task.ticksLeft <= 0) {
                 task.run();
-                queue.add(task);
+                if(task.isRepeating) {
+                    task.ticksLeft = task.ticksTotal;
+                } else {
+                    queue.add(task);
+                }
             }
         }
         tasks.removeAll(queue);

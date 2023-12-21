@@ -1,37 +1,25 @@
 package me.andreasmelone.glowingeyes.client.ui;
 
 import me.andreasmelone.glowingeyes.GlowingEyes;
-import me.andreasmelone.glowingeyes.client.data.ByteArray;
 import me.andreasmelone.glowingeyes.client.ui.buttons.GuiButtonBrush;
 import me.andreasmelone.glowingeyes.client.ui.buttons.GuiButtonColorPicker;
 import me.andreasmelone.glowingeyes.client.ui.buttons.GuiButtonEraser;
 import me.andreasmelone.glowingeyes.client.ui.buttons.GuiButtonFill;
 import me.andreasmelone.glowingeyes.client.util.GuiUtil;
 import me.andreasmelone.glowingeyes.client.util.TextureLocations;
+import me.andreasmelone.glowingeyes.common.capability.GlowingEyesProvider;
+import me.andreasmelone.glowingeyes.common.capability.IGlowingEyesCapability;
 import me.andreasmelone.glowingeyes.common.packets.ClientCapabilityMessage;
 import me.andreasmelone.glowingeyes.common.packets.NetworkHandler;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.entity.AbstractClientPlayer;
-import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.GuiButton;
-import net.minecraft.client.gui.GuiPlayerTabOverlay;
 import net.minecraft.client.gui.GuiScreen;
-import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.client.renderer.ThreadDownloadImageData;
-import net.minecraft.client.renderer.entity.Render;
-import net.minecraft.client.renderer.entity.RenderEntity;
-import net.minecraft.client.renderer.entity.RenderPlayer;
-import net.minecraft.client.renderer.texture.ITextureObject;
 import net.minecraft.client.renderer.texture.TextureManager;
-import net.minecraft.client.renderer.texture.TextureUtil;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.EnumFacing;
 import org.lwjgl.opengl.GL11;
-import scala.tools.nsc.transform.SpecializeTypes;
 
 import java.awt.*;
-import java.awt.image.BufferedImage;
 import java.io.IOException;
-import java.util.Base64;
 import java.util.HashMap;
 
 public class EyesEditScreen extends GuiScreen {
@@ -152,19 +140,18 @@ public class EyesEditScreen extends GuiScreen {
 
                 GL11.glDisable(GL11.GL_BLEND);
                 GL11.glEnable(GL11.GL_DEPTH_TEST);
-
-                // draw the pixel
-                if(pixelMap.containsKey(new Point(x, y))) {
-                    Color color = pixelMap.get(new Point(x, y));
-                    drawRect(
-                            headX + x * pixelSize + x * spaceBetweenPixels,
-                            headY + y * pixelSize + y * spaceBetweenPixels,
-                            headX + x * pixelSize + x * spaceBetweenPixels + pixelSize,
-                            headY + y * pixelSize + y * spaceBetweenPixels + pixelSize,
-                            color.getRGB()
-                    );
-                }
             }
+        }
+
+        for(Point point : pixelMap.keySet()) {
+            Color color = pixelMap.get(point);
+            drawRect(
+                    headX + point.x * pixelSize + point.x * spaceBetweenPixels,
+                    headY + point.y * pixelSize + point.y * spaceBetweenPixels,
+                    headX + point.x * pixelSize + point.x * spaceBetweenPixels + pixelSize,
+                    headY + point.y * pixelSize + point.y * spaceBetweenPixels + pixelSize,
+                    color.getRGB()
+            );
         }
 
         drawCenteredString(fontRenderer, "Glowing Eyes Editor",
@@ -252,7 +239,16 @@ public class EyesEditScreen extends GuiScreen {
     @Override
     public void onGuiClosed() {
         if(GlowingEyes.serverHasMod) {
-            NetworkHandler.sendToServer(new ClientCapabilityMessage());
+            IGlowingEyesCapability cap = mc.player.getCapability(GlowingEyesProvider.CAPABILITY, EnumFacing.UP);
+
+            GlowingEyes.logger.info("Checking if cap is null");
+            if(cap == null) return;
+            GlowingEyes.logger.info("Cap is not null");
+            cap.setGlowingEyesMap(pixelMap);
+
+            GlowingEyes.logger.info(cap.getGlowingEyesMap().toString());
+
+            NetworkHandler.sendToServer(new ClientCapabilityMessage(cap, mc.player));
         }
     }
 

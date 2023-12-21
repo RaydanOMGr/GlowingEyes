@@ -38,6 +38,19 @@ public class ClientProxy extends CommonProxy {
 
     @Override
     public void postInit(FMLPostInitializationEvent e) {
+//        new ScheduledTask() {
+//            @Override
+//            public void run() {
+//                GlowingEyes.logger.info("Pixel map: " + pixelMap);
+//                if(Minecraft.getMinecraft().player != null) {
+//                    GlowingEyes.logger.info("Player cap: " +
+//                            Minecraft.getMinecraft().player.getCapability(GlowingEyesProvider.CAPABILITY, EnumFacing.UP)
+//                                    .getGlowingEyesMap()
+//                    );
+//                }
+//            }
+//        }.runEvery(getScheduler(), 60);
+
         RenderManager manager = Minecraft.getMinecraft().getRenderManager();
         for (RenderPlayer renderPlayer : manager.getSkinMap().values()) {
             renderPlayer.addLayer(new GlowingEyesHeadLayer(renderPlayer));

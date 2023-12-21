@@ -50,18 +50,15 @@ public class OtherPlayerCapabilityMessage extends MessageBase<OtherPlayerCapabil
             int length = buf.readInt();
             this.playerUUID = UUID.fromString(buf.readBytes(length).toString(StandardCharsets.UTF_8));
 
-            int lengthBytes = buf.getInt(0);
+            int lengthBytes = buf.readInt();
             byte[] bytes = new byte[lengthBytes];
             buf.readBytes(bytes);
 
-            for(int i = 0; i < lengthBytes; i += 6) {
+            for(int i = 0; i < lengthBytes; i += 3) {
                 int x = bytes[i];
                 int y = bytes[i + 1];
-                int red = bytes[i + 2];
-                int green = bytes[i + 3];
-                int blue = bytes[i + 4];
-                int alpha = bytes[i + 5];
-                eyes.getGlowingEyesMap().put(new Point(x, y), new Color(red, green, blue, alpha));
+                int rgb = bytes[i + 2];
+                eyes.getGlowingEyesMap().put(new Point(x, y), new Color(rgb));
             }
         }
     }
@@ -72,14 +69,11 @@ public class OtherPlayerCapabilityMessage extends MessageBase<OtherPlayerCapabil
 
         buf.writeInt(uuid.length);
         buf.writeBytes(uuid);
-        buf.writeInt(eyes.getGlowingEyesMap().size() * 6);
+        buf.writeInt(eyes.getGlowingEyesMap().size() * 3);
         for(Point point : eyes.getGlowingEyesMap().keySet()) {
             buf.writeInt(point.x);
             buf.writeInt(point.y);
-            buf.writeInt(eyes.getGlowingEyesMap().get(point).getRed());
-            buf.writeInt(eyes.getGlowingEyesMap().get(point).getGreen());
-            buf.writeInt(eyes.getGlowingEyesMap().get(point).getBlue());
-            buf.writeInt(eyes.getGlowingEyesMap().get(point).getAlpha());
+            buf.writeInt(eyes.getGlowingEyesMap().get(point).getRGB());
         }
     }
 

@@ -2,7 +2,6 @@ package me.andreasmelone.glowingeyes.common.packets;
 
 import io.netty.buffer.ByteBuf;
 import me.andreasmelone.glowingeyes.GlowingEyes;
-import me.andreasmelone.glowingeyes.client.data.ByteArray;
 import me.andreasmelone.glowingeyes.common.capability.GlowingEyesCapability;
 import me.andreasmelone.glowingeyes.common.capability.GlowingEyesProvider;
 import me.andreasmelone.glowingeyes.common.capability.IGlowingEyesCapability;
@@ -52,32 +51,26 @@ public class ClientCapabilityMessage extends MessageBase<ClientCapabilityMessage
     @Override
     public void fromBytes(ByteBuf buf) {
         if(buf.isReadable()) {
-            int length = buf.getInt(0);
+            int length = buf.readInt();
             byte[] bytes = new byte[length];
             buf.readBytes(bytes);
 
-            for(int i = 0; i < length; i += 6) {
+            for(int i = 0; i < length; i += 3) {
                 int x = bytes[i];
                 int y = bytes[i + 1];
-                int red = bytes[i + 2];
-                int green = bytes[i + 3];
-                int blue = bytes[i + 4];
-                int alpha = bytes[i + 5];
-                cap.getGlowingEyesMap().put(new Point(x, y), new Color(red, green, blue, alpha));
+                int rgb = bytes[i + 2];
+                cap.getGlowingEyesMap().put(new Point(x, y), new Color(rgb));
             }
         }
     }
 
     @Override
     public void toBytes(ByteBuf buf) {
-        buf.writeInt(cap.getGlowingEyesMap().size() * 6);
+        buf.writeInt(cap.getGlowingEyesMap().size() * 3);
         for(Point point : cap.getGlowingEyesMap().keySet()) {
             buf.writeInt(point.x);
             buf.writeInt(point.y);
-            buf.writeInt(cap.getGlowingEyesMap().get(point).getRed());
-            buf.writeInt(cap.getGlowingEyesMap().get(point).getGreen());
-            buf.writeInt(cap.getGlowingEyesMap().get(point).getBlue());
-            buf.writeInt(cap.getGlowingEyesMap().get(point).getAlpha());
+            buf.writeInt(cap.getGlowingEyesMap().get(point).getRGB());
         }
     }
 
