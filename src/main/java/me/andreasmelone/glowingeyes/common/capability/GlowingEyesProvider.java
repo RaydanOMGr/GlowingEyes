@@ -16,7 +16,7 @@ public class GlowingEyesProvider implements ICapabilitySerializable<NBTBase> {
 
     @Override
     public boolean hasCapability(@Nonnull Capability<?> capability, @Nullable EnumFacing facing) {
-        return capability == CAPABILITY && facing == EnumFacing.UP;
+        return capability == CAPABILITY;
     }
 
     @Nullable
@@ -27,11 +27,11 @@ public class GlowingEyesProvider implements ICapabilitySerializable<NBTBase> {
 
     @Override
     public NBTBase serializeNBT() {
-        return CAPABILITY.getStorage().writeNBT(CAPABILITY, this.instance, EnumFacing.UP);
+        return CAPABILITY.getStorage().writeNBT(CAPABILITY, this.instance, null);
     }
 
     @Override
     public void deserializeNBT(NBTBase nbt) {
-        CAPABILITY.getStorage().readNBT(CAPABILITY, this.instance, EnumFacing.UP, nbt);
+        CAPABILITY.getStorage().readNBT(CAPABILITY, this.instance, null, nbt);
     }
 }

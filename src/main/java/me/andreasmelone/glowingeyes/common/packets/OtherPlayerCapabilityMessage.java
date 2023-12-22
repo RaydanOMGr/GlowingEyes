@@ -1,16 +1,16 @@
 package me.andreasmelone.glowingeyes.common.packets;
 
 import io.netty.buffer.ByteBuf;
+import me.andreasmelone.glowingeyes.GlowingEyes;
 import me.andreasmelone.glowingeyes.common.capability.GlowingEyesCapability;
 import me.andreasmelone.glowingeyes.common.capability.GlowingEyesProvider;
 import me.andreasmelone.glowingeyes.common.capability.IGlowingEyesCapability;
+import me.andreasmelone.glowingeyes.common.util.UUIDUtil;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.util.EnumFacing;
 import net.minecraft.util.text.TextComponentString;
 
 import java.awt.*;
-import java.nio.charset.StandardCharsets;
 import java.util.UUID;
 
 public class OtherPlayerCapabilityMessage extends MessageBase<OtherPlayerCapabilityMessage> {
@@ -24,12 +24,16 @@ public class OtherPlayerCapabilityMessage extends MessageBase<OtherPlayerCapabil
         // I have to run it on the main thread, I hate this game
         Minecraft.getMinecraft().addScheduledTask(() -> {
             IGlowingEyesCapability capability = message.eyes;
-            EntityPlayer thisPlayer = Minecraft.getMinecraft().player.world.getPlayerEntityByUUID(message.playerUUID);
+            EntityPlayer thisPlayer = Minecraft.getMinecraft().world.getPlayerEntityByUUID(message.playerUUID);
 
             if (thisPlayer != null) {
-                IGlowingEyesCapability old = thisPlayer.getCapability(GlowingEyesProvider.CAPABILITY, EnumFacing.UP);
+                IGlowingEyesCapability old = player.getCapability(GlowingEyesProvider.CAPABILITY, null);
 
                 old.setGlowingEyesMap(capability.getGlowingEyesMap());
+                GlowingEyes.logger.info("Successfully synced GlowingEyes data for player " + thisPlayer.getName());
+                GlowingEyes.logger.info("GlowingEyes data: " + capability.getGlowingEyesMap().toString());
+            } else {
+                GlowingEyes.logger.error("Failed to get player from UUID");
             }
         });
     }
@@ -47,33 +51,30 @@ public class OtherPlayerCapabilityMessage extends MessageBase<OtherPlayerCapabil
     @Override
     public void fromBytes(ByteBuf buf) {
         if(buf.isReadable()) {
+            byte[] uuidBytes = new byte[16];
+            buf.readBytes(uuidBytes);
+            playerUUID = UUIDUtil.getUUIDFromBytes(uuidBytes);
+
             int length = buf.readInt();
-            this.playerUUID = UUID.fromString(buf.readBytes(length).toString(StandardCharsets.UTF_8));
-
-            int lengthBytes = buf.readInt();
-            byte[] bytes = new byte[lengthBytes];
-            buf.readBytes(bytes);
-
-            for(int i = 0; i < lengthBytes; i += 3) {
-                int x = bytes[i];
-                int y = bytes[i + 1];
-                int rgb = bytes[i + 2];
-                eyes.getGlowingEyesMap().put(new Point(x, y), new Color(rgb));
+            for(int i = 0; i < length; i += 3) {
+                Point point = new Point(buf.readInt(), buf.readInt());
+                Color color = new Color(buf.readInt());
+                eyes.getGlowingEyesMap().put(point, color);
             }
         }
     }
 
     @Override
     public void toBytes(ByteBuf buf) {
-        byte[] uuid = player.getUniqueID().toString().getBytes(StandardCharsets.UTF_8);
+        if(buf.isWritable()) {
+            buf.writeBytes(UUIDUtil.getBytesFromUUID(player.getUniqueID()));
 
-        buf.writeInt(uuid.length);
-        buf.writeBytes(uuid);
-        buf.writeInt(eyes.getGlowingEyesMap().size() * 3);
-        for(Point point : eyes.getGlowingEyesMap().keySet()) {
-            buf.writeInt(point.x);
-            buf.writeInt(point.y);
-            buf.writeInt(eyes.getGlowingEyesMap().get(point).getRGB());
+            buf.writeInt(eyes.getGlowingEyesMap().size() * 3);
+            for(Point point : eyes.getGlowingEyesMap().keySet()) {
+                buf.writeInt(point.x);
+                buf.writeInt(point.y);
+                buf.writeInt(eyes.getGlowingEyesMap().get(point).getRGB());
+            }
         }
     }
 

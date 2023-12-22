@@ -15,7 +15,6 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.renderer.texture.TextureManager;
-import net.minecraft.util.EnumFacing;
 import org.lwjgl.opengl.GL11;
 
 import java.awt.*;
@@ -239,14 +238,10 @@ public class EyesEditScreen extends GuiScreen {
     @Override
     public void onGuiClosed() {
         if(GlowingEyes.serverHasMod) {
-            IGlowingEyesCapability cap = mc.player.getCapability(GlowingEyesProvider.CAPABILITY, EnumFacing.UP);
+            IGlowingEyesCapability cap = mc.player.getCapability(GlowingEyesProvider.CAPABILITY, null);
 
-            GlowingEyes.logger.info("Checking if cap is null");
             if(cap == null) return;
-            GlowingEyes.logger.info("Cap is not null");
             cap.setGlowingEyesMap(pixelMap);
-
-            GlowingEyes.logger.info(cap.getGlowingEyesMap().toString());
 
             NetworkHandler.sendToServer(new ClientCapabilityMessage(cap, mc.player));
         }

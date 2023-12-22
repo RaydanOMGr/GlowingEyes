@@ -42,9 +42,12 @@ public class GlowingEyesHeadLayer implements LayerRenderer<AbstractClientPlayer>
         IGlowingEyesCapability glowingEyes = player.getCapability(GlowingEyesProvider.CAPABILITY, EnumFacing.UP);
         boolean serverHasMod = GlowingEyes.serverHasMod;
 
+        if(player.isInvisible()) return;
+
         HashMap<Point, Color> pixelMap;
         if (serverHasMod) {
             pixelMap = glowingEyes.getGlowingEyesMap();
+            GlowingEyes.logger.info("GlowingEyes data: " + pixelMap.toString());
 //            pixelMap = GlowingEyes.proxy.getPixelMap();
         } else if(player.getUniqueID().equals(Minecraft.getMinecraft().player.getUniqueID())) { // if the player is the local player
             pixelMap = GlowingEyes.proxy.getPixelMap();

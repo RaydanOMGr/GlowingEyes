@@ -7,7 +7,6 @@ import me.andreasmelone.glowingeyes.common.capability.GlowingEyesProvider;
 import me.andreasmelone.glowingeyes.common.capability.IGlowingEyesCapability;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.util.EnumFacing;
 
 import java.awt.*;
 import java.util.List;
@@ -22,7 +21,7 @@ public class ClientCapabilityMessage extends MessageBase<ClientCapabilityMessage
         IGlowingEyesCapability capability = message.cap;
 
         if (player != null) {
-            IGlowingEyesCapability old = player.getCapability(GlowingEyesProvider.CAPABILITY, EnumFacing.UP);
+            IGlowingEyesCapability old = player.getCapability(GlowingEyesProvider.CAPABILITY, null);
 
             old.setGlowingEyesMap(capability.getGlowingEyesMap());
         }
@@ -31,19 +30,20 @@ public class ClientCapabilityMessage extends MessageBase<ClientCapabilityMessage
     @Override
     public void handleServerSide(ClientCapabilityMessage message, EntityPlayer player) {
         EntityPlayerMP playerMP = (EntityPlayerMP)player;
-        IGlowingEyesCapability capibility = message.cap;
-        IGlowingEyesCapability old = playerMP.getCapability(GlowingEyesProvider.CAPABILITY, EnumFacing.UP);
+        IGlowingEyesCapability capability = message.cap;
+        IGlowingEyesCapability old = playerMP.getCapability(GlowingEyesProvider.CAPABILITY, null);
 
-        old.setGlowingEyesMap(capibility.getGlowingEyesMap());
+        old.setGlowingEyesMap(capability.getGlowingEyesMap());
 
         // This is done to be compatible with replaymod, but it doesn't work and Idk why
-        NetworkHandler.sendToClient(new ClientCapabilityMessage(capibility, player), playerMP);
+        NetworkHandler.sendToClient(new ClientCapabilityMessage(capability, player), playerMP);
 
         List<UUID> playersTracking = GlowingEyes.proxy.getPlayersTracking().get(player);
         if(playersTracking == null) return;
         for(UUID pUUID : playersTracking) {
             EntityPlayerMP p = playerMP.getServer().getPlayerList().getPlayerByUUID(pUUID);
-            if(p == null) return;
+            GlowingEyes.logger.info("Sending packet to " + p.getName());
+            GlowingEyes.logger.info("Packet data: " + capability.getGlowingEyesMap().toString());
             NetworkHandler.sendToClient(new OtherPlayerCapabilityMessage(player, old), p);
         }
     }
@@ -52,14 +52,10 @@ public class ClientCapabilityMessage extends MessageBase<ClientCapabilityMessage
     public void fromBytes(ByteBuf buf) {
         if(buf.isReadable()) {
             int length = buf.readInt();
-            byte[] bytes = new byte[length];
-            buf.readBytes(bytes);
-
             for(int i = 0; i < length; i += 3) {
-                int x = bytes[i];
-                int y = bytes[i + 1];
-                int rgb = bytes[i + 2];
-                cap.getGlowingEyesMap().put(new Point(x, y), new Color(rgb));
+                Point point = new Point(buf.readInt(), buf.readInt());
+                Color color = new Color(buf.readInt());
+                cap.getGlowingEyesMap().put(point, color);
             }
         }
     }

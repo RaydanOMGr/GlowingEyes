@@ -1,16 +1,16 @@
 [
-{
-  "modid": "glowingeyes",
-  "name": "Glowing Eyes",
-  "description": "Make your eyes glow as if you were a vampire! (Shaders recommended)",
-  "version": "${version}",
-  "mcversion": "${mcversion}",
-  "url": "https://www.curseforge.com/mc-mods/glowing-eyes",
-  "updateUrl": "",
-  "authorList": ["AndreasMelone"],
-  "credits": "The vampirism mod for providing inspiration and code :)",
-  "logoFile": "",
-  "screenshots": [],
-  "dependencies": []
-}
+  {
+    "modid": "glowingeyes",
+    "name": "Glowing Eyes",
+    "description": "Make your eyes glow as if you were a vampire! (Shaders recommended)",
+    "version": "${version}",
+    "mcversion": "${mcversion}",
+    "url": "https://www.curseforge.com/mc-mods/glowing-eyes",
+    "updateUrl": "",
+    "authorList": ["AndreasMelone"],
+    "credits": "The vampirism mod for providing inspiration and code :)",
+    "logoFile": "",
+    "screenshots": [],
+    "dependencies": []
+  }
 ]

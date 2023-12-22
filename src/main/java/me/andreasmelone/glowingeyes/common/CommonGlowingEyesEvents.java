@@ -27,6 +27,8 @@ public class CommonGlowingEyesEvents {
         EntityPlayer player = event.getEntityPlayer();
         EntityPlayer target = (EntityPlayer) event.getTarget();
 
+        GlowingEyes.logger.info("Player " + player.getName() + " is tracking " + target.getName());
+
         HashMap<EntityPlayer, List<UUID>> playersTracking = GlowingEyes.proxy.getPlayersTracking();
         if(playersTracking.containsKey(player)) {
             List<UUID> tracking = playersTracking.get(player);
@@ -39,7 +41,7 @@ public class CommonGlowingEyesEvents {
         }
         GlowingEyes.proxy.setPlayersTracking(playersTracking);
 
-        IGlowingEyesCapability eyes = target.getCapability(GlowingEyesProvider.CAPABILITY, EnumFacing.UP);
+        IGlowingEyesCapability eyes = target.getCapability(GlowingEyesProvider.CAPABILITY, null);
 
         if(eyes == null) return;
 
@@ -54,6 +56,8 @@ public class CommonGlowingEyesEvents {
         EntityPlayer player = event.getEntityPlayer();
         EntityPlayer target = (EntityPlayer) event.getTarget();
 
+        GlowingEyes.logger.info("Player " + player.getName() + " stopped tracking " + target.getName());
+
         if(!playersTracking.containsKey(player)) return;
         List<UUID> tracking = playersTracking.get(player);
 
@@ -67,8 +71,8 @@ public class CommonGlowingEyesEvents {
     @SubscribeEvent
     public void onPlayerClone(PlayerEvent.Clone event) {
         EntityPlayer player = event.getEntityPlayer();
-        IGlowingEyesCapability eyes = player.getCapability(GlowingEyesProvider.CAPABILITY, EnumFacing.UP);
-        IGlowingEyesCapability oldEyes = event.getOriginal().getCapability(GlowingEyesProvider.CAPABILITY, EnumFacing.UP);
+        IGlowingEyesCapability eyes = player.getCapability(GlowingEyesProvider.CAPABILITY, null);
+        IGlowingEyesCapability oldEyes = event.getOriginal().getCapability(GlowingEyesProvider.CAPABILITY, null);
 
         if(eyes == null || oldEyes == null) return;
         eyes.setGlowingEyesMap(oldEyes.getGlowingEyesMap());
@@ -92,5 +96,15 @@ public class CommonGlowingEyesEvents {
 //            if(p == player) continue;
 //            NetworkHandler.sendToClient(new OtherPlayerCapabilityMessage(player, eyes), (EntityPlayerMP) p);
 //        }
+    }
+
+    @SubscribeEvent
+    public void onPlayerRespawn(net.minecraftforge.fml.common.gameevent.PlayerEvent.PlayerRespawnEvent event) {
+        EntityPlayer player = event.player;
+        IGlowingEyesCapability eyes = player.getCapability(GlowingEyesProvider.CAPABILITY, EnumFacing.UP);
+
+        if (eyes == null) return;
+
+        NetworkHandler.sendToClient(new ClientCapabilityMessage(eyes, player), (EntityPlayerMP) player);
     }
 }
