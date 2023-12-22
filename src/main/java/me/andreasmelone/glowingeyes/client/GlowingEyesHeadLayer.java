@@ -11,7 +11,7 @@ import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.entity.RenderPlayer;
 import net.minecraft.client.renderer.entity.layers.LayerRenderer;
 import net.minecraft.client.renderer.texture.DynamicTexture;
-import net.minecraft.util.EnumFacing;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -25,21 +25,15 @@ import java.util.HashMap;
 public class GlowingEyesHeadLayer implements LayerRenderer<AbstractClientPlayer> {
     private final RenderPlayer playerRenderer;
 
-    private final ResourceLocation[] eyeOverlays;
-
     public GlowingEyesHeadLayer(RenderPlayer playerRendererIn) {
         this.playerRenderer = playerRendererIn;
-        eyeOverlays = new ResourceLocation[ModInfo.EYE_TYPE_COUNT];
-        for (int i = 0; i < eyeOverlays.length; i++) {
-            eyeOverlays[i] = new ResourceLocation(ModInfo.MODID + ":textures/entity/eyes/eyes" + (i) + ".png");
-        }
     }
 
     @Override
     public void doRenderLayer(AbstractClientPlayer player, float limbSwing,
                               float limbSwingAmount, float partialTicks, float ageInTicks,
                               float netHeadYaw, float headPitch, float scale) {
-        IGlowingEyesCapability glowingEyes = player.getCapability(GlowingEyesProvider.CAPABILITY, EnumFacing.UP);
+        IGlowingEyesCapability glowingEyes = player.getCapability(GlowingEyesProvider.CAPABILITY, null);
         boolean serverHasMod = GlowingEyes.serverHasMod;
 
         if(player.isInvisible()) return;
@@ -47,9 +41,7 @@ public class GlowingEyesHeadLayer implements LayerRenderer<AbstractClientPlayer>
         HashMap<Point, Color> pixelMap;
         if (serverHasMod) {
             pixelMap = glowingEyes.getGlowingEyesMap();
-            GlowingEyes.logger.info("GlowingEyes data: " + pixelMap.toString());
-//            pixelMap = GlowingEyes.proxy.getPixelMap();
-        } else if(player.getUniqueID().equals(Minecraft.getMinecraft().player.getUniqueID())) { // if the player is the local player
+        } else if(player.getUniqueID().equals(Minecraft.getMinecraft().player.getUniqueID())) {                     // if the player is the local player
             pixelMap = GlowingEyes.proxy.getPixelMap();
         } else {
             pixelMap = new HashMap<>();

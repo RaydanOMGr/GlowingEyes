@@ -31,7 +31,7 @@ public class OtherPlayerCapabilityMessage extends MessageBase<OtherPlayerCapabil
 
                 old.setGlowingEyesMap(capability.getGlowingEyesMap());
                 GlowingEyes.logger.info("Successfully synced GlowingEyes data for player " + thisPlayer.getName());
-                GlowingEyes.logger.info("GlowingEyes data: " + capability.getGlowingEyesMap().toString());
+                GlowingEyes.logger.info("GlowingEyes data: " + old.getGlowingEyesMap().toString());
             } else {
                 GlowingEyes.logger.error("Failed to get player from UUID");
             }
