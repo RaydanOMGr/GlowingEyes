@@ -32,6 +32,7 @@ public class CommonGlowingEyesEvents {
             List<UUID> tracking = playersTracking.get(player);
             if(!tracking.contains(target.getUniqueID()))
                 tracking.add(target.getUniqueID());
+            else GlowingEyes.logger.info("Player " + target.getName() + " is already being tracked");
         } else {
             List<UUID> tracking = new ArrayList<>();
             tracking.add(target.getUniqueID());

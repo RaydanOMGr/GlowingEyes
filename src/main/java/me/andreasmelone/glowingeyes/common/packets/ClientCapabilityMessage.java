@@ -25,6 +25,7 @@ public class ClientCapabilityMessage extends MessageBase<ClientCapabilityMessage
             IGlowingEyesCapability oldCapability = receivingPlayer.getCapability(GlowingEyesProvider.CAPABILITY, null);
 
             oldCapability.setGlowingEyesMap(capability.getGlowingEyesMap());
+            GlowingEyes.proxy.setPixelMap(capability.getGlowingEyesMap());
         }
     }
 
