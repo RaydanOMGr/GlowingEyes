@@ -11,7 +11,7 @@ import net.minecraft.util.text.TextComponentString;
 
 public class ServerSyncMessage extends MessageBase<ServerSyncMessage> {
     @Override
-    public void handleClientSide(ServerSyncMessage message, EntityPlayer player) {
+    public void handleClientSide(ServerSyncMessage message, EntityPlayer receivingPlayer) {
         // fucking annoying message, go fuck yourself
 //        player.sendMessage(
 //                new TextComponentString("The server has Glowing Eyes installed. You can use the /eyes command to toggle your glowing eyes.")
@@ -20,13 +20,13 @@ public class ServerSyncMessage extends MessageBase<ServerSyncMessage> {
     }
 
     @Override
-    public void handleServerSide(ServerSyncMessage message, EntityPlayer player) {
-        NetworkHandler.sendToClient(new ServerSyncMessage(), (EntityPlayerMP) player);
-        IGlowingEyesCapability cap = player.getCapability(GlowingEyesProvider.CAPABILITY, EnumFacing.UP);
+    public void handleServerSide(ServerSyncMessage message, EntityPlayer sendingPlayer) {
+        NetworkHandler.sendToClient(new ServerSyncMessage(), (EntityPlayerMP) sendingPlayer);
+        IGlowingEyesCapability cap = sendingPlayer.getCapability(GlowingEyesProvider.CAPABILITY, EnumFacing.UP);
 
         if(cap == null) return;
 
-        NetworkHandler.sendToClient(new ClientCapabilityMessage(cap, player), (EntityPlayerMP) player);
+        NetworkHandler.sendToClient(new ClientCapabilityMessage(cap, sendingPlayer), (EntityPlayerMP) sendingPlayer);
     }
 
     @Override

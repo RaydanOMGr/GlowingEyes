@@ -2,7 +2,7 @@
   {
     "modid": "glowingeyes",
     "name": "Glowing Eyes",
-    "description": "Make your eyes glow as if you were a vampire! (Shaders recommended)",
+    "description": "Make your eyes glow as if you were a vampire!",
     "version": "${version}",
     "mcversion": "${mcversion}",
     "url": "https://www.curseforge.com/mc-mods/glowing-eyes",

@@ -19,7 +19,7 @@ import java.util.HashMap;
 
 public class ClientProxy extends CommonProxy {
     HashMap<Point, Color> pixelMap = new HashMap<>();
-    Color color = ModInfo.DEFAULT_EYE_COLOR;
+    Color currentColor = ModInfo.DEFAULT_EYE_COLOR;
 
     @Override
     public void preInit(FMLPreInitializationEvent e) {
@@ -70,11 +70,11 @@ public class ClientProxy extends CommonProxy {
 
     @Override
     public Color getPixelColor() {
-        return color;
+        return currentColor;
     }
 
     @Override
     public void setPixelColor(Color color) {
-        this.color = color;
+        this.currentColor = color;
     }
 }

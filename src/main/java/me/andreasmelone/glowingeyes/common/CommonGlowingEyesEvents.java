@@ -20,20 +20,18 @@ import java.util.UUID;
 
 public class CommonGlowingEyesEvents {
     @SubscribeEvent
-    // AAAAAAAAAAAAAAAAAAAAAAAAA I HATE THIS STUPID EVENT
     public void onStartTracking(PlayerEvent.StartTracking event) {
-        // Lets pretend I know what I am doing and this works, okay?
         if(!(event.getTarget() instanceof EntityPlayer)) return;
         EntityPlayer player = event.getEntityPlayer();
         EntityPlayer target = (EntityPlayer) event.getTarget();
 
-        GlowingEyes.logger.info("Player " + player.getName() + " is tracking " + target.getName());
+        GlowingEyes.logger.info(player.getName() + " start tracking " + target.getName());
 
         HashMap<EntityPlayer, List<UUID>> playersTracking = GlowingEyes.proxy.getPlayersTracking();
         if(playersTracking.containsKey(player)) {
             List<UUID> tracking = playersTracking.get(player);
-            if(tracking.contains(target.getUniqueID())) return;
-            tracking.add(target.getUniqueID());
+            if(!tracking.contains(target.getUniqueID()))
+                tracking.add(target.getUniqueID());
         } else {
             List<UUID> tracking = new ArrayList<>();
             tracking.add(target.getUniqueID());
@@ -41,11 +39,12 @@ public class CommonGlowingEyesEvents {
         }
         GlowingEyes.proxy.setPlayersTracking(playersTracking);
 
-        IGlowingEyesCapability eyes = target.getCapability(GlowingEyesProvider.CAPABILITY, null);
+        IGlowingEyesCapability glowingEyesCapability = target.getCapability(GlowingEyesProvider.CAPABILITY, null);
+        GlowingEyes.logger.info("Sending capability to " + player.getName());
+        if(glowingEyesCapability == null) return;
+        GlowingEyes.logger.info("Capability is not null");
 
-        if(eyes == null) return;
-
-        NetworkHandler.sendToClient(new OtherPlayerCapabilityMessage(target, eyes), (EntityPlayerMP) player);
+        NetworkHandler.sendToClient(new OtherPlayerCapabilityMessage(target, glowingEyesCapability), (EntityPlayerMP) player);
     }
 
     @SubscribeEvent
@@ -55,8 +54,6 @@ public class CommonGlowingEyesEvents {
 
         EntityPlayer player = event.getEntityPlayer();
         EntityPlayer target = (EntityPlayer) event.getTarget();
-
-        GlowingEyes.logger.info("Player " + player.getName() + " stopped tracking " + target.getName());
 
         if(!playersTracking.containsKey(player)) return;
         List<UUID> tracking = playersTracking.get(player);
@@ -71,40 +68,45 @@ public class CommonGlowingEyesEvents {
     @SubscribeEvent
     public void onPlayerClone(PlayerEvent.Clone event) {
         EntityPlayer player = event.getEntityPlayer();
-        IGlowingEyesCapability eyes = player.getCapability(GlowingEyesProvider.CAPABILITY, null);
-        IGlowingEyesCapability oldEyes = event.getOriginal().getCapability(GlowingEyesProvider.CAPABILITY, null);
+        IGlowingEyesCapability glowingEyesCapability =
+                player.getCapability(GlowingEyesProvider.CAPABILITY, null);
+        IGlowingEyesCapability oldGlowingEyesCapability =
+                event.getOriginal().getCapability(GlowingEyesProvider.CAPABILITY, null);
 
-        if(eyes == null || oldEyes == null) return;
-        eyes.setGlowingEyesMap(oldEyes.getGlowingEyesMap());
+        if(glowingEyesCapability == null || oldGlowingEyesCapability == null) return;
+        glowingEyesCapability.setGlowingEyesMap(oldGlowingEyesCapability.getGlowingEyesMap());
 
-        NetworkHandler.sendToClient(new ClientCapabilityMessage(eyes, player), (EntityPlayerMP) player);
-//        for(EntityPlayer p : player.getEntityWorld().playerEntities) {
-//            if(p == player) continue;
-//            NetworkHandler.sendToClient(new OtherPlayerCapabilityMessage(player, oldEyes), (EntityPlayerMP) p);
-//        }
+        NetworkHandler.sendToClient(new ClientCapabilityMessage(glowingEyesCapability, player), (EntityPlayerMP) player);
     }
 
     @SubscribeEvent
     public void onDimensionChange(PlayerChangedDimensionEvent event) {
         EntityPlayer player = event.player;
-        IGlowingEyesCapability eyes = player.getCapability(GlowingEyesProvider.CAPABILITY, EnumFacing.UP);
+        IGlowingEyesCapability glowingEyesCapability = player.getCapability(GlowingEyesProvider.CAPABILITY, EnumFacing.UP);
 
-        if(eyes == null) return;
+        if(glowingEyesCapability == null) return;
 
-        NetworkHandler.sendToClient(new ClientCapabilityMessage(eyes, player), (EntityPlayerMP) player);
-//        for(EntityPlayer p : player.getEntityWorld().playerEntities) {
-//            if(p == player) continue;
-//            NetworkHandler.sendToClient(new OtherPlayerCapabilityMessage(player, eyes), (EntityPlayerMP) p);
-//        }
+        NetworkHandler.sendToClient(new ClientCapabilityMessage(glowingEyesCapability, player), (EntityPlayerMP) player);
     }
 
     @SubscribeEvent
     public void onPlayerRespawn(net.minecraftforge.fml.common.gameevent.PlayerEvent.PlayerRespawnEvent event) {
         EntityPlayer player = event.player;
-        IGlowingEyesCapability eyes = player.getCapability(GlowingEyesProvider.CAPABILITY, EnumFacing.UP);
+        IGlowingEyesCapability glowingEyesCapability = player.getCapability(GlowingEyesProvider.CAPABILITY, EnumFacing.UP);
 
-        if (eyes == null) return;
+        if (glowingEyesCapability == null) return;
 
-        NetworkHandler.sendToClient(new ClientCapabilityMessage(eyes, player), (EntityPlayerMP) player);
+        NetworkHandler.sendToClient(new ClientCapabilityMessage(glowingEyesCapability, player), (EntityPlayerMP) player);
+    }
+
+    @SubscribeEvent
+    public void onPlayerLoggedOut(net.minecraftforge.fml.common.gameevent.PlayerEvent.PlayerLoggedOutEvent event) {
+        // remove the player from the tracking list
+        HashMap<EntityPlayer, List<UUID>> playersTracking = GlowingEyes.proxy.getPlayersTracking();
+        EntityPlayer player = event.player;
+        playersTracking.remove(player);
+        for(List<UUID> list : playersTracking.values()) {
+            list.remove(player.getUniqueID());
+        }
     }
 }

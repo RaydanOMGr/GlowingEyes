@@ -11,7 +11,6 @@ import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.entity.RenderPlayer;
 import net.minecraft.client.renderer.entity.layers.LayerRenderer;
 import net.minecraft.client.renderer.texture.DynamicTexture;
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -41,7 +40,7 @@ public class GlowingEyesHeadLayer implements LayerRenderer<AbstractClientPlayer>
         HashMap<Point, Color> pixelMap;
         if (serverHasMod) {
             pixelMap = glowingEyes.getGlowingEyesMap();
-        } else if(player.getUniqueID().equals(Minecraft.getMinecraft().player.getUniqueID())) {                     // if the player is the local player
+        } else if(player.getUniqueID().equals(Minecraft.getMinecraft().player.getUniqueID())) { // if the player is the local player
             pixelMap = GlowingEyes.proxy.getPixelMap();
         } else {
             pixelMap = new HashMap<>();

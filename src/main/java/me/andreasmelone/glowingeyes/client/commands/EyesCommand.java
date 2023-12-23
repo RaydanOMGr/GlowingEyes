@@ -65,10 +65,4 @@ public class EyesCommand implements ICommand {
     public boolean isUsernameIndex(String[] args, int index) {
         return false;
     }
-
-    private TextComponentTranslation format(TextFormatting color, String str, Object... args) {
-        TextComponentTranslation ret = new TextComponentTranslation(str, args);
-        ret.getStyle().setColor(color);
-        return ret;
-    }
 }

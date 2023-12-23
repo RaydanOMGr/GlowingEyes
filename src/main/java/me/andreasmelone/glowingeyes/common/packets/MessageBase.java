@@ -22,7 +22,7 @@ public abstract class MessageBase<REQ extends IMessage> implements IMessage, IMe
         return null;
     }
 
-    public abstract void handleClientSide(REQ message, EntityPlayer player);
+    public abstract void handleClientSide(REQ message, EntityPlayer receivingPlayer);
 
-    public abstract void handleServerSide(REQ message, EntityPlayer player);
+    public abstract void handleServerSide(REQ message, EntityPlayer sendingPlayer);
 }
