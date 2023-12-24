@@ -21,18 +21,16 @@ import java.util.UUID;
 public class CommonGlowingEyesEvents {
     @SubscribeEvent
     public void onStartTracking(PlayerEvent.StartTracking event) {
-        if(!(event.getTarget() instanceof EntityPlayer)) return;
+        if (!(event.getTarget() instanceof EntityPlayer)) return;
         EntityPlayer player = event.getEntityPlayer();
         EntityPlayer target = (EntityPlayer) event.getTarget();
 
-        GlowingEyes.logger.info(player.getName() + " start tracking " + target.getName());
-
         HashMap<EntityPlayer, List<UUID>> playersTracking = GlowingEyes.proxy.getPlayersTracking();
-        if(playersTracking.containsKey(player)) {
+        if (playersTracking.containsKey(player)) {
             List<UUID> tracking = playersTracking.get(player);
-            if(!tracking.contains(target.getUniqueID()))
+            if (!tracking.contains(target.getUniqueID()))
                 tracking.add(target.getUniqueID());
-            else GlowingEyes.logger.info("Player " + target.getName() + " is already being tracked");
+            else GlowingEyes.logger.debug("Player " + target.getName() + " is already being tracked");
         } else {
             List<UUID> tracking = new ArrayList<>();
             tracking.add(target.getUniqueID());
@@ -41,9 +39,7 @@ public class CommonGlowingEyesEvents {
         GlowingEyes.proxy.setPlayersTracking(playersTracking);
 
         IGlowingEyesCapability glowingEyesCapability = target.getCapability(GlowingEyesProvider.CAPABILITY, null);
-        GlowingEyes.logger.info("Sending capability to " + player.getName());
-        if(glowingEyesCapability == null) return;
-        GlowingEyes.logger.info("Capability is not null");
+        if (glowingEyesCapability == null) return;
 
         NetworkHandler.sendToClient(new OtherPlayerCapabilityMessage(target, glowingEyesCapability), (EntityPlayerMP) player);
     }
@@ -61,8 +57,10 @@ public class CommonGlowingEyesEvents {
 
         if(!tracking.contains(target.getUniqueID())) return;
         tracking.remove(target.getUniqueID());
-        if(tracking.size() == 0) playersTracking.remove(player);
+
+        if(tracking.isEmpty()) playersTracking.remove(player);
         else playersTracking.put(player, tracking);
+
         GlowingEyes.proxy.setPlayersTracking(playersTracking);
     }
 
@@ -102,7 +100,7 @@ public class CommonGlowingEyesEvents {
 
     @SubscribeEvent
     public void onPlayerLoggedOut(net.minecraftforge.fml.common.gameevent.PlayerEvent.PlayerLoggedOutEvent event) {
-        // remove the player from the tracking list
+//         remove the player from the tracking list
         HashMap<EntityPlayer, List<UUID>> playersTracking = GlowingEyes.proxy.getPlayersTracking();
         EntityPlayer player = event.player;
         playersTracking.remove(player);
@@ -110,4 +108,12 @@ public class CommonGlowingEyesEvents {
             list.remove(player.getUniqueID());
         }
     }
+
+//    @SideOnly(Side.SERVER)
+//    @SubscribeEvent
+//    public void onServerTick(TickEvent.ServerTickEvent event) {
+//        if(event.phase == TickEvent.Phase.END) {
+//            GlowingEyes.proxy.getScheduler().tick();
+//        }
+//    }
 }

@@ -1,18 +1,13 @@
 package me.andreasmelone.glowingeyes;
 
-import me.andreasmelone.glowingeyes.common.CommonGlowingEyesEvents;
 import me.andreasmelone.glowingeyes.common.CommonProxy;
 import me.andreasmelone.glowingeyes.common.util.ModInfo;
-import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.SidedProxy;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import org.apache.logging.log4j.Logger;
-
-import java.awt.*;
-import java.util.HashMap;
 
 @Mod(modid = ModInfo.MODID, name = ModInfo.NAME, version = ModInfo.VERSION)
 public class GlowingEyes {

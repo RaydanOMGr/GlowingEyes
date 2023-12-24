@@ -27,7 +27,7 @@ public class Util {
         return bos.toByteArray();
     }
 
-    public static <K, V> HashMap<K, V> deserializeHashMap(byte[] glowingEyesMapBytes) throws IOException, ClassCastException, ClassNotFoundException {
+    public static <K, V> HashMap<K, V> deserializeHashMap(byte[] glowingEyesMapBytes) throws IOException, ClassNotFoundException {
         ByteArrayInputStream bis = new ByteArrayInputStream(glowingEyesMapBytes);
         ObjectInputStream ois = new ObjectInputStream(bis);
         return (HashMap<K, V>) ois.readObject();

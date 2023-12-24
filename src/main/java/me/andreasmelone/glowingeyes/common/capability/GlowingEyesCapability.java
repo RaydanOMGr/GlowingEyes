@@ -1,7 +1,6 @@
 package me.andreasmelone.glowingeyes.common.capability;
 
 import java.awt.*;
-import java.nio.ByteBuffer;
 import java.util.HashMap;
 
 public class GlowingEyesCapability implements IGlowingEyesCapability {

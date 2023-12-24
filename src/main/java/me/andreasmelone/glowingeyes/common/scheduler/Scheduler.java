@@ -24,7 +24,6 @@ public class Scheduler {
             }
         }
         tasks.removeAll(queue);
-        queue.clear();
     }
 
     public void scheduleTask(ScheduledTask task) {

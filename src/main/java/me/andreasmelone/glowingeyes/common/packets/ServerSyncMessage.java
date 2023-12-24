@@ -7,7 +7,6 @@ import me.andreasmelone.glowingeyes.common.capability.IGlowingEyesCapability;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.util.EnumFacing;
-import net.minecraft.util.text.TextComponentString;
 
 public class ServerSyncMessage extends MessageBase<ServerSyncMessage> {
     @Override

@@ -1,10 +1,7 @@
 package me.andreasmelone.glowingeyes.client.ui;
 
 import me.andreasmelone.glowingeyes.GlowingEyes;
-import me.andreasmelone.glowingeyes.client.ui.buttons.GuiButtonBrush;
-import me.andreasmelone.glowingeyes.client.ui.buttons.GuiButtonColorPicker;
-import me.andreasmelone.glowingeyes.client.ui.buttons.GuiButtonEraser;
-import me.andreasmelone.glowingeyes.client.ui.buttons.GuiButtonFill;
+import me.andreasmelone.glowingeyes.client.ui.buttons.*;
 import me.andreasmelone.glowingeyes.client.util.GuiUtil;
 import me.andreasmelone.glowingeyes.client.util.TextureLocations;
 import me.andreasmelone.glowingeyes.common.capability.GlowingEyesProvider;
@@ -43,6 +40,8 @@ public class EyesEditScreen extends GuiScreen {
 
     private Mode mode = Mode.BRUSH;
 
+    private boolean isSecondLayerVisible = false;
+
     private final Minecraft mc;
     private final HashMap<Point, Color> pixelMap = GlowingEyes.proxy.getPixelMap();
 
@@ -62,26 +61,34 @@ public class EyesEditScreen extends GuiScreen {
         this.middleY = this.guiTop + this.ySize / 2;
 
         // add the color picker button
+        int i = 0;
         this.buttonList.add(
-                new GuiButtonColorPicker(0, this.guiLeft + this.xSize - 30, this.guiTop + this.ySize - 30)
+                new GuiButtonColorPicker(i++, this.guiLeft + this.xSize - 30, this.guiTop + this.ySize - 30)
         );
+
         // add the brush button
         this.buttonList.add(
-                brushButton = new GuiButtonBrush(1, this.guiLeft + 8, this.guiTop + 70)
+                brushButton = new GuiButtonBrush(i++, this.guiLeft + 8, this.guiTop + 70)
         );
         brushButton.setSelected(true);
 
         // add the eraser button
         this.buttonList.add(
-                eraserButton = new GuiButtonEraser(2, this.guiLeft + 8, this.guiTop + 95)
+                eraserButton = new GuiButtonEraser(i++, this.guiLeft + 8, this.guiTop + 95)
         );
         eraserButton.setSelected(false);
 
         // add the fill button
+//        this.buttonList.add(
+//                fillButton = new GuiButtonFill(i++, this.guiLeft + 8, this.guiTop + 120)
+//        );
+//        fillButton.setSelected(false);
+        i++;
+
+        // add the toggle layer button
         this.buttonList.add(
-                fillButton = new GuiButtonFill(3, this.guiLeft + 8, this.guiTop + 120)
+                new GuiButtonToggleLayer(i++, this.guiLeft + this.xSize - 30, this.guiTop + this.ySize - 55)
         );
-        fillButton.setSelected(false);
     }
 
     @Override
@@ -151,6 +158,30 @@ public class EyesEditScreen extends GuiScreen {
                     headY + point.y * pixelSize + point.y * spaceBetweenPixels + pixelSize,
                     color.getRGB()
             );
+        }
+
+        // loop again for the second layer
+        if(isSecondLayerVisible) {
+            for (int y = 0; y < headSize; y++) {
+                for (int x = 0; x < headSize; x++) {
+                    GL11.glDisable(GL11.GL_DEPTH_TEST);
+                    GL11.glEnable(GL11.GL_BLEND);
+                    GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+                    GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
+
+                    drawScaledCustomSizeModalRect(
+                            headX + x * pixelSize + x * spaceBetweenPixels,
+                            headY + y * pixelSize + y * spaceBetweenPixels,
+                            40f + x, 8f + y,
+                            1, 1,
+                            pixelSize, pixelSize,
+                            64, 64
+                    );
+
+                    GL11.glDisable(GL11.GL_BLEND);
+                    GL11.glEnable(GL11.GL_DEPTH_TEST);
+                }
+            }
         }
 
         drawCenteredString(fontRenderer, "Glowing Eyes Editor",
@@ -232,6 +263,12 @@ public class EyesEditScreen extends GuiScreen {
             brushButton.setSelected(false);
             eraserButton.setSelected(false);
             fillButton.setSelected(true);
+        }
+
+        if(button.id == 4) {
+            // toggle the second layer
+            isSecondLayerVisible = !isSecondLayerVisible;
+            ((GuiButtonToggleLayer) button).toggleLayer();
         }
     }
 

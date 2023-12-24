@@ -110,6 +110,8 @@ processResources {
 
 // Example for how to get properties into the manifest for reading by the runtime..
 jar {
+    // why does it complain again???
+    duplicatesStrategy = DuplicatesStrategy.INCLUDE
     manifest {
         attributes([
                 "Mod-Title": "Glowing Eyes",
