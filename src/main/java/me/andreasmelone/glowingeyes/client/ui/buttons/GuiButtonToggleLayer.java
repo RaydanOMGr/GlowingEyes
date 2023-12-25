@@ -31,13 +31,6 @@ public class GuiButtonToggleLayer extends GuiButton {
         }
     }
 
-    public void setIsFirstLayer(boolean isFirstLayer) {
-        this.isSecondLayer = isFirstLayer;
-    }
-
-    public boolean getIsFirstLayer() {
-        return this.isSecondLayer;
-    }
 
     public void toggleLayer() {
         this.isSecondLayer = !this.isSecondLayer;

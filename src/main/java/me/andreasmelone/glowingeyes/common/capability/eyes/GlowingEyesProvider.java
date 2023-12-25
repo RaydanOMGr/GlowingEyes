@@ -1,4 +1,4 @@
-package me.andreasmelone.glowingeyes.common.capability;
+package me.andreasmelone.glowingeyes.common.capability.eyes;
 
 import net.minecraft.nbt.NBTBase;
 import net.minecraft.util.EnumFacing;

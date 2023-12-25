@@ -2,8 +2,8 @@ package me.andreasmelone.glowingeyes.client;
 
 import me.andreasmelone.glowingeyes.GlowingEyes;
 import me.andreasmelone.glowingeyes.client.util.RenderUtil;
-import me.andreasmelone.glowingeyes.common.capability.GlowingEyesProvider;
-import me.andreasmelone.glowingeyes.common.capability.IGlowingEyesCapability;
+import me.andreasmelone.glowingeyes.common.capability.eyes.GlowingEyesProvider;
+import me.andreasmelone.glowingeyes.common.capability.eyes.IGlowingEyesCapability;
 import me.andreasmelone.glowingeyes.common.util.ModInfo;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.AbstractClientPlayer;
@@ -36,6 +36,7 @@ public class GlowingEyesHeadLayer implements LayerRenderer<AbstractClientPlayer>
         boolean serverHasMod = GlowingEyes.serverHasMod;
 
         if(player.isInvisible()) return;
+        if(serverHasMod && !glowingEyes.isToggledOn()) return;
 
         HashMap<Point, Color> pixelMap;
         if (serverHasMod) {

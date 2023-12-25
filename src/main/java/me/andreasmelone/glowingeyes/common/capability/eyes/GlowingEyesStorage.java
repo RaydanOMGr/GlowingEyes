@@ -1,4 +1,4 @@
-package me.andreasmelone.glowingeyes.common.capability;
+package me.andreasmelone.glowingeyes.common.capability.eyes;
 
 import me.andreasmelone.glowingeyes.GlowingEyes;
 import me.andreasmelone.glowingeyes.common.util.Util;
@@ -7,13 +7,18 @@ import net.minecraft.util.EnumFacing;
 import net.minecraftforge.common.capabilities.Capability;
 
 import java.io.IOException;
+import java.nio.ByteBuffer;
 import java.util.HashMap;
 
 public class GlowingEyesStorage implements Capability.IStorage<IGlowingEyesCapability> {
     @Override
     public NBTBase writeNBT(Capability<IGlowingEyesCapability> capability, IGlowingEyesCapability instance, EnumFacing side) {
         try {
-            return new NBTTagByteArray(Util.serializeHashMap(instance.getGlowingEyesMap()));
+            byte[] data = Util.serializeHashMap(instance.getGlowingEyesMap());
+            ByteBuffer buffer = ByteBuffer.allocate(data.length + 1);
+            buffer.put((byte) (instance.isToggledOn() ? 1 : 0));
+            buffer.put(data);
+            return new NBTTagByteArray(buffer.array());
         } catch (IOException e) {
             GlowingEyes.logger.error("GlowingEyesStorage: Failed writing NBT");
             e.printStackTrace();
@@ -41,13 +46,18 @@ public class GlowingEyesStorage implements Capability.IStorage<IGlowingEyesCapab
             return;
         }
 
+        ByteBuffer buffer = ByteBuffer.wrap(data);
+        instance.setToggledOn(buffer.get() == 1);
+        byte[] mapData = new byte[data.length - 1];
+        buffer.get(mapData);
         try {
-            instance.setGlowingEyesMap(Util.deserializeHashMap(data));
+            instance.setGlowingEyesMap(Util.deserializeHashMap(mapData));
         } catch (IOException | ClassNotFoundException e) {
-            GlowingEyes.logger.error("GlowingEyesStorage: Failed reading NBT");
+            instance.setGlowingEyesMap(new HashMap<>());
+
+            GlowingEyes.logger.error("GlowingEyesStorage: readNBT: Failed reading NBT");
             e.printStackTrace();
             GlowingEyes.logger.error("Data will be changed to default");
-            instance.setGlowingEyesMap(new HashMap<>());
         }
     }
 }

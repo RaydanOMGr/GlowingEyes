@@ -4,8 +4,8 @@ import me.andreasmelone.glowingeyes.GlowingEyes;
 import me.andreasmelone.glowingeyes.client.ui.buttons.*;
 import me.andreasmelone.glowingeyes.client.util.GuiUtil;
 import me.andreasmelone.glowingeyes.client.util.TextureLocations;
-import me.andreasmelone.glowingeyes.common.capability.GlowingEyesProvider;
-import me.andreasmelone.glowingeyes.common.capability.IGlowingEyesCapability;
+import me.andreasmelone.glowingeyes.common.capability.eyes.GlowingEyesProvider;
+import me.andreasmelone.glowingeyes.common.capability.eyes.IGlowingEyesCapability;
 import me.andreasmelone.glowingeyes.common.packets.ClientCapabilityMessage;
 import me.andreasmelone.glowingeyes.common.packets.NetworkHandler;
 import net.minecraft.client.Minecraft;
@@ -190,8 +190,13 @@ public class EyesEditScreen extends GuiScreen {
         super.drawScreen(mouseX, mouseY, partialTicks);
     }
 
+    protected boolean isLeftMousePressed = false;
+    protected boolean isRightMousePressed = false;
     @Override
     protected void mouseClicked(int mouseX, int mouseY, int mouseButton) {
+        isLeftMousePressed = mouseButton == 0;
+        isRightMousePressed = mouseButton == 1;
+
         // when a pixel is clicked, change its colour to red
         // if mode equals to something, then check mouse position, and do stuff
         if(mouseX >= headX && mouseX <= endHeadX && mouseY >= headY && mouseY <= endHeadY) {
@@ -205,21 +210,21 @@ public class EyesEditScreen extends GuiScreen {
 
             // do stuff
             if(mode == Mode.BRUSH) {
-                if(mouseButton == 0) {
+                if(isLeftMousePressed) {
                     // set the pixel to the selected color
                     if(pixelMap.containsKey(new Point(x, y))) {
                         pixelMap.replace(new Point(x, y), GlowingEyes.proxy.getPixelColor());
                     } else {
                         pixelMap.put(new Point(x, y), GlowingEyes.proxy.getPixelColor());
                     }
-                } else if(mouseButton == 1) {
+                } else if(isRightMousePressed) {
                     // remove the pixel
                     pixelMap.remove(new Point(x, y));
                 }
             }
 
             if(mode == Mode.ERASER) {
-                if(mouseButton == 0) {
+                if(isLeftMousePressed) {
                     // remove the pixel
                     pixelMap.remove(new Point(x, y));
                 }

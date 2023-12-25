@@ -53,13 +53,4 @@ public class RenderUtil {
         OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, (float) j, (float) k);
         GlStateManager.disableBlend();
     }
-
-    public static BufferedImage getBufferedImageFromResourceLocation(ResourceLocation resourceLocation) {
-        try {
-            return TextureUtil.readBufferedImage(Minecraft.getMinecraft().getResourceManager().getResource(resourceLocation).getInputStream());
-        } catch (IOException e) {
-            e.printStackTrace();
-            return null;
-        }
-    }
 }

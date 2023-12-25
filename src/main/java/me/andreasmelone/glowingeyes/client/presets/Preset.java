@@ -13,6 +13,11 @@ public class Preset {
     public String name;
     public HashMap<Point, Color> content;
 
+    public Preset(String name, HashMap<Point, Color> content) {
+        this.name = name;
+        this.content = content;
+    }
+
     private DynamicTexture createDynamicTexture() {
         BufferedImage eyeOverlayTexture = new BufferedImage(64, 64, BufferedImage.TYPE_INT_ARGB);
         for (Point point : content.keySet()) {

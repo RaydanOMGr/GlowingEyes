@@ -1,5 +1,6 @@
 package me.andreasmelone.glowingeyes.common.capability;
 
+import me.andreasmelone.glowingeyes.common.capability.eyes.GlowingEyesProvider;
 import me.andreasmelone.glowingeyes.common.util.ModInfo;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;

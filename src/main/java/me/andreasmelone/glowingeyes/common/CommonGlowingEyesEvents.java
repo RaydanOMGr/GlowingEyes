@@ -1,8 +1,8 @@
 package me.andreasmelone.glowingeyes.common;
 
 import me.andreasmelone.glowingeyes.GlowingEyes;
-import me.andreasmelone.glowingeyes.common.capability.GlowingEyesProvider;
-import me.andreasmelone.glowingeyes.common.capability.IGlowingEyesCapability;
+import me.andreasmelone.glowingeyes.common.capability.eyes.GlowingEyesProvider;
+import me.andreasmelone.glowingeyes.common.capability.eyes.IGlowingEyesCapability;
 import me.andreasmelone.glowingeyes.common.packets.ClientCapabilityMessage;
 import me.andreasmelone.glowingeyes.common.packets.NetworkHandler;
 import me.andreasmelone.glowingeyes.common.packets.OtherPlayerCapabilityMessage;
@@ -100,7 +100,7 @@ public class CommonGlowingEyesEvents {
 
     @SubscribeEvent
     public void onPlayerLoggedOut(net.minecraftforge.fml.common.gameevent.PlayerEvent.PlayerLoggedOutEvent event) {
-//         remove the player from the tracking list
+        //  remove the player from the tracking list
         HashMap<EntityPlayer, List<UUID>> playersTracking = GlowingEyes.proxy.getPlayersTracking();
         EntityPlayer player = event.player;
         playersTracking.remove(player);
@@ -108,12 +108,4 @@ public class CommonGlowingEyesEvents {
             list.remove(player.getUniqueID());
         }
     }
-
-//    @SideOnly(Side.SERVER)
-//    @SubscribeEvent
-//    public void onServerTick(TickEvent.ServerTickEvent event) {
-//        if(event.phase == TickEvent.Phase.END) {
-//            GlowingEyes.proxy.getScheduler().tick();
-//        }
-//    }
 }

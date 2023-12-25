@@ -2,9 +2,9 @@ package me.andreasmelone.glowingeyes.common;
 
 import me.andreasmelone.glowingeyes.client.presets.PresetManager;
 import me.andreasmelone.glowingeyes.common.capability.CapabilityHandler;
-import me.andreasmelone.glowingeyes.common.capability.GlowingEyesCapability;
-import me.andreasmelone.glowingeyes.common.capability.GlowingEyesStorage;
-import me.andreasmelone.glowingeyes.common.capability.IGlowingEyesCapability;
+import me.andreasmelone.glowingeyes.common.capability.eyes.GlowingEyesCapability;
+import me.andreasmelone.glowingeyes.common.capability.eyes.GlowingEyesStorage;
+import me.andreasmelone.glowingeyes.common.capability.eyes.IGlowingEyesCapability;
 import me.andreasmelone.glowingeyes.common.packets.NetworkHandler;
 import me.andreasmelone.glowingeyes.common.scheduler.Scheduler;
 import net.minecraft.client.gui.GuiScreen;

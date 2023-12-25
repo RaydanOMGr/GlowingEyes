@@ -2,8 +2,8 @@ package me.andreasmelone.glowingeyes.common.packets;
 
 import io.netty.buffer.ByteBuf;
 import me.andreasmelone.glowingeyes.GlowingEyes;
-import me.andreasmelone.glowingeyes.common.capability.GlowingEyesProvider;
-import me.andreasmelone.glowingeyes.common.capability.IGlowingEyesCapability;
+import me.andreasmelone.glowingeyes.common.capability.eyes.GlowingEyesProvider;
+import me.andreasmelone.glowingeyes.common.capability.eyes.IGlowingEyesCapability;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.util.EnumFacing;

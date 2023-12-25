@@ -8,17 +8,37 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.client.renderer.entity.RenderPlayer;
+import net.minecraft.client.settings.KeyBinding;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraftforge.client.ClientCommandHandler;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.fml.client.registry.ClientRegistry;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
+import org.lwjgl.input.Keyboard;
 
 import java.awt.*;
 import java.util.HashMap;
 
 public class ClientProxy extends CommonProxy {
+    public static KeyBinding editorKeybind = new KeyBinding(
+            "key.glowingeyes.openeditor",
+            Keyboard.KEY_G,
+            "key.categories.glowingeyes"
+    );
+
+    public static KeyBinding toggleKeybind = new KeyBinding(
+            "key.glowingeyes.toggle",
+            Keyboard.KEY_H,
+            "key.categories.glowingeyes"
+    );
+
+    public static KeyBinding[] keyBindings = new KeyBinding[] {
+            editorKeybind,
+            toggleKeybind
+    };
+
     PresetManager presetManager = new PresetManager();
 
     HashMap<Point, Color> pixelMap = new HashMap<>();
@@ -39,6 +59,10 @@ public class ClientProxy extends CommonProxy {
     public void init(FMLInitializationEvent e) {
         super.init(e);
         MinecraftForge.EVENT_BUS.register(new ClientGlowingEyesEvents());
+
+        for (KeyBinding keyBinding : keyBindings) {
+            ClientRegistry.registerKeyBinding(keyBinding);
+        }
     }
 
     @Override
