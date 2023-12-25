@@ -1,5 +1,6 @@
 package me.andreasmelone.glowingeyes.common;
 
+import me.andreasmelone.glowingeyes.client.presets.PresetManager;
 import me.andreasmelone.glowingeyes.common.capability.CapabilityHandler;
 import me.andreasmelone.glowingeyes.common.capability.GlowingEyesCapability;
 import me.andreasmelone.glowingeyes.common.capability.GlowingEyesStorage;
@@ -60,6 +61,9 @@ public class CommonProxy {
 
     public Scheduler getScheduler() {
         return scheduler;
+    }
+    public PresetManager getPresetManager() {
+        return null;
     }
 
     public HashMap<Point, Color> getPixelMap() {

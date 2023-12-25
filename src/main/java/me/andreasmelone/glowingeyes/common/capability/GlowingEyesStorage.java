@@ -32,7 +32,7 @@ public class GlowingEyesStorage implements Capability.IStorage<IGlowingEyesCapab
             return;
         }
         byte[] data = ((NBTTagByteArray) nbt).getByteArray();
-        if (data.length % 3 != 0) {
+        if (data.length % 3 != 0 && data.length != 0) {
             instance.setGlowingEyesMap(new HashMap<>());
 
             GlowingEyes.logger.error("GlowingEyesStorage: readNBT: data.length % 3 != 0");

@@ -1,6 +1,7 @@
 package me.andreasmelone.glowingeyes.client;
 
 import me.andreasmelone.glowingeyes.client.commands.EyesCommand;
+import me.andreasmelone.glowingeyes.client.presets.PresetManager;
 import me.andreasmelone.glowingeyes.common.CommonProxy;
 import me.andreasmelone.glowingeyes.common.util.ModInfo;
 import net.minecraft.client.Minecraft;
@@ -18,6 +19,8 @@ import java.awt.*;
 import java.util.HashMap;
 
 public class ClientProxy extends CommonProxy {
+    PresetManager presetManager = new PresetManager();
+
     HashMap<Point, Color> pixelMap = new HashMap<>();
     Color currentColor = ModInfo.DEFAULT_EYE_COLOR;
 
@@ -27,6 +30,8 @@ public class ClientProxy extends CommonProxy {
         e.getModLog().info("Registering commands");
         ClientCommandHandler.instance.registerCommand(new EyesCommand());
         ClientCommandHandler.instance.getCommands().forEach((s, command) -> e.getModLog().info("Registered command: " + s));
+
+        presetManager.loadPresets();
         e.getModLog().info("Registered commands");
     }
 
