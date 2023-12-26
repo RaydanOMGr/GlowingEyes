@@ -1,0 +1,13 @@
+key.categories.glowingeyes=Leuchtende Augen
+key.glowingeyes.editor.open=Öffne den Augen Editor
+key.glowingeyes.toggle=Leuchtende Augen an-/ausschalten
+
+gui.confirm=Bestätigen
+gui.reset=Zurücksetzen
+
+gui.red=Rot
+gui.green=Grün
+gui.blue=Blau
+gui.alpha=Alpha
+
+gui.glowingeyes.editor.title=Leuchtende Augen Editor

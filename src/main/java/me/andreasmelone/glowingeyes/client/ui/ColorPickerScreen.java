@@ -9,6 +9,7 @@ import net.minecraft.client.gui.GuiButton;
 import me.andreasmelone.glowingeyes.client.ui.labels.GuiLabel;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.GuiTextField;
+import net.minecraft.client.resources.I18n;
 import org.lwjgl.input.Keyboard;
 import java.awt.*;
 import java.io.IOException;
@@ -77,7 +78,7 @@ public class ColorPickerScreen extends GuiScreen {
                 guiTop + defaultOffset + yDifference * labels + fields * height + buttons * ((buttonHeight / 2) + yDifference),                width, height,
                 0xFF0000
         );
-        redLabel.addLine("Red");
+        redLabel.addLine(I18n.format("gui.red"));
         labels++;
 
         redField = new GuiTextField(0, this.fontRenderer,
@@ -94,7 +95,7 @@ public class ColorPickerScreen extends GuiScreen {
                 guiTop + defaultOffset + yDifference * labels + fields * height + buttons * ((buttonHeight / 2) + yDifference),                width, height,
                 0x00FF00
         );
-        greenLabel.addLine("Green");
+        greenLabel.addLine(I18n.format("gui.green"));
         labels++;
 
         greenField = new GuiTextField(1, this.fontRenderer,
@@ -112,7 +113,7 @@ public class ColorPickerScreen extends GuiScreen {
                 width, height,
                 0x0000FF
         );
-        blueLabel.addLine("Blue");
+        blueLabel.addLine(I18n.format("gui.blue"));
         labels++;
 
         blueField = new GuiTextField(2, this.fontRenderer,
@@ -130,7 +131,7 @@ public class ColorPickerScreen extends GuiScreen {
                 width, height,
                 new Color(145, 145, 145).getRGB()
         );
-        alphaLabel.addLine("Alpha");
+        alphaLabel.addLine(I18n.format("gui.alpha"));
         labels++;
 
         alphaField = new GuiTextField(3, this.fontRenderer,
@@ -149,7 +150,7 @@ public class ColorPickerScreen extends GuiScreen {
                 this.guiLeft + xButtonDifference,
                 guiTop + defaultOffset + defaultButtonOffset + yDifference * labels + fields * height + buttons * ((buttonHeight / 2) + yDifference),
                 buttonWidth, buttonHeight,
-                "Confirm"
+                I18n.format("gui.confirm")
         ));
         buttons++;
 
@@ -158,7 +159,7 @@ public class ColorPickerScreen extends GuiScreen {
                 this.guiLeft + xButtonDifference,
                 guiTop + defaultOffset + defaultButtonOffset + yDifference * labels + fields * height + buttons * ((buttonHeight / 2) + yDifference),
                 buttonWidth, buttonHeight,
-                "Reset"
+                I18n.format("gui.reset")
         ));
         buttons++;
 

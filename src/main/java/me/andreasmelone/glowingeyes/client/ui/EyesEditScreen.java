@@ -12,6 +12,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.renderer.texture.TextureManager;
+import net.minecraft.client.resources.I18n;
 import org.lwjgl.opengl.GL11;
 
 import java.awt.*;
@@ -184,7 +185,7 @@ public class EyesEditScreen extends GuiScreen {
             }
         }
 
-        drawCenteredString(fontRenderer, "Glowing Eyes Editor",
+        drawCenteredString(fontRenderer, I18n.format("gui.glowingeyes.editor.title"),
                 middleX, guiTop + 8, 0xFFFFFF);
 
         super.drawScreen(mouseX, mouseY, partialTicks);

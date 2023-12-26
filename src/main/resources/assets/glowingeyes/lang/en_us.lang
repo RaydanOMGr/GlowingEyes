@@ -1,3 +1,13 @@
 key.categories.glowingeyes=Glowing Eyes
-key.glowingeyes.openeditor=Open Eyes Editor
+key.glowingeyes.editor.open=Open Eyes Editor
 key.glowingeyes.toggle=Toggle Eyes On/Off
+
+gui.confirm=Confirm
+gui.reset=Reset
+
+gui.red=Red
+gui.green=Green
+gui.blue=Blue
+gui.alpha=Alpha
+
+gui.glowingeyes.editor.title=Glowing Eyes Editor
