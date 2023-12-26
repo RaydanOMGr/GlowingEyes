@@ -1,9 +1,14 @@
 package me.andreasmelone.glowingeyes.client;
 
 import me.andreasmelone.glowingeyes.GlowingEyes;
-import me.andreasmelone.glowingeyes.client.ui.ColorPickerScreen;
+import me.andreasmelone.glowingeyes.client.ui.EyesEditScreen;
+import me.andreasmelone.glowingeyes.common.capability.eyes.GlowingEyesProvider;
+import me.andreasmelone.glowingeyes.common.capability.eyes.IGlowingEyesCapability;
+import me.andreasmelone.glowingeyes.common.packets.ClientCapabilityMessage;
 import me.andreasmelone.glowingeyes.common.packets.NetworkHandler;
 import me.andreasmelone.glowingeyes.common.packets.ServerSyncMessage;
+import net.minecraft.client.Minecraft;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.InputEvent;
@@ -36,10 +41,16 @@ public class ClientGlowingEyesEvents {
 
     @SubscribeEvent(receiveCanceled=true)
     public void onKeyInput(InputEvent.KeyInputEvent event) {
-        if(ClientProxy.editorKeybind.isPressed()) {
-            GlowingEyes.proxy.openGui(new ColorPickerScreen());
-        } else if(ClientProxy.toggleKeybind.isPressed()) {
-            // TODO: Implement this
+        if(ClientProxy.toggleKeyBinding.isPressed()) {
+            EntityPlayer p = GlowingEyes.proxy.getPlayer();
+            IGlowingEyesCapability eyesCapability = p.getCapability(GlowingEyesProvider.CAPABILITY, null);
+            if(eyesCapability == null) return;
+            eyesCapability.setToggledOn(!eyesCapability.isToggledOn());
+            NetworkHandler.sendToServer(new ClientCapabilityMessage(eyesCapability, p));
+        }
+        if(ClientProxy.eyesEditorKeyBinding.isPressed()) {
+            if(Minecraft.getMinecraft().currentScreen != null) return;
+            GlowingEyes.proxy.openGui(new EyesEditScreen(Minecraft.getMinecraft()));
         }
     }
 }

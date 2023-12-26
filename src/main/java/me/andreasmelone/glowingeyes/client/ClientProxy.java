@@ -22,22 +22,10 @@ import java.awt.*;
 import java.util.HashMap;
 
 public class ClientProxy extends CommonProxy {
-    public static KeyBinding editorKeybind = new KeyBinding(
-            "key.glowingeyes.openeditor",
-            Keyboard.KEY_G,
-            "key.categories.glowingeyes"
-    );
+    public static KeyBinding toggleKeyBinding = new KeyBinding("key.glowingeyes.toggle", Keyboard.KEY_G, "key.categories.glowingeyes");
+    public static KeyBinding eyesEditorKeyBinding = new KeyBinding("key.glowingeyes.openeditor", Keyboard.KEY_H, "key.categories.glowingeyes");
 
-    public static KeyBinding toggleKeybind = new KeyBinding(
-            "key.glowingeyes.toggle",
-            Keyboard.KEY_H,
-            "key.categories.glowingeyes"
-    );
-
-    public static KeyBinding[] keyBindings = new KeyBinding[] {
-            editorKeybind,
-            toggleKeybind
-    };
+    public static KeyBinding[] keyBindings = new KeyBinding[] { toggleKeyBinding, eyesEditorKeyBinding };
 
     PresetManager presetManager = new PresetManager();
 

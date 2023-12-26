@@ -36,18 +36,13 @@ public class GlowingEyesStorage implements Capability.IStorage<IGlowingEyesCapab
             GlowingEyes.logger.error("Data will be changed to default");
             return;
         }
-        byte[] data = ((NBTTagByteArray) nbt).getByteArray();
-        if (data.length % 3 != 0 && data.length != 0) {
-            instance.setGlowingEyesMap(new HashMap<>());
 
-            GlowingEyes.logger.error("GlowingEyesStorage: readNBT: data.length % 3 != 0");
-            GlowingEyes.logger.error("The format of the byte array is not correct and most likely corrupted");
-            GlowingEyes.logger.error("Data will be changed to default");
-            return;
-        }
+        byte[] data = ((NBTTagByteArray) nbt).getByteArray();
 
         ByteBuffer buffer = ByteBuffer.wrap(data);
-        instance.setToggledOn(buffer.get() == 1);
+        byte toggledOn = buffer.get();
+        instance.setToggledOn(toggledOn == (byte)1);
+
         byte[] mapData = new byte[data.length - 1];
         buffer.get(mapData);
         try {

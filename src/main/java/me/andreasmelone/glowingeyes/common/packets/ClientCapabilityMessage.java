@@ -25,6 +25,8 @@ public class ClientCapabilityMessage extends MessageBase<ClientCapabilityMessage
             IGlowingEyesCapability oldCapability = receivingPlayer.getCapability(GlowingEyesProvider.CAPABILITY, null);
 
             oldCapability.setGlowingEyesMap(capability.getGlowingEyesMap());
+            oldCapability.setToggledOn(capability.isToggledOn());
+
             GlowingEyes.proxy.setPixelMap(capability.getGlowingEyesMap());
         }
     }
@@ -36,6 +38,7 @@ public class ClientCapabilityMessage extends MessageBase<ClientCapabilityMessage
         IGlowingEyesCapability oldCapability = playerMP.getCapability(GlowingEyesProvider.CAPABILITY, null);
 
         oldCapability.setGlowingEyesMap(capability.getGlowingEyesMap());
+        oldCapability.setToggledOn(capability.isToggledOn());
 
         // This is done to be compatible with replaymod, but it doesn't work and Idk why
         NetworkHandler.sendToClient(new ClientCapabilityMessage(capability, sendingPlayer), playerMP);
@@ -43,7 +46,7 @@ public class ClientCapabilityMessage extends MessageBase<ClientCapabilityMessage
         List<UUID> playersTracking = GlowingEyes.proxy.getPlayersTracking().get(sendingPlayer);
         if(playersTracking == null) return;
         for(UUID pUUID : playersTracking) {
-            EntityPlayerMP p = playerMP.getServer().getPlayerList().getPlayerByUUID(pUUID);
+            EntityPlayerMP p = (EntityPlayerMP) playerMP.world.getPlayerEntityByUUID(pUUID);
             NetworkHandler.sendToClient(new OtherPlayerCapabilityMessage(sendingPlayer, oldCapability), p);
         }
     }
@@ -51,8 +54,10 @@ public class ClientCapabilityMessage extends MessageBase<ClientCapabilityMessage
     @Override
     public void fromBytes(ByteBuf buf) {
         if(buf.isReadable()) {
-            int length = buf.readInt();
+            byte toggledOn = buf.readByte();
+            cap.setToggledOn(toggledOn == (byte)1);
 
+            int length = buf.readInt();
             HashMap<Point, Color> glowingEyesMap = new HashMap<>();
             for(int i = 0; i < length; i += 3) {
                 Point point = new Point(buf.readInt(), buf.readInt());
@@ -66,6 +71,8 @@ public class ClientCapabilityMessage extends MessageBase<ClientCapabilityMessage
 
     @Override
     public void toBytes(ByteBuf buf) {
+        buf.writeByte((byte) (cap.isToggledOn() ? 1 : 0));
+
         buf.writeInt(cap.getGlowingEyesMap().size() * 3);
         for(Point point : cap.getGlowingEyesMap().keySet()) {
             buf.writeInt(point.x);

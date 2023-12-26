@@ -251,7 +251,7 @@ public class EyesEditScreen extends GuiScreen {
             mode = Mode.BRUSH;
             brushButton.setSelected(true);
             eraserButton.setSelected(false);
-            fillButton.setSelected(false);
+//            fillButton.setSelected(false);
         }
 
         if(button.id == 2 && !eraserButton.isSelected()) {
@@ -259,16 +259,16 @@ public class EyesEditScreen extends GuiScreen {
             mode = Mode.ERASER;
             brushButton.setSelected(false);
             eraserButton.setSelected(true);
-            fillButton.setSelected(false);
+//            fillButton.setSelected(false);
         }
 
-        if(button.id == 3 && !fillButton.isSelected()) {
-            // change the mode to fill
-            mode = Mode.FILL;
-            brushButton.setSelected(false);
-            eraserButton.setSelected(false);
-            fillButton.setSelected(true);
-        }
+//        if(button.id == 3 && !fillButton.isSelected()) {
+//            // change the mode to fill
+//            mode = Mode.FILL;
+//            brushButton.setSelected(false);
+//            eraserButton.setSelected(false);
+//            fillButton.setSelected(true);
+//        }
 
         if(button.id == 4) {
             // toggle the second layer

@@ -31,6 +31,7 @@ public class OtherPlayerCapabilityMessage extends MessageBase<OtherPlayerCapabil
                 IGlowingEyesCapability old = player.getCapability(GlowingEyesProvider.CAPABILITY, null);
 
                 old.setGlowingEyesMap(capability.getGlowingEyesMap());
+                old.setToggledOn(capability.isToggledOn());
             } else {
                 GlowingEyes.logger.error("Failed to get player from UUID");
             }
@@ -54,6 +55,9 @@ public class OtherPlayerCapabilityMessage extends MessageBase<OtherPlayerCapabil
             buf.readBytes(uuidBytes);
             playerUUID = Util.getUUIDFromBytes(uuidBytes);
 
+            byte toggledOn = buf.readByte();
+            glowingEyesCapability.setToggledOn(toggledOn == (byte)1);
+
             HashMap<Point, Color> glowingEyesMap = new HashMap<>();
             int length = buf.readInt();
             for(int i = 0; i < length; i += 3) {
@@ -69,6 +73,8 @@ public class OtherPlayerCapabilityMessage extends MessageBase<OtherPlayerCapabil
     @Override
     public void toBytes(ByteBuf buf) {
         buf.writeBytes(Util.getBytesFromUUID(player.getUniqueID()));
+
+        buf.writeByte((byte) (glowingEyesCapability.isToggledOn() ? 1 : 0));
 
         buf.writeInt(glowingEyesCapability.getGlowingEyesMap().size() * 3);
         for (Point point : glowingEyesCapability.getGlowingEyesMap().keySet()) {

@@ -5,7 +5,7 @@ import java.awt.*;
 import java.util.HashMap;
 
 public class GlowingEyesCapability implements IGlowingEyesCapability {
-    private boolean toggledOn = false;
+    private boolean toggledOn = true;
     private HashMap<Point, Color> glowingEyesMap = new HashMap<>();
 
     @Nonnull
