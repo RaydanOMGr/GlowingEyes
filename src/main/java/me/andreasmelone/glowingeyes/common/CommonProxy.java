@@ -76,4 +76,9 @@ public class CommonProxy {
     }
     public void setPixelColor(Color color) {
     }
+    public boolean isToggledOn() {
+        return false;
+    }
+    public void setToggledOn(boolean toggledOn) {
+    }
 }

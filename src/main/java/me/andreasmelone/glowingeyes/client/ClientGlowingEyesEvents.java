@@ -42,6 +42,8 @@ public class ClientGlowingEyesEvents {
     @SubscribeEvent(receiveCanceled=true)
     public void onKeyInput(InputEvent.KeyInputEvent event) {
         if(ClientProxy.toggleKeyBinding.isPressed()) {
+            GlowingEyes.proxy.setToggledOn(!GlowingEyes.proxy.isToggledOn());
+
             EntityPlayer p = GlowingEyes.proxy.getPlayer();
             IGlowingEyesCapability eyesCapability = p.getCapability(GlowingEyesProvider.CAPABILITY, null);
             if(eyesCapability == null) return;

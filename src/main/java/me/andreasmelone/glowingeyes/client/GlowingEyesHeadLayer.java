@@ -34,18 +34,23 @@ public class GlowingEyesHeadLayer implements LayerRenderer<AbstractClientPlayer>
                               float netHeadYaw, float headPitch, float scale) {
         IGlowingEyesCapability glowingEyes = player.getCapability(GlowingEyesProvider.CAPABILITY, null);
         boolean serverHasMod = GlowingEyes.serverHasMod;
+        boolean isToggled = true;
 
         if(player.isInvisible()) return;
-        if(serverHasMod && !glowingEyes.isToggledOn()) return;
 
         HashMap<Point, Color> pixelMap;
         if (serverHasMod) {
             pixelMap = glowingEyes.getGlowingEyesMap();
+            isToggled = glowingEyes.isToggledOn();
         } else if(player.getUniqueID().equals(Minecraft.getMinecraft().player.getUniqueID())) { // if the player is the local player
             pixelMap = GlowingEyes.proxy.getPixelMap();
+            isToggled = GlowingEyes.proxy.isToggledOn();
         } else {
             pixelMap = new HashMap<>();
+            isToggled = false;
         }
+
+        if(!isToggled) return;
 
         // Push the matrix
         // This is needed to make sure the texture is rendered at the right position

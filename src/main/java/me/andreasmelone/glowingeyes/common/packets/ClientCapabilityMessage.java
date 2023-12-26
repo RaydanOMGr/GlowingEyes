@@ -28,6 +28,7 @@ public class ClientCapabilityMessage extends MessageBase<ClientCapabilityMessage
             oldCapability.setToggledOn(capability.isToggledOn());
 
             GlowingEyes.proxy.setPixelMap(capability.getGlowingEyesMap());
+            GlowingEyes.proxy.setToggledOn(capability.isToggledOn());
         }
     }
 

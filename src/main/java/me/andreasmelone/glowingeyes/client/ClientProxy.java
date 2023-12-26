@@ -30,6 +30,8 @@ public class ClientProxy extends CommonProxy {
     PresetManager presetManager = new PresetManager();
 
     HashMap<Point, Color> pixelMap = new HashMap<>();
+    boolean isToggledOn = false;
+
     Color currentColor = ModInfo.DEFAULT_EYE_COLOR;
 
     @Override
@@ -93,5 +95,15 @@ public class ClientProxy extends CommonProxy {
     @Override
     public void setPixelColor(Color color) {
         this.currentColor = color;
+    }
+
+    @Override
+    public boolean isToggledOn() {
+        return isToggledOn;
+    }
+
+    @Override
+    public void setToggledOn(boolean toggledOn) {
+        isToggledOn = toggledOn;
     }
 }
