@@ -30,7 +30,7 @@ public class PresetManager {
             content.put(new Point(i, 0), ModInfo.DEFAULT_EYE_COLOR);
             content.put(new Point(0, i), ModInfo.DEFAULT_EYE_COLOR);
 
-            this.presets.add(new Preset("Preset " + i, content));
+            this.presets.add(new Preset("Preset " + i, i, content));
         }
     }
 
