@@ -10,8 +10,8 @@ import java.awt.image.BufferedImage;
 import java.util.HashMap;
 
 public class Preset {
-    public String name;
-    public HashMap<Point, Color> content;
+    private String name;
+    private HashMap<Point, Color> content;
 
     public Preset(String name, HashMap<Point, Color> content) {
         this.name = name;
@@ -29,5 +29,14 @@ public class Preset {
 
     public ResourceLocation getResourceLocation() {
         return Minecraft.getMinecraft().renderEngine.getDynamicTextureLocation(ModInfo.MODID, createDynamicTexture());
+    }
+
+    public HashMap<Point, Color> getContent() {
+        // return a copy so that the original content can't be modified
+        return new HashMap<>(this.content);
+    }
+
+    public String getName() {
+        return this.name;
     }
 }

@@ -11,5 +11,8 @@ public class TextureLocations {
     public static final ResourceLocation UI_BACKGROUND_BIG = new ResourceLocation(ModInfo.MODID, "textures/gui/background_big.png");
     // 256x222
     public static final ResourceLocation UI_BACKGROUND_BROAD = new ResourceLocation(ModInfo.MODID, "textures/gui/background_broad.png");
+
+    // 128x29
+    public static final ResourceLocation BIG_BUTTON = new ResourceLocation(ModInfo.MODID, "textures/gui/big_button.png");
 }
 

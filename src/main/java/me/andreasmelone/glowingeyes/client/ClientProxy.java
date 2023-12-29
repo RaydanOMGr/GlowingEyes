@@ -27,8 +27,6 @@ public class ClientProxy extends CommonProxy {
 
     public static KeyBinding[] keyBindings = new KeyBinding[] { toggleKeyBinding, eyesEditorKeyBinding };
 
-    PresetManager presetManager = new PresetManager();
-
     HashMap<Point, Color> pixelMap = new HashMap<>();
     boolean isToggledOn = false;
 
@@ -41,7 +39,7 @@ public class ClientProxy extends CommonProxy {
         ClientCommandHandler.instance.registerCommand(new EyesCommand());
         ClientCommandHandler.instance.getCommands().forEach((s, command) -> e.getModLog().info("Registered command: " + s));
 
-        presetManager.loadPresets();
+        PresetManager.getInstance().loadPresets();
         e.getModLog().info("Registered commands");
     }
 

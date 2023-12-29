@@ -62,9 +62,6 @@ public class CommonProxy {
     public Scheduler getScheduler() {
         return scheduler;
     }
-    public PresetManager getPresetManager() {
-        return null;
-    }
 
     public HashMap<Point, Color> getPixelMap() {
         return null;

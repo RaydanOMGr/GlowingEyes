@@ -1,9 +1,11 @@
 package me.andreasmelone.glowingeyes.client.ui;
 
-import me.andreasmelone.glowingeyes.GlowingEyes;
 import me.andreasmelone.glowingeyes.client.presets.Preset;
+import me.andreasmelone.glowingeyes.client.presets.PresetManager;
+import me.andreasmelone.glowingeyes.client.ui.buttons.GuiBigSelectableButton;
 import me.andreasmelone.glowingeyes.client.util.GuiUtil;
 import me.andreasmelone.glowingeyes.client.util.TextureLocations;
+import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
 
 import java.util.List;
@@ -16,6 +18,7 @@ public class PresetsScreen extends GuiScreen {
     protected int ySize = 222; // the size of the texture is 221x222
 
     private final GuiScreen parent;
+    private final PresetManager presetManager = PresetManager.getInstance();
 
     public PresetsScreen(GuiScreen parent) {
         this.parent = parent;
@@ -25,6 +28,13 @@ public class PresetsScreen extends GuiScreen {
     public void initGui() {
         this.guiLeft = (this.width - this.xSize) / 2;
         this.guiTop = (this.height - this.ySize) / 2;
+
+        List<Preset> presets = presetManager.getPresets();
+        int i = 0;
+        for(Preset preset : presets) {
+            this.buttonList.add(new GuiBigSelectableButton(i, this.guiLeft + 10, this.guiTop + 10 + (i * 30), preset.getName()));
+            i++;
+        }
     }
 
     @Override
@@ -32,20 +42,19 @@ public class PresetsScreen extends GuiScreen {
         this.drawDefaultBackground();
         GuiUtil.drawBackground(TextureLocations.UI_BACKGROUND_BROAD, this.guiLeft, this.guiTop, this.xSize, this.ySize);
 
-        List<Preset> presets = GlowingEyes.proxy.getPresetManager().getPresets();
-        int i = 0;
-        for(Preset preset : presets) {
-            this.mc.getTextureManager().bindTexture(preset.getResourceLocation());
-            // draw a grey background
-            this.drawGradientRect(this.guiLeft + 10 + (i * 50), this.guiTop + 10, this.guiLeft + 50 + (i * 50), this.guiTop + 50, 0x80FFFFFF, 0x80FFFFFF);
-            // now draw eyes
-            this.drawTexturedModalRect(this.guiLeft + 10 + (i * 50), this.guiTop + 10, 0, 0, 40, 40);
-            i++;
-        }
+        super.drawScreen(mouseX, mouseY, partialTicks);
     }
 
     @Override
-    public void onGuiClosed() {
-        this.mc.displayGuiScreen(this.parent);
+    protected void actionPerformed(GuiButton button) {
+        if(button instanceof GuiBigSelectableButton) {
+            GuiBigSelectableButton bigButton = (GuiBigSelectableButton) button;
+            bigButton.setSelected(true);
+            for(GuiButton guiButton : this.buttonList) {
+                if(guiButton instanceof GuiBigSelectableButton && guiButton != bigButton) {
+                    ((GuiBigSelectableButton) guiButton).setSelected(false);
+                }
+            }
+        }
     }
 }

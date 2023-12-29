@@ -37,7 +37,6 @@ public class EyesEditScreen extends GuiScreen {
 
     GuiButtonBrush brushButton;
     GuiButtonEraser eraserButton;
-    GuiButtonFill fillButton;
 
     private Mode mode = Mode.BRUSH;
 
@@ -79,16 +78,14 @@ public class EyesEditScreen extends GuiScreen {
         );
         eraserButton.setSelected(false);
 
-        // add the fill button
-//        this.buttonList.add(
-//                fillButton = new GuiButtonFill(i++, this.guiLeft + 8, this.guiTop + 120)
-//        );
-//        fillButton.setSelected(false);
-        i++;
+        // add the presets menu button right below the toggle layer button
+        this.buttonList.add(
+                new GuiButtonOpenPresets(i++, this.guiLeft + this.xSize - 30, this.guiTop + this.ySize - 55)
+        );
 
         // add the toggle layer button
         this.buttonList.add(
-                new GuiButtonToggleLayer(i++, this.guiLeft + this.xSize - 30, this.guiTop + this.ySize - 55)
+                new GuiButtonToggleLayer(i++, this.guiLeft + this.xSize - 30, this.guiTop + this.ySize - 80)
         );
     }
 
@@ -252,7 +249,6 @@ public class EyesEditScreen extends GuiScreen {
             mode = Mode.BRUSH;
             brushButton.setSelected(true);
             eraserButton.setSelected(false);
-//            fillButton.setSelected(false);
         }
 
         if(button.id == 2 && !eraserButton.isSelected()) {
@@ -260,16 +256,12 @@ public class EyesEditScreen extends GuiScreen {
             mode = Mode.ERASER;
             brushButton.setSelected(false);
             eraserButton.setSelected(true);
-//            fillButton.setSelected(false);
         }
 
-//        if(button.id == 3 && !fillButton.isSelected()) {
-//            // change the mode to fill
-//            mode = Mode.FILL;
-//            brushButton.setSelected(false);
-//            eraserButton.setSelected(false);
-//            fillButton.setSelected(true);
-//        }
+        if(button.id == 3) {
+            // open the presets menu
+            mc.displayGuiScreen(new PresetsScreen(this));
+        }
 
         if(button.id == 4) {
             // toggle the second layer
