@@ -14,8 +14,8 @@ public class PresetsScreen extends GuiScreen {
     private int guiLeft;
     private int guiTop;
 
-    protected int xSize = 256; // the size of the texture is 221x222
-    protected int ySize = 222; // the size of the texture is 221x222
+    protected int xSize = 256; // the size of the texture is 256x222
+    protected int ySize = 222; // the size of the texture is 256x222
 
     private final GuiScreen parent;
     private final PresetManager presetManager = PresetManager.getInstance();
@@ -24,17 +24,48 @@ public class PresetsScreen extends GuiScreen {
         this.parent = parent;
     }
 
+    int page = 0;
+    int buttons = 0;
+
+    int selectedPreset = -1;
+
     @Override
     public void initGui() {
         this.guiLeft = (this.width - this.xSize) / 2;
         this.guiTop = (this.height - this.ySize) / 2;
 
+        // <- and ->
+        this.buttonList.add(
+                new GuiButton(
+                        buttons++,
+                        this.guiLeft + 20, this.guiTop + 190,
+                        20, 20,
+                        "<"
+                )
+        );
+        this.buttonList.add(
+                new GuiButton(
+                        buttons++,
+                        this.guiLeft + 90, this.guiTop + 190,
+                        20, 20,
+                        ">"
+                )
+        );
+
         List<Preset> presets = presetManager.getPresets();
-        int i = 0;
+        int j = 0;
         for(Preset preset : presets) {
-            this.buttonList.add(new GuiBigSelectableButton(i, this.guiLeft + 10, this.guiTop + 10 + (i * 30), preset.getName()));
-            i++;
+            if(j >= 6) break; // TODO: add scrolling
+            this.buttonList.add(
+                    new GuiBigSelectableButton(
+                            j + buttons,
+                            this.guiLeft + 10, this.guiTop + 10 + (j * 30),
+                            preset.getName()
+                    )
+            );
+            j++;
         }
+        buttons += j;
     }
 
     @Override
@@ -53,6 +84,39 @@ public class PresetsScreen extends GuiScreen {
             for(GuiButton guiButton : this.buttonList) {
                 if(guiButton instanceof GuiBigSelectableButton && guiButton != bigButton) {
                     ((GuiBigSelectableButton) guiButton).setSelected(false);
+                }
+            }
+        }
+        if(button.id == 0) {
+            if(page > 0) {
+                page--;
+            }
+            for(GuiButton guiButton : this.buttonList) {
+                if(guiButton instanceof GuiBigSelectableButton) {
+                    GuiBigSelectableButton bigButton = (GuiBigSelectableButton) guiButton;
+                    Preset preset = presetManager.getPreset(page * 6 + bigButton.id - 2);
+                    if(preset != null) {
+                        bigButton.visible = true;
+                        bigButton.displayString = preset.getName();
+                    } else {
+                        bigButton.visible = false;
+                    }
+                }
+            }
+        } else if(button.id == 1) {
+            if(page < presetManager.getPresets().size() / 6) {
+                page++;
+            }
+            for(GuiButton guiButton : this.buttonList) {
+                if(guiButton instanceof GuiBigSelectableButton) {
+                    GuiBigSelectableButton bigButton = (GuiBigSelectableButton) guiButton;
+                    Preset preset = presetManager.getPreset(page * 6 + bigButton.id - 2);
+                    if(preset != null) {
+                        bigButton.visible = true;
+                        bigButton.displayString = preset.getName();
+                    } else {
+                        bigButton.visible = false;
+                    }
                 }
             }
         }

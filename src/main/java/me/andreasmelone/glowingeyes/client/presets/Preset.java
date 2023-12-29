@@ -11,10 +11,12 @@ import java.util.HashMap;
 
 public class Preset {
     private String name;
+    private int id;
     private HashMap<Point, Color> content;
 
-    public Preset(String name, HashMap<Point, Color> content) {
+    public Preset(String name, int id, HashMap<Point, Color> content) {
         this.name = name;
+        this.id = id;
         this.content = content;
     }
 
@@ -38,5 +40,9 @@ public class Preset {
 
     public String getName() {
         return this.name;
+    }
+
+    public int getId() {
+        return this.id;
     }
 }

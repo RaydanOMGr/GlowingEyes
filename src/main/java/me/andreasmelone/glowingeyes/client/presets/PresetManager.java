@@ -9,6 +9,7 @@ import me.andreasmelone.glowingeyes.common.packets.NetworkHandler;
 import me.andreasmelone.glowingeyes.common.util.ModInfo;
 import net.minecraft.entity.player.EntityPlayer;
 
+import javax.annotation.Nullable;
 import java.awt.*;
 import java.io.File;
 import java.util.ArrayList;
@@ -23,14 +24,14 @@ public class PresetManager {
     private final List<Preset> presets = new LinkedList<>();
 
     public void loadPresets() {
-        HashMap<Point, Color> content = new HashMap<>();
-        content.put(new Point(3, 5), ModInfo.DEFAULT_EYE_COLOR);
-        content.put(new Point(6, 5), ModInfo.DEFAULT_EYE_COLOR);
-        presets.add(new Preset("Eyes 1", content));
+        for(int i = 1; i < 16 + 1; i++) {
+            HashMap<Point, Color> content = new HashMap<>();
 
-        content.put(new Point(3, 6), ModInfo.DEFAULT_EYE_COLOR);
-        content.put(new Point(6, 6), ModInfo.DEFAULT_EYE_COLOR);
-        presets.add(new Preset("Eyes 2", content));
+            content.put(new Point(i, 0), ModInfo.DEFAULT_EYE_COLOR);
+            content.put(new Point(0, i), ModInfo.DEFAULT_EYE_COLOR);
+
+            this.presets.add(new Preset("Preset " + i, content));
+        }
     }
 
     public void savePresets() {
@@ -56,6 +57,7 @@ public class PresetManager {
         }
     }
 
+    @Nullable
     public Preset getPreset(int id) {
         if(id < 0 || id >= this.presets.size()) {
             return null;
