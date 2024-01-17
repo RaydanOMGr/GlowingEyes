@@ -7,6 +7,8 @@ import net.minecraft.util.EnumFacing;
 import net.minecraftforge.common.capabilities.Capability;
 
 import java.io.IOException;
+import java.nio.BufferOverflowException;
+import java.nio.BufferUnderflowException;
 import java.nio.ByteBuffer;
 import java.util.HashMap;
 
@@ -44,10 +46,11 @@ public class GlowingEyesStorage implements Capability.IStorage<IGlowingEyesCapab
         instance.setToggledOn(toggledOn == (byte)1);
 
         byte[] mapData = new byte[data.length - 1];
-        buffer.get(mapData);
+
         try {
+            buffer.get(mapData);
             instance.setGlowingEyesMap(Util.deserializeHashMap(mapData));
-        } catch (IOException | ClassNotFoundException e) {
+        } catch (BufferUnderflowException | BufferOverflowException | IOException | ClassNotFoundException e) {
             instance.setGlowingEyesMap(new HashMap<>());
 
             GlowingEyes.logger.error("GlowingEyesStorage: readNBT: Failed reading NBT");

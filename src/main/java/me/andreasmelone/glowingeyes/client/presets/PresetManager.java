@@ -30,7 +30,7 @@ public class PresetManager {
             content.put(new Point(i, 0), ModInfo.DEFAULT_EYE_COLOR);
             content.put(new Point(0, i), ModInfo.DEFAULT_EYE_COLOR);
 
-            this.presets.add(new Preset("Preset " + i, i, content));
+            this.addPreset(new Preset("Preset " + i, i, content));
         }
     }
 
@@ -65,10 +65,21 @@ public class PresetManager {
         return this.presets.get(id);
     }
 
-    public void addPreset(Preset preset) {
-        this.presets.add(preset);
+    public boolean hasPage(int page, int pageSize) {
+        // a page can have even only one element, but still be valid
+        return page >= 0 && page < (this.presets.size() / pageSize) + 1;
     }
 
+    public int addPreset(Preset preset) {
+        this.presets.add(preset);
+        return this.presets.size() - 1;
+    }
+    public void removePreset(int id) {
+        if(id < 0 || id >= this.presets.size()) {
+            return;
+        }
+        this.presets.remove(id);
+    }
 
     public static PresetManager getInstance() {
         return INSTANCE;

@@ -23,6 +23,7 @@ import java.util.UUID;
 public class CommonProxy {
     private Scheduler scheduler;
     private HashMap<EntityPlayer, List<UUID>> playersTracking = new HashMap<>();
+    private CapabilityHandler capHandler;
 
     public void preInit(FMLPreInitializationEvent e) {
         scheduler = new Scheduler();
@@ -32,7 +33,8 @@ public class CommonProxy {
         MinecraftForge.EVENT_BUS.register(new CommonGlowingEyesEvents());
 
         CapabilityManager.INSTANCE.register(IGlowingEyesCapability.class, new GlowingEyesStorage(), GlowingEyesCapability::new);
-        MinecraftForge.EVENT_BUS.register(new CapabilityHandler());
+        capHandler = new CapabilityHandler();
+        MinecraftForge.EVENT_BUS.register(capHandler);
 
         NetworkHandler.init();
     }
@@ -77,5 +79,8 @@ public class CommonProxy {
         return false;
     }
     public void setToggledOn(boolean toggledOn) {
+    }
+    public CapabilityHandler getCapabilityHandler() {
+        return capHandler;
     }
 }
