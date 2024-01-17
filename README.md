@@ -7,11 +7,11 @@ You can download it on [CurseForge](https://www.curseforge.com/minecraft/mc-mods
 If you decide to build the mod from the source here (on github) you might encounter some issues.
 
 ## Usage
-You can toggle your glowing eyes on by doing typing `/eyes toggle on` in chat, and you can toggle them off by typing `/eyes toggle off`<br>
-To change the type of your eyes, type `/eyes type <number>` where `<number>` can be any number from 0 to 16. I have taken textures 0 to 15 from the [Vampirism](https://github.com/TeamLapen/Vampirism) mod, 16 I have made myself, but I might add some kind of customization later
+~~You can toggle your glowing eyes on by doing typing `/eyes toggle on` in chat, and you can toggle them off by typing `/eyes toggle off`<br>
+To change the type of your eyes, type `/eyes type <number>` where `<number>` can be any number from 0 to 16. I have taken textures 0 to 15 from the [Vampirism](https://github.com/TeamLapen/Vampirism) mod, 16 I have made myself, but I might add some kind of customization later~~ gonna fix this later
 
 ## Planned features
-- An eye selection GUI, possibly even an editor of some kind
+- ~~An eye selection GUI, possibly even an editor of some kind~~ Done!
 
 Suggest your ideas in the issues section!
 
