@@ -2,6 +2,7 @@ package me.andreasmelone.glowingeyes.client.ui;
 
 import me.andreasmelone.glowingeyes.GlowingEyes;
 import me.andreasmelone.glowingeyes.client.ui.buttons.*;
+import me.andreasmelone.glowingeyes.client.ui.preset.PresetsScreen;
 import me.andreasmelone.glowingeyes.client.util.GuiUtil;
 import me.andreasmelone.glowingeyes.client.util.TextureLocations;
 import me.andreasmelone.glowingeyes.common.capability.eyes.GlowingEyesProvider;
@@ -43,7 +44,7 @@ public class EyesEditScreen extends GuiScreen {
     private boolean isSecondLayerVisible = false;
 
     private final Minecraft mc;
-    private final HashMap<Point, Color> pixelMap = GlowingEyes.proxy.getPixelMap();
+    private final HashMap<Point, Color> pixelMap = GlowingEyes.proxy.getPixelMap(); // to be re-fetched
 
     public EyesEditScreen(Minecraft mc) {
         super();
@@ -280,6 +281,14 @@ public class EyesEditScreen extends GuiScreen {
 
             NetworkHandler.sendToServer(new ClientCapabilityMessage(cap, mc.player));
         }
+    }
+
+    public void openAsParent() {
+        // refetch all values
+        this.pixelMap.clear();
+        this.pixelMap.putAll(GlowingEyes.proxy.getPixelMap());
+
+        mc.displayGuiScreen(this);
     }
 
     enum Mode {

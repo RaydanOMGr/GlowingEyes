@@ -6,7 +6,7 @@ import me.andreasmelone.glowingeyes.client.util.TextureLocations;
 import me.andreasmelone.glowingeyes.common.util.ModInfo;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
-import me.andreasmelone.glowingeyes.client.ui.labels.GuiLabel;
+import net.minecraft.client.gui.GuiLabel;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.GuiTextField;
 import net.minecraft.client.resources.I18n;
@@ -26,12 +26,12 @@ public class ColorPickerScreen extends GuiScreen {
     GuiLabel redLabel;
     GuiLabel greenLabel;
     GuiLabel blueLabel;
-    GuiLabel alphaLabel;
+    //GuiLabel alphaLabel;
 
     GuiTextField redField;
     GuiTextField greenField;
     GuiTextField blueField;
-    GuiTextField alphaField;
+    //GuiTextField alphaField;
 
     private final GuiScreen parent;
 
@@ -125,23 +125,23 @@ public class ColorPickerScreen extends GuiScreen {
         blueField.setText(String.valueOf(GlowingEyes.proxy.getPixelColor().getBlue()));
         fields++;
 
-        alphaLabel = new GuiLabel(fontRenderer, 3,
-                this.guiLeft + xDifference,
-                guiTop + defaultOffset + yDifference * labels + fields * height + buttons * ((buttonHeight / 2) + yDifference),
-                width, height,
-                new Color(145, 145, 145).getRGB()
-        );
-        alphaLabel.addLine(I18n.format("gui.alpha"));
-        labels++;
-
-        alphaField = new GuiTextField(3, this.fontRenderer,
-                this.guiLeft + xDifference,
-                guiTop + defaultOffset + yDifference * labels + fields * height + buttons * ((buttonHeight / 2) + yDifference),
-                width, height
-        );
-        alphaField.setMaxStringLength(3);
-        alphaField.setText(String.valueOf(GlowingEyes.proxy.getPixelColor().getAlpha()));
-        fields++;
+//        alphaLabel = new GuiLabel(fontRenderer, 3,
+//                this.guiLeft + xDifference,
+//                guiTop + defaultOffset + yDifference * labels + fields * height + buttons * ((buttonHeight / 2) + yDifference),
+//                width, height,
+//                new Color(145, 145, 145).getRGB()
+//        );
+//        alphaLabel.addLine(I18n.format("gui.alpha"));
+//        labels++;
+//
+//        alphaField = new GuiTextField(3, this.fontRenderer,
+//                this.guiLeft + xDifference,
+//                guiTop + defaultOffset + yDifference * labels + fields * height + buttons * ((buttonHeight / 2) + yDifference),
+//                width, height
+//        );
+//        alphaField.setMaxStringLength(3);
+//        alphaField.setText(String.valueOf(GlowingEyes.proxy.getPixelColor().getAlpha()));
+//        fields++;
 
         Keyboard.enableRepeatEvents(true);
 
@@ -183,8 +183,8 @@ public class ColorPickerScreen extends GuiScreen {
         blueLabel.drawLabel(mc, mouseX, mouseY);
         blueField.drawTextBox();
 
-        alphaLabel.drawLabel(mc, mouseX, mouseY);
-        alphaField.drawTextBox();
+//        alphaLabel.drawLabel(mc, mouseX, mouseY);
+//        alphaField.drawTextBox();
 
         super.drawScreen(mouseX, mouseY, partialTicks);
     }
@@ -204,7 +204,7 @@ public class ColorPickerScreen extends GuiScreen {
         redField.textboxKeyTyped(typedChar, keyCode);
         greenField.textboxKeyTyped(typedChar, keyCode);
         blueField.textboxKeyTyped(typedChar, keyCode);
-        alphaField.textboxKeyTyped(typedChar, keyCode);
+//        alphaField.textboxKeyTyped(typedChar, keyCode);
 
         super.keyTyped(typedChar, keyCode);
     }
@@ -215,7 +215,7 @@ public class ColorPickerScreen extends GuiScreen {
         redField.mouseClicked(mouseX, mouseY, mouseButton);
         greenField.mouseClicked(mouseX, mouseY, mouseButton);
         blueField.mouseClicked(mouseX, mouseY, mouseButton);
-        alphaField.mouseClicked(mouseX, mouseY, mouseButton);
+//        alphaField.mouseClicked(mouseX, mouseY, mouseButton);
 
         super.mouseClicked(mouseX, mouseY, mouseButton);
     }
@@ -248,19 +248,19 @@ public class ColorPickerScreen extends GuiScreen {
                 blue = GlowingEyes.proxy.getPixelColor().getBlue();
             }
 
-            try {
-                alpha = Integer.parseInt(alphaField.getText());
-            } catch (NumberFormatException e) {
-                alpha = GlowingEyes.proxy.getPixelColor().getAlpha();
-            }
+//            try {
+//                alpha = Integer.parseInt(alphaField.getText());
+//            } catch (NumberFormatException e) {
+//                alpha = GlowingEyes.proxy.getPixelColor().getAlpha();
+//            }
 
             red = Math.max(0, Math.min(255, red));
             green = Math.max(0, Math.min(255, green));
             blue = Math.max(0, Math.min(255, blue));
-            alpha = Math.max(0, Math.min(255, alpha));
+//            alpha = Math.max(0, Math.min(255, alpha));
 
             // create a color object from the values
-            Color color = new Color(red, green, blue, alpha);
+            Color color = new Color(red, green, blue /*, alpha*/);
             GlowingEyes.proxy.setPixelColor(color);
 
             // close the screen
@@ -271,7 +271,7 @@ public class ColorPickerScreen extends GuiScreen {
             redField.setText(String.valueOf(GlowingEyes.proxy.getPixelColor().getRed()));
             greenField.setText(String.valueOf(GlowingEyes.proxy.getPixelColor().getGreen()));
             blueField.setText(String.valueOf(GlowingEyes.proxy.getPixelColor().getBlue()));
-            alphaField.setText(String.valueOf(GlowingEyes.proxy.getPixelColor().getAlpha()));
+//            alphaField.setText(String.valueOf(GlowingEyes.proxy.getPixelColor().getAlpha()));
         }
     }
 }
