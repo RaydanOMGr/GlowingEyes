@@ -12,6 +12,7 @@ import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.inventory.GuiInventory;
 import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
 import org.lwjgl.opengl.GL11;
 
@@ -91,7 +92,7 @@ public class PresetsScreen extends GuiScreen {
                         buttons++,
                         this.guiLeft + this.xSize - 90, this.guiTop + 120,
                         80, 20,
-                        "Done"
+                        I18n.format("gui.done")
                 )
         );
         this.buttonList.add(
@@ -99,7 +100,7 @@ public class PresetsScreen extends GuiScreen {
                         buttons++,
                         this.guiLeft + this.xSize - 90, this.guiTop + 142,
                         80, 20,
-                        "Cancel"
+                        I18n.format("gui.cancel")
                 )
         );
         this.buttonList.add(
@@ -107,7 +108,7 @@ public class PresetsScreen extends GuiScreen {
                         buttons++,
                         this.guiLeft + 10, this.guiTop + 5 + ((pageSize + 1) * 30),
                         128 / 2 - 3, 20,
-                        "Create"
+                        I18n.format("gui.presets.create")
                 )
         );
         this.buttonList.add(
@@ -115,7 +116,7 @@ public class PresetsScreen extends GuiScreen {
                         buttons++,
                         this.guiLeft + 10 + (128 / 2) + (3 * 2), this.guiTop + 5 + ((pageSize + 1) * 30),
                         128 / 2 - 3, 20,
-                        "Delete"
+                        I18n.format("gui.presets.delete")
                 )
         );
         this.buttonList.add(
@@ -123,7 +124,7 @@ public class PresetsScreen extends GuiScreen {
                         buttons++,
                         this.guiLeft + this.xSize - 90, this.guiTop + 164,
                         80, 20,
-                        "Lock"
+                        I18n.format("gui.presets.lock")
                 )
         );
 
@@ -134,17 +135,23 @@ public class PresetsScreen extends GuiScreen {
         offset = buttons;
 
         List<Preset> presets = new ArrayList<>(presetManager.getPresets().values());
-        int j = 0;
-        for(Preset preset : presets) {
-            if(j >= pageSize) break;
+        int j;
+        for(j = 0; j < pageSize; j++) {
+            Preset preset = presets.get(j + (page * pageSize));
+            GuiPresetButton current;
             this.buttonList.add(
-                    new GuiPresetButton(
+                    current = new GuiPresetButton(
                             j + buttons,
                             this.guiLeft + 10, this.guiTop + 10 + (j * 30),
                             preset
                     )
             );
-            j++;
+            if((page * pageSize) + j >= presets.size()) {
+                this.buttonList.get(j).visible = false;
+            } else {
+                this.buttonList.get(j).visible = true;
+                current.setSelected(current.getPreset().getId() == selectedPreset);
+            }
         }
         buttons += j;
     }
@@ -196,15 +203,15 @@ public class PresetsScreen extends GuiScreen {
                 pb.setSelected(false);
             }
         }
-        this.buttonList.get(4).displayString = "Create";
+        this.setEditing(false);
     }
 
     private void setEditing(boolean editing) {
         this.editing = editing;
         if(editing) {
-            this.buttonList.get(4).displayString = "Edit";
+            this.buttonList.get(4).displayString = I18n.format("gui.presets.edit");
         } else {
-            this.buttonList.get(4).displayString = "Create";
+            this.buttonList.get(4).displayString = I18n.format("gui.presets.create");
         }
     }
 
@@ -237,7 +244,14 @@ public class PresetsScreen extends GuiScreen {
                 EditPresetScreen.askForName(this, presetManager.getPreset(selectedPreset).getName()).thenAccept((result) -> {
                     if(result != null) {
                         presetManager.getPreset(selectedPreset).setName(result);
-                        switchPage(page);
+                        for(GuiButton b : this.buttonList) {
+                            if(b instanceof GuiPresetButton) {
+                                GuiPresetButton pb = (GuiPresetButton) b;
+                                if(pb.getPreset().getId() == selectedPreset) {
+                                    pb.setPreset(presetManager.getPreset(selectedPreset));
+                                }
+                            }
+                        }
                         this.unselectPreset();
                     }
                 });
@@ -248,19 +262,14 @@ public class PresetsScreen extends GuiScreen {
                 ConfirmDeletionScreen.askToDelete(this, presetManager.getPreset(selectedPreset).getName()).thenAccept((result) -> {
                     if(result) {
                         presetManager.removePreset(selectedPreset);
-                        if(presetManager.hasPage(page, pageSize))
-                            switchPage(page);
-                        else {
-                            page--;
-                            switchPage(page);
-                        }
+                        switchPage(1);
                     }
                     unselectPreset();
                 });
             }
         } else if(button.id == 6) {
             isLocked = !isLocked;
-            button.displayString = isLocked ? "Unlock" : "Lock";
+            button.displayString = isLocked ? I18n.format("gui.presets.unlock") : I18n.format("gui.presets.lock");
         } else if(button instanceof GuiPresetButton) {
             GuiPresetButton presetButton = (GuiPresetButton) button;
             if(!presetManager.hasPreset(presetButton.getPreset().getId())) {

@@ -1,0 +1,26 @@
+key.categories.glowingeyes=Светящиеся глаза
+key.glowingeyes.editor.open=Открыть редактор глаз
+key.glowingeyes.toggle=Вкл./Выкл. светящиеся глаза
+
+gui.confirm=Подтвердить
+gui.reset=Сбросить
+gui.cancel=Отмена
+gui.apply=Применить
+gui.create=Создать
+
+gui.red=Красный
+gui.green=Зеленый
+gui.blue=Синий
+
+gui.create.title=Создать пресет
+gui.delete.confirm=Вы уверены, что хотите удалить %s?
+gui.edit.title=Редактировать пресет
+gui.name=Имя
+
+gui.presets.edit=Изменить
+gui.presets.delete=Удалить
+gui.presets.create=Создать
+gui.presets.lock=Заблокировать
+gui.presets.unlock=Разблокировать
+
+gui.editor.title=Редактор светящихся глаз

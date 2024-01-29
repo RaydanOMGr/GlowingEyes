@@ -148,7 +148,7 @@ public class ColorPickerScreen extends GuiScreen {
         // Confirm button
         this.buttonList.add(new GuiButton(0,
                 this.guiLeft + xButtonDifference,
-                guiTop + defaultOffset + defaultButtonOffset + yDifference * labels + fields * height + buttons * ((buttonHeight / 2) + yDifference),
+                guiTop + defaultOffset + defaultButtonOffset + yDifference * labels + (fields + 1) * height + buttons * ((buttonHeight / 2) + yDifference),
                 buttonWidth, buttonHeight,
                 I18n.format("gui.confirm")
         ));
@@ -157,7 +157,7 @@ public class ColorPickerScreen extends GuiScreen {
         // Reset button
         this.buttonList.add(new GuiButton(1,
                 this.guiLeft + xButtonDifference,
-                guiTop + defaultOffset + defaultButtonOffset + yDifference * labels + fields * height + buttons * ((buttonHeight / 2) + yDifference),
+                guiTop + defaultOffset + defaultButtonOffset + yDifference * labels + (fields + 1) * height + buttons * ((buttonHeight / 2) + yDifference),
                 buttonWidth, buttonHeight,
                 I18n.format("gui.reset")
         ));

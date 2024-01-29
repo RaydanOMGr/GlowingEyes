@@ -183,7 +183,7 @@ public class EyesEditScreen extends GuiScreen {
             }
         }
 
-        drawCenteredString(fontRenderer, I18n.format("gui.glowingeyes.editor.title"),
+        drawCenteredString(fontRenderer, I18n.format("gui.editor.title"),
                 middleX, guiTop + 8, 0xFFFFFF);
 
         super.drawScreen(mouseX, mouseY, partialTicks);

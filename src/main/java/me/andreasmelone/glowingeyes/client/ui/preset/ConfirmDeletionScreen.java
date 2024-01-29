@@ -6,8 +6,10 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiLabel;
 import net.minecraft.client.gui.GuiScreen;
+import net.minecraft.client.resources.I18n;
 
 import java.awt.*;
+import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
 public class ConfirmDeletionScreen extends GuiScreen {
@@ -36,13 +38,13 @@ public class ConfirmDeletionScreen extends GuiScreen {
                 0,
                 this.guiLeft + 20, this.guiTop + 100,
                 80 - 5, 20,
-                "Confirm"
+                I18n.format("gui.confirm")
         ));
         this.buttonList.add(new GuiButton(
                 1,
                 this.guiLeft + 100 + (5 * 2), this.guiTop + 100,
                 80 - 5, 20,
-                "Cancel"
+                I18n.format("gui.cancel")
         ));
 
         this.labelList.add(
@@ -54,9 +56,14 @@ public class ConfirmDeletionScreen extends GuiScreen {
                         0xFFFFFF
                 )
         );
+        String formated = I18n.format("gui.delete.confirm", this.deletedElement);
+
         this.label.setCentered();
-        this.label.addLine("Are you sure you want to delete");
-        this.label.addLine(this.deletedElement + "?");
+        // split the text up so it fits on the screen
+        List<String> lines = this.fontRenderer.listFormattedStringToWidth(formated, this.xSize - (20 * 2));
+        for (String line : lines) {
+            this.label.addLine(line);
+        }
     }
 
     @Override

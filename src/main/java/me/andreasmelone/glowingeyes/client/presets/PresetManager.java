@@ -2,6 +2,7 @@ package me.andreasmelone.glowingeyes.client.presets;
 
 import com.google.common.collect.ImmutableList;
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.google.gson.JsonSyntaxException;
 import me.andreasmelone.glowingeyes.GlowingEyes;
 import me.andreasmelone.glowingeyes.common.capability.eyes.GlowingEyesProvider;
@@ -14,9 +15,7 @@ import net.minecraft.util.ResourceLocation;
 
 import javax.annotation.Nullable;
 import java.awt.*;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.HashMap;
@@ -29,12 +28,14 @@ import java.util.List;
 // A hash map would be the best choice, I will implement this as soon as I have time.
 public class PresetManager {
     private static final PresetManager INSTANCE = new PresetManager();
+    Gson gson = new GsonBuilder()
+            .registerTypeAdapter(HashMap.class, new PointColorMapSerializer())
+            .create();
 
     private final File presetStorage = new File("presets.json");
     private final HashMap<Integer, Preset> presets = new HashMap<>();
 
     public void loadPresets() {
-        Gson gson = new Gson();
         if(!this.presetStorage.exists() || !this.presetStorage.isFile()) {
             GlowingEyes.logger.info("No presets file found, creating a new one");
             this.saveDefaultPresets();
@@ -43,9 +44,17 @@ public class PresetManager {
 
         GsonPresetsFileModel gsonPresetsFileModel;
         try {
-            gsonPresetsFileModel = gson.fromJson(this.presetStorage.toString(), GsonPresetsFileModel.class);
+            gsonPresetsFileModel = gson.fromJson(
+                    new String(Files.readAllBytes(this.presetStorage.toPath())),
+                    GsonPresetsFileModel.class
+            );
         } catch (JsonSyntaxException e) {
             GlowingEyes.logger.error("Could not parse presets file due to it being malformed. Not loading data.");
+            e.printStackTrace();
+            return;
+        } catch (IOException e) {
+            GlowingEyes.logger.error("Could not load presets file due to an IOException");
+            e.printStackTrace();
             return;
         }
 
@@ -57,7 +66,6 @@ public class PresetManager {
     }
 
     public void savePresets() {
-        Gson gson = new Gson();
         GsonPresetsFileModel gsonPresetsFileModel = new GsonPresetsFileModel(this.presets.values().toArray(new Preset[0]));
         String json = gson.toJson(gsonPresetsFileModel);
         GlowingEyes.logger.info("Saving presets file");

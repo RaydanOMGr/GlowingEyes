@@ -9,6 +9,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.GuiTextField;
+import net.minecraft.client.resources.I18n;
 
 import java.io.IOException;
 
@@ -38,19 +39,20 @@ public class CreatePresetScreen extends GuiScreen {
                 this.guiLeft + 20, this.guiTop + 50,
                 this.xSize - (20 * 2), 20
         );
+        nameField.setFocused(true);
 
         // make a create and a cancel button
         this.buttonList.add(new GuiButton(
                 0,
                 this.guiLeft + 20, this.guiTop + 100,
                 80 - 5, 20,
-                "Create"
+                I18n.format("gui.create")
         ));
         this.buttonList.add(new GuiButton(
                 1,
                 this.guiLeft + 100 + (5 * 2), this.guiTop + 100,
                 80 - 5, 20,
-                "Cancel"
+                I18n.format("gui.cancel")
         ));
     }
 
@@ -60,9 +62,9 @@ public class CreatePresetScreen extends GuiScreen {
         this.drawDefaultBackground();
         GuiUtil.drawBackground(TextureLocations.UI_BACKGROUND_SLIM, this.guiLeft, this.guiTop, this.xSize, this.ySize);
 
-        this.drawCenteredString(this.fontRenderer, "Create Preset", this.width / 2, this.guiTop + 10, 0xFFFFFF);
+        this.drawCenteredString(this.fontRenderer, I18n.format("gui.create.title"), this.width / 2, this.guiTop + 10, 0xFFFFFF);
 
-        this.drawCenteredString(this.fontRenderer, "Name", this.width / 2, this.guiTop + 40, 0xFFFFFF);
+        this.drawCenteredString(this.fontRenderer, I18n.format("gui.name"), this.width / 2, this.guiTop + 40, 0xFFFFFF);
         nameField.drawTextBox();
 
         super.drawScreen(mouseX, mouseY, partialTicks);
