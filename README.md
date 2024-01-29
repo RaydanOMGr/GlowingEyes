@@ -16,7 +16,7 @@ To change the type of your eyes, type `/eyes type <number>` where `<number>` can
 Suggest your ideas in the issues section!
 
 ## Known Issues
-- It seems ReplayMod doesn't record the glowing eyes, but I don't see it as crucial for now. In case more people want this feature, I'll try to fix it -- Update: I have looked into the issue and I might have an idea how to fix it.
+- It seems ReplayMod doesn't record the glowing eyes, but I don't see it as crucial for now. In case more people want this feature, I'll try to fix it -- Update: I have looked into the issue and I might have an idea how to fix it. -- Update 2: I don't have an idea how to fix it. 
 
 ## Thanks!
 Thanks to the [Vampirism](https://github.com/TeamLapen/Vampirism) mod and its authors,
