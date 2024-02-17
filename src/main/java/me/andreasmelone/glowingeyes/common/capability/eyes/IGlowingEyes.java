@@ -4,7 +4,7 @@ import javax.annotation.Nonnull;
 import java.awt.*;
 import java.util.HashMap;
 
-public interface IGlowingEyesCapability {
+public interface IGlowingEyes {
     @Nonnull
     HashMap<Point, Color> getGlowingEyesMap();
     void setGlowingEyesMap(@Nonnull HashMap<Point, Color> glowingEyesMap);

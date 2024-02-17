@@ -1,31 +1,25 @@
 package me.andreasmelone.glowingeyes.common.capability.eyes;
 
-import javax.annotation.Nonnull;
-import java.awt.*;
-import java.util.HashMap;
+import net.minecraft.world.entity.player.Player;
+import net.minecraftforge.common.capabilities.Capability;
+import net.minecraftforge.common.capabilities.CapabilityManager;
+import net.minecraftforge.common.capabilities.CapabilityToken;
+import net.minecraftforge.common.capabilities.RegisterCapabilitiesEvent;
 
-public class GlowingEyesCapability implements IGlowingEyesCapability {
-    private boolean toggledOn = true;
-    private HashMap<Point, Color> glowingEyesMap = new HashMap<>();
+public class GlowingEyesCapability {
 
-    @Nonnull
-    @Override
-    public HashMap<Point, Color> getGlowingEyesMap() {
-        return this.glowingEyesMap;
+    public static final Capability<IGlowingEyes> INSTANCE = CapabilityManager.get(new CapabilityToken<>() {});
+
+    public static void register(RegisterCapabilitiesEvent event) {
+        event.register(IGlowingEyes.class);
     }
 
-    @Override
-    public void setGlowingEyesMap(@Nonnull HashMap<Point, Color> glowingEyesMap) {
-        this.glowingEyesMap = glowingEyesMap;
+    private static final IGlowingEyes localCapability = new GlowingEyesImpl();
+    public static IGlowingEyes getCapability(Player player) {
+        return player.getCapability(INSTANCE)
+                .orElseThrow(() -> new IllegalStateException("Could not get GlowingEyes capability from player"));
     }
 
-    @Override
-    public boolean isToggledOn() {
-        return toggledOn;
-    }
-
-    @Override
-    public void setToggledOn(boolean toggledOn) {
-        this.toggledOn = toggledOn;
+    private GlowingEyesCapability() {
     }
 }

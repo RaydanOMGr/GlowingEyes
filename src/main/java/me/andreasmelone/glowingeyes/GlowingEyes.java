@@ -1,41 +1,28 @@
 package me.andreasmelone.glowingeyes;
 
-import me.andreasmelone.glowingeyes.common.CommonProxy;
-import me.andreasmelone.glowingeyes.common.util.ModInfo;
+import me.andreasmelone.glowingeyes.common.capability.eyes.GlowingEyesHandler;
+import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.eventbus.api.IEventBus;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.common.SidedProxy;
-import net.minecraftforge.fml.common.event.FMLInitializationEvent;
-import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
-import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
-import org.apache.logging.log4j.Logger;
+import com.mojang.logging.LogUtils;
+import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
+import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
+import org.slf4j.Logger;
 
-@Mod(modid = ModInfo.MODID, name = ModInfo.NAME, version = ModInfo.VERSION)
+@Mod(GlowingEyes.MOD_ID)
 public class GlowingEyes {
-    public static Logger logger;
-    public static boolean serverHasMod = false;
+    public static final String MOD_ID = "glowingeyes";
+    private static final Logger LOGGER = LogUtils.getLogger();
 
-    @SidedProxy(clientSide = ModInfo.CLIENT_PROXY, serverSide = ModInfo.COMMON_PROXY)
-    public static CommonProxy proxy;
-
-    @Mod.EventHandler
-    public void preInit(FMLPreInitializationEvent event) {
-        event.getModLog().info(ModInfo.NAME + " is starting pre initialization!");
-        logger = event.getModLog();
-        proxy.preInit(event);
-        logger.info(ModInfo.NAME + " has finished pre initialization!");
+    public GlowingEyes() {
+        IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
+        modEventBus.addListener(this::commonSetup);
+        MinecraftForge.EVENT_BUS.register(this);
     }
 
-    @Mod.EventHandler
-    public void init(FMLInitializationEvent event) {
-        logger.info(ModInfo.NAME + " is starting initialization!");
-        proxy.init(event);
-        logger.info(ModInfo.NAME + " has finished initialization!");
-    }
-
-    @Mod.EventHandler
-    public void postInit(FMLPostInitializationEvent e) {
-        logger.info(ModInfo.NAME + " is in post initialization!");
-        proxy.postInit(e);
-        logger.info(ModInfo.NAME + " has finished post initialization!");
+    private void commonSetup(FMLCommonSetupEvent event) {
+        LOGGER.info("Glowing Eyes common setup");
+        MinecraftForge.EVENT_BUS.register(GlowingEyesHandler.class);
     }
 }

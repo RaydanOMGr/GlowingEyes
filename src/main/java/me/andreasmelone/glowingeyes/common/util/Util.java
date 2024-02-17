@@ -1,35 +1,44 @@
 package me.andreasmelone.glowingeyes.common.util;
 
 import java.io.*;
-import java.nio.ByteBuffer;
-import java.util.HashMap;
-import java.util.UUID;
+import java.util.Map;
 
 public class Util {
-    public static byte[] getBytesFromUUID(UUID uuid) {
-        ByteBuffer buffer = ByteBuffer.wrap(new byte[16]);
-        buffer.putLong(uuid.getMostSignificantBits());
-        buffer.putLong(uuid.getLeastSignificantBits());
-        return buffer.array();
+    /**
+     * Serialize a map to a byte array
+     * @param map the map to serialize
+     * @return the byte array containing the serialized map, in case of an error an empty byte array
+     * @param <K> the key type of the map, has to be serializable
+     * @param <V> the value type of the map, has to be serializable
+     */
+    public static <K extends Serializable, V extends Serializable> byte[] serializeMap(Map<K, V> map) {
+        // use object streams to serialize the map
+        try(ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
+            ObjectOutputStream oos = new ObjectOutputStream(baos);
+            oos.writeObject(map);
+            return baos.toByteArray();
+        } catch (IOException e) {
+            e.printStackTrace();
+            return new byte[0];
+        }
     }
 
-    public static UUID getUUIDFromBytes(byte[] uuidBytes) {
-        ByteBuffer buffer = ByteBuffer.wrap(uuidBytes);
-        long mostSignificantBits = buffer.getLong();
-        long leastSignificantBits = buffer.getLong();
-        return new UUID(mostSignificantBits, leastSignificantBits);
-    }
-
-    public static byte[] serializeHashMap(HashMap<?, ?> glowingEyesMap) throws IOException {
-        ByteArrayOutputStream bos = new ByteArrayOutputStream();
-        ObjectOutputStream oos = new ObjectOutputStream(bos);
-        oos.writeObject(glowingEyesMap);
-        return bos.toByteArray();
-    }
-
-    public static <K, V> HashMap<K, V> deserializeHashMap(byte[] glowingEyesMapBytes) throws IOException, ClassNotFoundException {
-        ByteArrayInputStream bis = new ByteArrayInputStream(glowingEyesMapBytes);
-        ObjectInputStream ois = new ObjectInputStream(bis);
-        return (HashMap<K, V>) ois.readObject();
+    /**
+     * Deserialize a map from a byte array
+     * @param serializedMap the byte array containing the serialized map
+     * @return the deserialized map, in case of an error null, please make sure to handle properly
+     * @param <MAP> the type of the map, including K and V
+     * @param <K> the key type of the map, has to be serializable
+     * @param <V> the value type of the map, has to be serializable
+     */
+    public static <MAP extends Map<K, V>, K extends Serializable, V extends Serializable> MAP deserializeMap(byte[] serializedMap) {
+        // use object streams to deserialize the map
+        try(ByteArrayInputStream bais = new ByteArrayInputStream(serializedMap)) {
+            ObjectInputStream ois = new ObjectInputStream(bais);
+            return (MAP) ois.readObject();
+        } catch (IOException | ClassNotFoundException e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 }
