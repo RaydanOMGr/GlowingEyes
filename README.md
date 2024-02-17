@@ -19,6 +19,7 @@ Suggest your ideas in the issues section!
 - It seems ReplayMod doesn't record the glowing eyes, but I don't see it as crucial for now. In case more people want this feature, I'll try to fix it -- Update: I have looked into the issue and I might have an idea how to fix it. -- Update 2: I don't have an idea how to fix it. 
 
 ## Thanks!
+Big thanks to [Olivo](https://github.com/Olivoz) for helping with writing the editor gui screen!<br>
 Thanks to the [Vampirism](https://github.com/TeamLapen/Vampirism) mod and its authors,
 contributors for the idea, inspiration, some code and the eye textures! **Please check them out!**<br>
 A lot of thanks also go to the [Modded Minecraft Discord Server](discord.gg/moddedmc) for helping me with the code!
