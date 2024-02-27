@@ -90,6 +90,11 @@ minecraft {
             property 'forge.enabledGameTestNamespaces', mod_id
         }
 
+        client2 {
+            parent runs.client
+            args '--username', "Dev2"
+        }
+
         server {
             property 'forge.enabledGameTestNamespaces', mod_id
             args '--nogui'

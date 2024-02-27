@@ -2,6 +2,7 @@ package me.andreasmelone.glowingeyes.client.commands;
 
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
+import me.andreasmelone.glowingeyes.client.GlowingEyesClient;
 import me.andreasmelone.glowingeyes.client.gui.EyesEditorScreen;
 import net.minecraft.client.Minecraft;
 import net.minecraft.commands.CommandSourceStack;
@@ -13,9 +14,10 @@ public class EyesCommand {
         eyes.executes(ctx -> {
             Minecraft mc = Minecraft.getInstance();
 
-            mc.execute(() -> {
-                    mc.setScreen(new EyesEditorScreen());
-            });
+            GlowingEyesClient.getClientScheduler().runLater(() -> {
+                mc.setScreen(new EyesEditorScreen());
+            }, 1L);
+
             return 1;
         });
 

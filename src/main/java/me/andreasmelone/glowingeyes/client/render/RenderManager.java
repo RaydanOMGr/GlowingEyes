@@ -6,11 +6,12 @@ import net.minecraft.client.renderer.entity.LivingEntityRenderer;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.client.event.EntityRenderersEvent;
+import net.minecraftforge.eventbus.api.Event;
 
 public class RenderManager {
-    private static <T extends Player, Q extends EntityModel<T>,
+    static <T extends Player, Q extends EntityModel<T>,
             Z extends HumanoidModel<T>, I extends LivingEntity, U extends EntityModel<I>>
-    void onAddLayers(EntityRenderersEvent.AddLayers event) {
+    void _onAddLayers(EntityRenderersEvent.AddLayers event) {
         for (String s : event.getSkins()) {
             LivingEntityRenderer<T, Q> renderPlayer = event.getSkin(s);
             if (renderPlayer != null && renderPlayer.getModel() instanceof HumanoidModel) {
@@ -18,5 +19,9 @@ public class RenderManager {
                 renderPlayer2.addLayer(new GlowingEyesHeadLayer<>(renderPlayer2));
             }
         }
+    }
+
+    public static void onAddLayers(EntityRenderersEvent.AddLayers event) {
+        _onAddLayers(event);
     }
 }

@@ -6,7 +6,10 @@ import com.mojang.logging.LogUtils;
 import me.andreasmelone.glowingeyes.client.util.GuiUtil;
 import me.andreasmelone.glowingeyes.client.util.TextureLocations;
 import me.andreasmelone.glowingeyes.common.capability.eyes.GlowingEyesCapability;
+import me.andreasmelone.glowingeyes.common.packets.CapabilityUpdatePacket;
+import me.andreasmelone.glowingeyes.common.packets.PacketManager;
 import net.minecraft.client.gui.Gui;
+import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Player;
@@ -44,6 +47,19 @@ public class EyesEditorScreen extends Screen {
         if(!saved.get()) {
             LogUtils.getLogger().error("Could not load glowing eyes map from player capability");
         }
+
+        this.addRenderableWidget(new Button(
+                this.guiLeft + 8, this.guiTop + 70,
+                20, 20,
+                Component.translatable("gui.glowingeyes.brush"),
+                button -> mode = Mode.BRUSH
+        ));
+        this.addRenderableWidget(new Button(
+                this.guiLeft + 8, this.guiTop + 95,
+                20, 20,
+                Component.translatable("gui.glowingeyes.eraser"),
+                button -> mode = Mode.ERASER
+        ));
     }
 
     int headX, headY;
@@ -60,7 +76,6 @@ public class EyesEditorScreen extends Screen {
      */
     @Override
     public void render(PoseStack poseStack, int mouseX, int mouseY, float deltaTime) {
-        super.render(poseStack, mouseX, mouseY, deltaTime);
         renderBackground(poseStack);
 
         GuiUtil.drawBackground(poseStack,
@@ -123,6 +138,8 @@ public class EyesEditorScreen extends Screen {
                 }
             }
         }
+
+        super.render(poseStack, mouseX, mouseY, deltaTime);
     }
 
     @Override
@@ -152,7 +169,6 @@ public class EyesEditorScreen extends Screen {
 
         return super.mouseClicked(mouseX, mouseY, mouseButton);
     }
-
     @Override
     public void onClose() {
         AtomicBoolean saved = new AtomicBoolean(false);
@@ -161,6 +177,8 @@ public class EyesEditorScreen extends Screen {
             player.getCapability(GlowingEyesCapability.INSTANCE).ifPresent(eyes -> {
                 eyes.setGlowingEyesMap(pixels);
                 saved.set(true);
+
+                PacketManager.INSTANCE.sendToServer(new CapabilityUpdatePacket(player, eyes));
             });
         }
         if(!saved.get()) {

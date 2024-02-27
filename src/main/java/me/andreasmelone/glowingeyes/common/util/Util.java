@@ -1,5 +1,9 @@
 package me.andreasmelone.glowingeyes.common.util;
 
+import com.mojang.blaze3d.platform.NativeImage;
+import com.mojang.logging.LogUtils;
+
+import java.awt.image.BufferedImage;
 import java.io.*;
 import java.util.Map;
 
@@ -40,5 +44,24 @@ public class Util {
             e.printStackTrace();
             return null;
         }
+    }
+
+    public static NativeImage toNativeImage(BufferedImage image) {
+        NativeImage nativeImage = new NativeImage(image.getWidth(), image.getHeight(), true);
+        for (int y = 0; y < image.getHeight(); y++) {
+            for (int x = 0; x < image.getWidth(); x++) {
+                int argb = image.getRGB(x, y);
+
+                int alpha = (argb >> 24) & 0xFF;
+                int red = (argb >> 16) & 0xFF;
+                int green = (argb >> 8) & 0xFF;
+                int blue = argb & 0xFF;
+
+                int rgba = (blue << 24) | (red << 16) | (green << 8) | alpha;
+                nativeImage.setPixelRGBA(x, y, rgba);
+            }
+        }
+
+        return nativeImage;
     }
 }
