@@ -52,16 +52,25 @@ public class Util {
             for (int x = 0; x < image.getWidth(); x++) {
                 int argb = image.getRGB(x, y);
 
-                int alpha = (argb >> 24) & 0xFF;
-                int red = (argb >> 16) & 0xFF;
-                int green = (argb >> 8) & 0xFF;
-                int blue = argb & 0xFF;
-
-                int rgba = (blue << 24) | (red << 16) | (green << 8) | alpha;
-                nativeImage.setPixelRGBA(x, y, rgba);
+//                int alpha = (argb >> 24) & 0xFF;
+//                int red = (argb >> 16) & 0xFF;
+//                int green = (argb >> 8) & 0xFF;
+//                int blue = argb & 0xFF;
+//
+//                int rgba = (blue << 24) | (red << 16) | (green << 8) | alpha;
+//                nativeImage.setPixelRGBA(x, y, rgba);
+                nativeImage.setPixelRGBA(x, y, argb);
             }
         }
 
         return nativeImage;
+    }
+
+    public static float round(float value, int places) {
+        if (places < 0) throw new IllegalArgumentException();
+        long factor = (long) Math.pow(10, places);
+        value = value * factor;
+        long tmp = Math.round(value);
+        return (float) tmp / factor;
     }
 }

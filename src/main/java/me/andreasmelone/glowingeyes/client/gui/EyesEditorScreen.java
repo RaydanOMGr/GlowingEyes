@@ -10,13 +10,15 @@ import me.andreasmelone.glowingeyes.common.packets.CapabilityUpdatePacket;
 import me.andreasmelone.glowingeyes.common.packets.PacketManager;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.components.Button;
+import net.minecraft.client.gui.components.ImageButton;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Player;
 
 import java.awt.*;
+import java.util.List;
+import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 public class EyesEditorScreen extends Screen {
@@ -29,6 +31,7 @@ public class EyesEditorScreen extends Screen {
     protected int ySize = 222;
 
     HashMap<Point, Color> pixels = new HashMap<>();
+    List<Button> modeButtons = new ArrayList<>();
 
     @Override
     protected void init() {
@@ -48,18 +51,57 @@ public class EyesEditorScreen extends Screen {
             LogUtils.getLogger().error("Could not load glowing eyes map from player capability");
         }
 
-        this.addRenderableWidget(new Button(
+        // the color picker button
+        this.addRenderableWidget(new ImageButton(
+                this.guiLeft + this.xSize - 30, this.guiTop + this.ySize - 30,
+                20, 20,
+                0, 0, 20,
+                TextureLocations.COLOR_PICKER,
+                64, 64,
+                button -> {
+                    getMinecraft().setScreen(new ColorPickerScreen(this));
+                }
+        ));
+
+        // the preset menu button
+        this.addRenderableWidget(new ImageButton(
+                this.guiLeft + this.xSize - 60, this.guiTop + this.ySize - 30,
+                20, 20,
+                0, 0, 20,
+                TextureLocations.PRESET_MENU_BUTTON,
+                64, 64,
+                button -> {
+
+                }
+        ));
+
+        modeButtons.add(new ImageButton(
                 this.guiLeft + 8, this.guiTop + 70,
                 20, 20,
-                Component.translatable("gui.glowingeyes.brush"),
-                button -> mode = Mode.BRUSH
+                0, 0, 20,
+                TextureLocations.BRUSH_BUTTON,
+                64, 64,
+                button -> {
+                    mode = Mode.BRUSH;
+                    modeButtons.forEach(b -> b.active = true);
+                    button.active = false;
+                }
         ));
-        this.addRenderableWidget(new Button(
+        modeButtons.add(new ImageButton(
                 this.guiLeft + 8, this.guiTop + 95,
                 20, 20,
-                Component.translatable("gui.glowingeyes.eraser"),
-                button -> mode = Mode.ERASER
+                0, 0, 20,
+                TextureLocations.ERASER_BUTTON,
+                64, 64,
+                button -> {
+                    mode = Mode.ERASER;
+                    modeButtons.forEach(b -> b.active = true);
+                    button.active = false;
+                }
         ));
+
+        modeButtons.get(0).onPress();
+        modeButtons.forEach(this::addRenderableWidget);
     }
 
     int headX, headY;

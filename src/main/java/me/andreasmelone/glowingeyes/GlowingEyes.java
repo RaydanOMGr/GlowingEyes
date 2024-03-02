@@ -13,9 +13,12 @@ import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import org.slf4j.Logger;
 
+import java.awt.*;
+
 @Mod(GlowingEyes.MOD_ID)
 public class GlowingEyes {
     public static final String MOD_ID = "glowingeyes";
+    public static final Color DEFAULT_COLOR = new Color(255, 0, 0);
     private static final Logger LOGGER = LogUtils.getLogger();
 
     public GlowingEyes() {
