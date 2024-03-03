@@ -24,9 +24,8 @@ public class GlowingEyesHeadLayer<T extends Player, Q extends HumanoidModel<T>> 
     public void render(PoseStack poseStack, MultiBufferSource multiBufferSource,
                        int i, T t, float v, float v1, float v2,
                        float v3, float v4, float v5) {
-        IGlowingEyes glowingEyes = t.getCapability(GlowingEyesCapability.INSTANCE).orElse(new GlowingEyesImpl());
-        if(glowingEyes.isToggledOn() && !t.isInvisible()) {
-            ResourceLocation eyeOverlayResource = glowingEyes.getGlowingEyesTexture();
+        if(GlowingEyesCapability.isToggledOn(t) && !t.isInvisible()) {
+            ResourceLocation eyeOverlayResource = GlowingEyesCapability.getGlowingEyesTexture(t);
             if(eyeOverlayResource == null) return;
 
             RenderType eyeRenderType = RenderType.eyes(eyeOverlayResource);

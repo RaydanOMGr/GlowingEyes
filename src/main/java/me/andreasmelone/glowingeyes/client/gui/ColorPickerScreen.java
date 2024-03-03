@@ -15,14 +15,14 @@ import java.awt.*;
 import java.util.function.Consumer;
 
 public class ColorPickerScreen extends Screen {
-    private static int selectedColor;
+    private static int selectedColor = GlowingEyes.DEFAULT_COLOR.getRGB();
     public static Color getSelectedColor() {
         return new Color(selectedColor);
     }
 
     private int guiLeft, guiTop;
-    private final int xSize = 221;
-    private final int ySize = 222;
+    private final int xSize = 200;
+    private final int ySize = 143;
 
     private int colorWheelX;
     private int colorWheelY;
@@ -41,7 +41,6 @@ public class ColorPickerScreen extends Screen {
     EditBox red;
     EditBox green;
     EditBox blue;
-    EditBox hex;
 
     @Override
     protected void init() {
@@ -56,7 +55,7 @@ public class ColorPickerScreen extends Screen {
         this.addEditBox(
                 red = new EditBox(
                         this.font,
-                        this.guiLeft + 120, this.guiTop + 20,
+                        this.guiLeft + this.xSize - 50, this.guiTop + 20,
                         40, 20,
                         Component.literal(String.valueOf(Util.round(GuiUtil.getRedFromRGB(GlowingEyes.DEFAULT_COLOR.getRGB()) / 255)))
                 )
@@ -64,7 +63,7 @@ public class ColorPickerScreen extends Screen {
         this.addEditBox(
                 green = new EditBox(
                         this.font,
-                        this.guiLeft + 120, this.guiTop + 50,
+                        this.guiLeft + this.xSize - 50, this.guiTop + 50,
                         40, 20,
                         Component.literal(String.valueOf(Util.round(GuiUtil.getGreenFromRGB(GlowingEyes.DEFAULT_COLOR.getRGB()) / 255)))
                 )
@@ -72,41 +71,23 @@ public class ColorPickerScreen extends Screen {
         this.addEditBox(
                 blue = new EditBox(
                         this.font,
-                        this.guiLeft + 120, this.guiTop + 80,
+                        this.guiLeft + this.xSize - 50, this.guiTop + 80,
                         40, 20,
                         Component.literal(String.valueOf(Util.round(GuiUtil.getBlueFromRGB(GlowingEyes.DEFAULT_COLOR.getRGB()) / 255)))
                 )
         );
-        this.addEditBox(
-                hex = new EditBox(
-                        this.font,
-                        this.guiLeft + 120, this.guiTop + 110,
-                        80, 20,
-                        Component.literal(String.format("#%06X", (0xFFFFFF & GlowingEyes.DEFAULT_COLOR.getRGB())))
-                )
-        );
 
-        selectedColor = GlowingEyes.DEFAULT_COLOR.getRGB();
         selectedX = WheelRenderer.getPointFromColor(selectedColor).x;
         selectedY = WheelRenderer.getPointFromColor(selectedColor).y;
 
         red.setValue(String.valueOf(Util.round(GuiUtil.getRedFromRGB(selectedColor) / 255, 2)));
         green.setValue(String.valueOf(Util.round(GuiUtil.getGreenFromRGB(selectedColor) / 255, 2)));
         blue.setValue(String.valueOf(Util.round(GuiUtil.getBlueFromRGB(selectedColor) / 255, 2)));
-        hex.setValue(String.format("#%06X", (0xFFFFFF & selectedColor)));
     }
 
     private void addEditBox(EditBox editBox) {
         editBox.setResponder(getColorResponder(editBox));
         this.addRenderableWidget(editBox);
-    }
-
-    private String getColorValue(int colorComponent) {
-        return String.valueOf(Util.round(colorComponent / 255f, 2));
-    }
-
-    private String getHexColorValue(int color) {
-        return String.format("#%06X", (0xFFFFFF & color));
     }
 
     private Consumer<String> getColorResponder(EditBox editBox) {
@@ -133,12 +114,6 @@ public class ColorPickerScreen extends Screen {
                 greenValue = value * 255;
             else if (editBox == blue)
                 blueValue = value * 255;
-            else if (editBox == hex) {
-                selectedColor = Color.decode(s).getRGB();
-                redValue = GuiUtil.getRedFromRGB(selectedColor);
-                greenValue = GuiUtil.getGreenFromRGB(selectedColor);
-                blueValue = GuiUtil.getBlueFromRGB(selectedColor);
-            }
 
             selectedColor = new Color(
                     redValue / 255f,
@@ -146,7 +121,6 @@ public class ColorPickerScreen extends Screen {
                     blueValue / 255f
             ).getRGB();
 
-            hex.setValue(getHexColorValue(selectedColor));
             selectedX = WheelRenderer.getPointFromColor(selectedColor).x;
             selectedY = WheelRenderer.getPointFromColor(selectedColor).y;
         };
@@ -160,7 +134,7 @@ public class ColorPickerScreen extends Screen {
 
         this.renderBackground(poseStack);
         GuiUtil.drawBackground(poseStack,
-                TextureLocations.UI_BACKGROUND_BIG, this.guiLeft, this.guiTop, this.xSize, this.ySize);
+                TextureLocations.UI_BACKGROUND_SLIM, this.guiLeft, this.guiTop, this.xSize, this.ySize);
 
         // draw the selected color on the right bottom
         fill(
@@ -201,16 +175,11 @@ public class ColorPickerScreen extends Screen {
 
             int c = WheelRenderer.getColorAt(x, y);
             if(c == 0) return super.mouseClicked(mouseX, mouseY, button);
-            selectedColor = new Color(
-                    GuiUtil.getBlueFromRGB(c) / 255f,
-                    GuiUtil.getGreenFromRGB(c) / 255f,
-                    GuiUtil.getRedFromRGB(c) / 255f
-            ).getRGB();
+            selectedColor = c;
 
             red.setValue(String.valueOf(Util.round(GuiUtil.getRedFromRGB(selectedColor) / 255, 2)));
             green.setValue(String.valueOf(Util.round(GuiUtil.getGreenFromRGB(selectedColor) / 255, 2)));
             blue.setValue(String.valueOf(Util.round(GuiUtil.getBlueFromRGB(selectedColor) / 255, 2)));
-            hex.setValue(String.format("#%06X", (0xFFFFFF & selectedColor)));
 
             selectedX = x;
             selectedY = y;
@@ -236,7 +205,11 @@ public class ColorPickerScreen extends Screen {
     public void onClose() {
         if(parent != null) {
             getMinecraft().setScreen(parent);
-            parent.init(getMinecraft(), getMinecraft().getWindow().getGuiScaledWidth(), getMinecraft().getWindow().getGuiScaledHeight());
+            parent.init(
+                    getMinecraft(),
+                    getMinecraft().getWindow().getGuiScaledWidth(),
+                    getMinecraft().getWindow().getGuiScaledHeight()
+            );
         }
     }
 }

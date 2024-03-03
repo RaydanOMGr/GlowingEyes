@@ -45,19 +45,21 @@ public class GlowingEyesImpl implements IGlowingEyes {
     }
 
     private void updateTexture() {
-        if(resourceLocation != null) {
-            Minecraft.getInstance().getTextureManager().release(resourceLocation);
-        }
+        Minecraft.getInstance().execute(() -> {
+            if (resourceLocation != null) {
+                Minecraft.getInstance().getTextureManager().release(resourceLocation);
+            }
 
-        BufferedImage eyeOverlayTexture = new BufferedImage(64, 64, BufferedImage.TYPE_INT_ARGB);
-        for (Point point : glowingEyesMap.keySet()) {
-            Color color = glowingEyesMap.get(point);
-            eyeOverlayTexture.setRGB(point.x + (64 / 8), point.y + (64 / 8), color.getRGB());
-        }
-        DynamicTexture dynamicTexture = new DynamicTexture(Util.toNativeImage(eyeOverlayTexture));
-        Minecraft.getInstance().getTextureManager().register(
-                resourceLocation = new ResourceLocation(GlowingEyes.MOD_ID + ":eyes_texture" + UUID.randomUUID()),
-                dynamicTexture
-        );
+            BufferedImage eyeOverlayTexture = new BufferedImage(64, 64, BufferedImage.TYPE_INT_ARGB);
+            for (Point point : glowingEyesMap.keySet()) {
+                Color color = glowingEyesMap.get(point);
+                eyeOverlayTexture.setRGB(point.x + (64 / 8), point.y + (64 / 8), color.getRGB());
+            }
+            DynamicTexture dynamicTexture = new DynamicTexture(Util.toNativeImage(eyeOverlayTexture));
+            Minecraft.getInstance().getTextureManager().register(
+                    resourceLocation = new ResourceLocation(GlowingEyes.MOD_ID + ":eyes_texture" + UUID.randomUUID()),
+                    dynamicTexture
+            );
+        });
     }
 }

@@ -1,5 +1,6 @@
 package me.andreasmelone.glowingeyes;
 
+import me.andreasmelone.glowingeyes.common.capability.eyes.GlowingEyesCapability;
 import me.andreasmelone.glowingeyes.common.capability.eyes.GlowingEyesHandler;
 import me.andreasmelone.glowingeyes.common.packets.PacketManager;
 import me.andreasmelone.glowingeyes.common.scheduler.CodeScheduler;
@@ -30,6 +31,7 @@ public class GlowingEyes {
     private void commonSetup(FMLCommonSetupEvent event) {
         LOGGER.info("Glowing Eyes common setup");
         MinecraftForge.EVENT_BUS.register(GlowingEyesHandler.class);
+        MinecraftForge.EVENT_BUS.addListener(GlowingEyesCapability::register);
 
         PacketManager.registerAll();
     }

@@ -42,17 +42,8 @@ public class EyesEditorScreen extends Screen {
         AtomicBoolean saved = new AtomicBoolean(false);
         Player player = getMinecraft().player;
         if(player != null) {
-            player.getCapability(GlowingEyesCapability.INSTANCE).ifPresent(eyes -> {
-                // inverse the red and blue of all the colors
-                pixels = eyes.getGlowingEyesMap();
-                HashMap<Point, Color> pixelsToPut = new HashMap<>();
-                for(Point point : pixels.keySet()) {
-                    Color color = pixels.get(point);
-                    pixelsToPut.put(point, new Color(color.getBlue(), color.getGreen(), color.getRed()));
-                }
-                pixels = pixelsToPut;
-                saved.set(true);
-            });
+            pixels = GlowingEyesCapability.getGlowingEyesMap(player);
+            saved.set(true);
         }
         if(!saved.get()) {
             LogUtils.getLogger().error("Could not load glowing eyes map from player capability");
@@ -220,18 +211,10 @@ public class EyesEditorScreen extends Screen {
         AtomicBoolean saved = new AtomicBoolean(false);
         Player player = getMinecraft().player;
         if(player != null) {
-            player.getCapability(GlowingEyesCapability.INSTANCE).ifPresent(eyes -> {
-                HashMap<Point, Color> pixelsToPut = new HashMap<>();
-                // inverse the red and blue of all the colors
-                for(Point point : this.pixels.keySet()) {
-                    Color color = this.pixels.get(point);
-                    pixelsToPut.put(point, new Color(color.getBlue(), color.getGreen(), color.getRed()));
-                }
-                eyes.setGlowingEyesMap(pixelsToPut);
-                saved.set(true);
+            GlowingEyesCapability.setGlowingEyesMap(player, pixels);
+            saved.set(true);
 
-                PacketManager.INSTANCE.sendToServer(new CapabilityUpdatePacket(player, eyes));
-            });
+            GlowingEyesCapability.sendUpdate();
         }
         if(!saved.get()) {
             LogUtils.getLogger().error("Could not save glowing eyes map to player capability");

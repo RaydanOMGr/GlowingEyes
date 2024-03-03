@@ -34,53 +34,58 @@ public class CapabilityUpdatePacket {
         buffer.writeUUID(player.getUUID());
         buffer.writeBoolean(capability.isToggledOn());
         buffer.writeByteArray(Util.serializeMap(capability.getGlowingEyesMap()));
-        System.out.printf("Encoded capability: %s\n", capability.getGlowingEyesMap());
+        System.out.println("[ENC_CAP] Encoded capability update packet");
+        System.out.printf("[ENC_CAP] GlowingEyesMap Length: %d\n", capability.getGlowingEyesMap().size());
+        System.out.printf("[ENC_CAP] ToggledOn: %b\n", capability.isToggledOn());
     }
 
     public static CapabilityUpdatePacket decode(FriendlyByteBuf buffer) {
         UUID playerUUID = buffer.readUUID();
         boolean toggledOn = buffer.readBoolean();
         byte[] glowingEyesMap = buffer.readByteArray();
-        System.out.printf("UUID: %s, ToggledOn: %s, EyesBytes: %s", playerUUID, toggledOn, new String(glowingEyesMap));
 
         IGlowingEyes capability = new GlowingEyesImpl();
         capability.setToggledOn(toggledOn);
         capability.setGlowingEyesMap(Util.deserializeMap(glowingEyesMap));
-        System.out.printf("Decoded capability: %s\n", capability.getGlowingEyesMap());
+        System.out.println("[DEC_CAP] Decoded capability update packet");
+        System.out.printf("[DEC_CAP] GlowingEyesMap Length: %d\n", capability.getGlowingEyesMap().size());
+        System.out.printf("[DEC_CAP] ToggledOn: %b\n", capability.isToggledOn());
         return new CapabilityUpdatePacket(playerUUID, capability);
     }
 
     public void messageConsumer(Supplier<NetworkEvent.Context> ctx) {
         NetworkEvent.Context context = ctx.get();
         context.enqueueWork(() -> {
-            System.out.printf("Received capability: %s\n", capability.getGlowingEyesMap());
             if(context.getDirection().getReceptionSide().isClient()) {
-                System.out.println("Received capability on client");
                 Player player = Minecraft.getInstance().level.getPlayerByUUID(playerUUID);
-                System.out.println(player);
                 if (player != null) {
-                    System.out.println("Player is not null");
-                    IGlowingEyes capability = player.getCapability(GlowingEyesCapability.INSTANCE).orElse(new GlowingEyesImpl());
-                    capability.setToggledOn(this.capability.isToggledOn());
-                    capability.setGlowingEyesMap(this.capability.getGlowingEyesMap());
-                    System.out.printf("Set capability: %s\n", capability.getGlowingEyesMap());
+                    GlowingEyesCapability.setGlowingEyesMap(player, capability.getGlowingEyesMap());
+                    GlowingEyesCapability.setToggledOn(player, capability.isToggledOn());
                 }
             } else {
-                System.out.println("Received capability on server");
-                List<ServerPlayer> players = context.getSender().getServer().getPlayerList().getPlayers();
+
+                // check whether the sender is the player who has been updated
+                if (!context.getSender().getUUID().equals(playerUUID)) return;
+                try {
+                    GlowingEyesCapability.setGlowingEyesMap(context.getSender(), capability.getGlowingEyesMap());
+                    GlowingEyesCapability.setToggledOn(context.getSender(), capability.isToggledOn());
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+
+                if(context.getSender().getServer() == null) {
+                    return;
+                }
+
+                List<ServerPlayer> players = context.getSender().getServer().getPlayerList()
+                        .getPlayers()
+                        .stream()
+                        .filter(p -> p != context.getSender())
+                        .toList();
                 this.player = context.getSender();
+
                 for (ServerPlayer player : players) {
-                    System.out.printf("Sending capability to player %s", player.getName().getString());
-                    IGlowingEyes capability = this.player.getCapability(GlowingEyesCapability.INSTANCE).orElse(new GlowingEyesImpl());
-                    capability.setToggledOn(this.capability.isToggledOn());
-                    capability.setGlowingEyesMap(this.capability.getGlowingEyesMap());
-                    System.out.printf("Set capability: %s\n", capability.getGlowingEyesMap());
-                    // send packet to client
-                    PacketManager.INSTANCE.send(
-                            PacketDistributor.PLAYER.with(() -> player),
-                            new CapabilityUpdatePacket(player, capability)
-                    );
-                    System.out.println("Sent capability to player");
+                    GlowingEyesCapability.sendUpdate((ServerPlayer) this.player, player);
                 }
             }
         });

@@ -2,6 +2,7 @@ package me.andreasmelone.glowingeyes.common.util;
 
 import com.mojang.blaze3d.platform.NativeImage;
 
+import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.*;
 import java.util.Map;
@@ -50,8 +51,11 @@ public class Util {
         for (int y = 0; y < image.getHeight(); y++) {
             for (int x = 0; x < image.getWidth(); x++) {
                 int argb = image.getRGB(x, y);
+                // native textures use BGR instead of RGB so we have to convert the color
+                Color bgr = new Color(argb);
+                bgr = new Color(bgr.getBlue(), bgr.getGreen(), bgr.getRed());
 
-                nativeImage.setPixelRGBA(x, y, argb);
+                nativeImage.setPixelRGBA(x, y, bgr.getRGB());
             }
         }
 

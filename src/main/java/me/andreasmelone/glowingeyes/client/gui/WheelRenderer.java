@@ -77,8 +77,8 @@ public class WheelRenderer {
                 float distance = (float) Math.sqrt(dx * dx + dy * dy);
                 if(distance < WHEEL_RADIUS) {
                     // use the getColorAt method to get the color at the current position
-                    int color = getColorAt(x, y);
-                    nativeImage.setPixelRGBA(x, y, color);
+                    Color color = new Color(getColorAt(x, y));
+                    nativeImage.setPixelRGBA(x, y, new Color(color.getBlue(), color.getGreen(), color.getRed()).getRGB());
                 } else {
                     nativeImage.setPixelRGBA(x, y, 0);
                 }
@@ -99,7 +99,8 @@ public class WheelRenderer {
             }
             float saturation = distance / WHEEL_RADIUS;
             float value = 1;
-            return Color.HSBtoRGB(angle / 360, saturation, value);
+            Color tmp = new Color(Color.HSBtoRGB(angle / 360, saturation, value));
+            return tmp.getRGB();
         } else {
             return 0;
         }
