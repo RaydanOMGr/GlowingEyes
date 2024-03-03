@@ -132,12 +132,11 @@ public class ColorPickerScreen extends Screen {
             }
             if (value > 1) value = 1;
             if (value < 0) value = 0;
-            float redValue = GuiUtil.getRedFromRGB(selectedColor);
-            float greenValue = GuiUtil.getGreenFromRGB(selectedColor);
-            float blueValue = GuiUtil.getBlueFromRGB(selectedColor);
-            if (editBox == red) redValue = value * 255;
-            else if (editBox == green) greenValue = value * 255;
-            else if (editBox == blue) blueValue = value * 255;
+
+            float redValue = (editBox == red) ? value * 255 : GuiUtil.getRedFromRGB(selectedColor);
+            float greenValue = (editBox == green) ? value * 255 : GuiUtil.getGreenFromRGB(selectedColor);
+            float blueValue = (editBox == blue) ? value * 255 : GuiUtil.getBlueFromRGB(selectedColor);
+            
             selectedColor = new Color(redValue / 255f, greenValue / 255f, blueValue / 255f).getRGB();
             selectedX = WheelRenderer.getPointFromColor(selectedColor).x;
             selectedY = WheelRenderer.getPointFromColor(selectedColor).y;
