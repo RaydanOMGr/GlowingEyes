@@ -4,20 +4,18 @@ import com.mojang.blaze3d.platform.NativeImage;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import me.andreasmelone.glowingeyes.GlowingEyes;
-import me.andreasmelone.glowingeyes.common.util.Util;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiComponent;
 import net.minecraft.client.renderer.texture.DynamicTexture;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.util.Mth;
 import org.jetbrains.annotations.NotNull;
 
 import java.awt.*;
-import java.awt.image.BufferedImage;
+import java.io.IOException;
 
 public class WheelRenderer {
     public final static int WHEEL_RADIUS = 256;
-    public final static float SCALE = WHEEL_RADIUS / 100.0f;
+    public final static float SCALE = (WHEEL_RADIUS / 100.0f) * 2;
 
     static ResourceLocation colorWheel = null;
     public static void renderColorWheel(PoseStack posestack, int colorWheelX, int colorWheelY) {
@@ -56,6 +54,15 @@ public class WheelRenderer {
     }
 
     public static void resetColorWheel() {
+        // some debugging stuff here
+        if(colorWheel != null) {
+            try {
+                getNativeImage().writeToFile("color_wheel.png");
+            } catch(IOException e) {
+                e.printStackTrace();
+            }
+        }
+
         Minecraft.getInstance().getTextureManager().release(colorWheel);
         colorWheel = null;
     }
@@ -77,6 +84,7 @@ public class WheelRenderer {
                 }
             }
         }
+
         return nativeImage;
     }
 
@@ -95,5 +103,23 @@ public class WheelRenderer {
         } else {
             return 0;
         }
+    }
+
+    public static Point getPointFromColor(int color) {
+        float[] hsv = new float[3];
+        Color.RGBtoHSB(
+                (color >> 16) & 0xFF,
+                (color >> 8) & 0xFF,
+                color & 0xFF,
+                hsv
+        );
+        float angle = hsv[0] * 360;
+        float saturation = hsv[1];
+        float value = hsv[2];
+        float distance = saturation * WHEEL_RADIUS;
+        int x = (int) (Math.cos(Math.toRadians(angle)) * distance + WHEEL_RADIUS);
+        int y = (int) (Math.sin(Math.toRadians(angle)) * distance + WHEEL_RADIUS);
+
+        return new Point(x, y);
     }
 }

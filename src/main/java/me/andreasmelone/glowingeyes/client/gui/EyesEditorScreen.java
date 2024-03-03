@@ -43,7 +43,14 @@ public class EyesEditorScreen extends Screen {
         Player player = getMinecraft().player;
         if(player != null) {
             player.getCapability(GlowingEyesCapability.INSTANCE).ifPresent(eyes -> {
+                // inverse the red and blue of all the colors
                 pixels = eyes.getGlowingEyesMap();
+                HashMap<Point, Color> pixelsToPut = new HashMap<>();
+                for(Point point : pixels.keySet()) {
+                    Color color = pixels.get(point);
+                    pixelsToPut.put(point, new Color(color.getBlue(), color.getGreen(), color.getRed()));
+                }
+                pixels = pixelsToPut;
                 saved.set(true);
             });
         }
@@ -58,9 +65,7 @@ public class EyesEditorScreen extends Screen {
                 0, 0, 20,
                 TextureLocations.COLOR_PICKER,
                 64, 64,
-                button -> {
-                    getMinecraft().setScreen(new ColorPickerScreen(this));
-                }
+                button -> getMinecraft().setScreen(new ColorPickerScreen(this))
         ));
 
         // the preset menu button
@@ -75,6 +80,7 @@ public class EyesEditorScreen extends Screen {
                 }
         ));
 
+        modeButtons.clear();
         modeButtons.add(new ImageButton(
                 this.guiLeft + 8, this.guiTop + 70,
                 20, 20,
@@ -84,7 +90,7 @@ public class EyesEditorScreen extends Screen {
                 button -> {
                     mode = Mode.BRUSH;
                     modeButtons.forEach(b -> b.active = true);
-                    button.active = false;
+                    if(mode == Mode.BRUSH) button.active = false;
                 }
         ));
         modeButtons.add(new ImageButton(
@@ -96,7 +102,7 @@ public class EyesEditorScreen extends Screen {
                 button -> {
                     mode = Mode.ERASER;
                     modeButtons.forEach(b -> b.active = true);
-                    button.active = false;
+                    if(mode == Mode.ERASER) button.active = false;
                 }
         ));
 
@@ -186,8 +192,6 @@ public class EyesEditorScreen extends Screen {
 
     @Override
     public boolean mouseClicked(double mouseX, double mouseY, int mouseButton) {
-        Color defaultColor = new Color(255, 0, 0);
-
         if(mouseX >= headX && mouseX <= endHeadX && mouseY >= headY && mouseY <= endHeadY) {
             int spaceBetweenPixels = 2;
             int pixelSize = 16;
@@ -197,7 +201,7 @@ public class EyesEditorScreen extends Screen {
 
             if (mode == Mode.BRUSH) {
                 if (mouseButton == 0) {
-                    pixels.put(new Point(x, y), defaultColor);
+                    pixels.put(new Point(x, y), ColorPickerScreen.getSelectedColor());
                 } else if (mouseButton == 1) {
                     pixels.remove(new Point(x, y));
                 }
@@ -217,7 +221,13 @@ public class EyesEditorScreen extends Screen {
         Player player = getMinecraft().player;
         if(player != null) {
             player.getCapability(GlowingEyesCapability.INSTANCE).ifPresent(eyes -> {
-                eyes.setGlowingEyesMap(pixels);
+                HashMap<Point, Color> pixelsToPut = new HashMap<>();
+                // inverse the red and blue of all the colors
+                for(Point point : this.pixels.keySet()) {
+                    Color color = this.pixels.get(point);
+                    pixelsToPut.put(point, new Color(color.getBlue(), color.getGreen(), color.getRed()));
+                }
+                eyes.setGlowingEyesMap(pixelsToPut);
                 saved.set(true);
 
                 PacketManager.INSTANCE.sendToServer(new CapabilityUpdatePacket(player, eyes));

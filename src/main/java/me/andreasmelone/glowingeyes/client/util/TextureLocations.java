@@ -13,6 +13,9 @@ public class TextureLocations {
     public static final ResourceLocation PRESET_MENU_BUTTON =
             new ResourceLocation(GlowingEyes.MOD_ID, "textures/gui/button/preset_menu_button.png");
 
+    public static final ResourceLocation CURSOR =
+            new ResourceLocation(GlowingEyes.MOD_ID, "textures/gui/cursor.png");
+
     // 176x222
     public static final ResourceLocation UI_BACKGROUND =
             new ResourceLocation(GlowingEyes.MOD_ID, "textures/gui/background/background.png");
