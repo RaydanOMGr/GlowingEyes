@@ -22,10 +22,9 @@ public class ColorPickerScreen extends Screen {
     private static final int COLOR_WHEEL_Y = 20;
 
     private final Screen parent;
-    private EditBox red;
-    private EditBox green;
-    private EditBox blue;
+    private EditBox red, green, blue;
     private int selectedX, selectedY;
+    private int guiLeft, guiTop;
 
     public ColorPickerScreen() {
         this(null);
