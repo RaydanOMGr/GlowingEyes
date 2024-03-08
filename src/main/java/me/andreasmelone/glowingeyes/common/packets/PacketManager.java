@@ -1,7 +1,11 @@
 package me.andreasmelone.glowingeyes.common.packets;
 
-import com.mojang.logging.LogUtils;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.player.Player;
+import net.minecraftforge.network.ConnectionData;
+import net.minecraftforge.network.NetworkHooks;
 import me.andreasmelone.glowingeyes.GlowingEyes;
+import net.minecraft.network.Connection;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.network.NetworkEvent;
@@ -14,22 +18,39 @@ import java.util.function.Supplier;
 
 public class PacketManager {
     private static final String PROTOCOL_VERSION = "1";
+    public static final ResourceLocation IDENTIFIER = new ResourceLocation(GlowingEyes.MOD_ID, "main_network");
     public static final SimpleChannel INSTANCE = NetworkRegistry.newSimpleChannel(
-            new ResourceLocation(GlowingEyes.MOD_ID, "main_network"),
+            IDENTIFIER,
             () -> PROTOCOL_VERSION,
             PROTOCOL_VERSION::equals,
             PROTOCOL_VERSION::equals
     );
 
-    public static void init() {
-        System.out.println("Init " + INSTANCE.getClass());
-    }
-
     public static void registerAll() {
         System.out.println("Side: " + Thread.currentThread().getThreadGroup().toString());
 
         register(CapabilityUpdatePacket.class, CapabilityUpdatePacket::encode, CapabilityUpdatePacket::decode, CapabilityUpdatePacket::messageConsumer);
-        register(HasModPacket.class, HasModPacket::encode, HasModPacket::decode, HasModPacket::messageConsumer);
+    }
+
+    public static boolean isModPresent(Connection connection) {
+        final ConnectionData connectionData = NetworkHooks.getConnectionData(connection);
+        if (connectionData != null) {
+            return connectionData.getChannels().containsKey(IDENTIFIER);
+        }
+
+        // If the connection data is null, then we fallback to the vanilla channel list, via #isRemotePresent
+        return INSTANCE.isRemotePresent(connection);
+    }
+
+    public static boolean isModPresent(ServerPlayer player) {
+        Connection connection = player.connection.getConnection();
+        final ConnectionData connectionData = NetworkHooks.getConnectionData(connection);
+        if (connectionData != null) {
+            return connectionData.getChannels().containsKey(IDENTIFIER);
+        }
+
+        // If the connection data is null, then we fallback to the vanilla channel list, via #isRemotePresent
+        return INSTANCE.isRemotePresent(connection);
     }
 
     private static int i = 0;

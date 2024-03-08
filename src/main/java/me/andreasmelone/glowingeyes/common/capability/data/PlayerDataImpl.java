@@ -5,18 +5,7 @@ import java.util.Set;
 import java.util.UUID;
 
 public class PlayerDataImpl implements IPlayerData {
-    boolean hasMod = false;
     Set<UUID> trackingPlayer = new HashSet<>();
-
-    @Override
-    public boolean hasMod() {
-        return hasMod;
-    }
-
-    @Override
-    public void setHasMod(boolean hasMod) {
-        this.hasMod = hasMod;
-    }
 
     @Override
     public void addTrackingPlayer(UUID uuid) {

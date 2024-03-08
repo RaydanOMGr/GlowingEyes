@@ -28,14 +28,6 @@ public class PlayerDataCapability {
                 .orElseThrow(() -> new IllegalStateException("Could not get PlayerData capability from player"));
     }
 
-    public static boolean hasMod(Player player) {
-        return getCapability(player).hasMod();
-    }
-
-    public static void setHasMod(Player player, boolean hasMod) {
-        getCapability(player).setHasMod(hasMod);
-    }
-
     public static void addTrackingPlayer(Player player, UUID uuid) {
         getCapability(player).addTrackingPlayer(uuid);
     }
@@ -46,21 +38,5 @@ public class PlayerDataCapability {
 
     public static Set<UUID> getTrackingPlayers(Player player) {
         return getCapability(player).getTrackingPlayers();
-    }
-
-    public static void addPlayerWithMod(Player player) {
-        playersWithMod.add(player.getUUID());
-    }
-
-    public static void removePlayerWithMod(Player player) {
-        playersWithMod.remove(player.getUUID());
-    }
-
-    public static Set<UUID> getPlayersWithMod() {
-        return new HashSet<>(playersWithMod);
-    }
-
-    public static void setPlayersWithMod(Set<UUID> players) {
-        playersWithMod = new HashSet<>(players);
     }
 }

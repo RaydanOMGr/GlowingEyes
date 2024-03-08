@@ -26,8 +26,6 @@ public class GlowingEyes {
     private static final Logger LOGGER = LogUtils.getLogger();
 
     public GlowingEyes() {
-        PacketManager.init();
-
         IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
         modEventBus.addListener(this::commonSetup);
         MinecraftForge.EVENT_BUS.register(this);
