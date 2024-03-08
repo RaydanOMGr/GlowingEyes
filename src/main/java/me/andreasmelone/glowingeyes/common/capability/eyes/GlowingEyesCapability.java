@@ -20,36 +20,68 @@ public class GlowingEyesCapability {
     private GlowingEyesCapability() {
     }
 
-    public static final Capability<IGlowingEyes> INSTANCE = CapabilityManager.get(new CapabilityToken<>() {});
+    protected static final Capability<IGlowingEyes> INSTANCE = CapabilityManager.get(new CapabilityToken<>() {});
 
     public static void register(RegisterCapabilitiesEvent event) {
         event.register(IGlowingEyes.class);
     }
 
     private static final IGlowingEyes localCapability = new GlowingEyesImpl();
+
+    /**
+     * Get the GlowingEyes capability from a player
+     * @param player the player to get the capability from
+     * @return the GlowingEyes capability
+     */
     public static IGlowingEyes getCapability(Player player) {
         if(player.isLocalPlayer()) return localCapability;
         return player.getCapability(INSTANCE)
                 .orElseThrow(() -> new IllegalStateException("Could not get GlowingEyes capability from player"));
     }
 
+    /**
+     * Gets the glowing eyes map from a player
+     * @param player the player to get the glowing eyes map from
+     * @return the glowing eyes map (Point, Color)
+     */
     @NotNull
     public static HashMap<Point, Color> getGlowingEyesMap(Player player) {
         return getCapability(player).getGlowingEyesMap();
     }
 
+    /**
+     * Sets the glowing eyes map (should only be using when completely overwriting the map)
+     * Otherwise, get the glowing eyes map and modify it
+     * @param player the player to set the glowing eyes map for
+     * @param glowingEyesMap the glowing eyes map to set
+     */
     public static void setGlowingEyesMap(Player player, @NotNull HashMap<Point, Color> glowingEyesMap) {
         getCapability(player).setGlowingEyesMap(glowingEyesMap);
     }
 
+    /**
+     * Gets whether the glowing eyes are toggled on for a player
+     * @param player the player to get the toggled on status for
+     * @return whether the glowing eyes are toggled on
+     */
     public static boolean isToggledOn(Player player) {
         return getCapability(player).isToggledOn();
     }
 
+    /**
+     * Sets whether the glowing eyes are toggled on for a player
+     * @param player the player to set the toggled on status for
+     * @param toggledOn whether the glowing eyes are toggled on
+     */
     public static void setToggledOn(Player player, boolean toggledOn) {
         getCapability(player).setToggledOn(toggledOn);
     }
 
+    /**
+     * Gets the texture for the glowing eyes for a player
+     * @param player the player to get the glowing eyes texture for
+     * @return the glowing eyes texture
+     */
     public static ResourceLocation getGlowingEyesTexture(Player player) {
         return getCapability(player).getGlowingEyesTexture();
     }

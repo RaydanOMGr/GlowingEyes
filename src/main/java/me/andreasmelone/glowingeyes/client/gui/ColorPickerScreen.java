@@ -24,10 +24,9 @@ public class ColorPickerScreen extends Screen {
     private final int xSize = 200;
     private final int ySize = 143;
 
-    private int colorWheelX;
-    private int colorWheelY;
+    private int colorWheelX, colorWheelY;
 
-    private Screen parent;
+    private final Screen parent;
     public ColorPickerScreen() {
         super(Component.empty());
         parent = null;

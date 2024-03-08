@@ -22,24 +22,25 @@ public class CapabilityUpdatePacket {
 
     public CapabilityUpdatePacket(Player player, IGlowingEyes capability) {
         this.player = player;
-        this.capability = capability;
+        this.capability = capability == null ? new GlowingEyesImpl() : capability;
     }
 
     private CapabilityUpdatePacket(UUID playerUUID, IGlowingEyes capability) {
         this.playerUUID = playerUUID;
-        this.capability = capability;
+        this.capability = capability == null ? new GlowingEyesImpl() : capability;
     }
 
     public void encode(FriendlyByteBuf buffer) {
+        System.out.println("Encoding capability update packet");
+
         buffer.writeUUID(player.getUUID());
         buffer.writeBoolean(capability.isToggledOn());
         buffer.writeByteArray(Util.serializeMap(capability.getGlowingEyesMap()));
-        System.out.println("[ENC_CAP] Encoded capability update packet");
-        System.out.printf("[ENC_CAP] GlowingEyesMap Length: %d\n", capability.getGlowingEyesMap().size());
-        System.out.printf("[ENC_CAP] ToggledOn: %b\n", capability.isToggledOn());
     }
 
     public static CapabilityUpdatePacket decode(FriendlyByteBuf buffer) {
+        System.out.println("Decoding capability update packet");
+
         UUID playerUUID = buffer.readUUID();
         boolean toggledOn = buffer.readBoolean();
         byte[] glowingEyesMap = buffer.readByteArray();
@@ -47,35 +48,29 @@ public class CapabilityUpdatePacket {
         IGlowingEyes capability = new GlowingEyesImpl();
         capability.setToggledOn(toggledOn);
         capability.setGlowingEyesMap(Util.deserializeMap(glowingEyesMap));
-        System.out.println("[DEC_CAP] Decoded capability update packet");
-        System.out.printf("[DEC_CAP] GlowingEyesMap Length: %d\n", capability.getGlowingEyesMap().size());
-        System.out.printf("[DEC_CAP] ToggledOn: %b\n", capability.isToggledOn());
+
         return new CapabilityUpdatePacket(playerUUID, capability);
     }
 
     public void messageConsumer(Supplier<NetworkEvent.Context> ctx) {
         NetworkEvent.Context context = ctx.get();
         context.enqueueWork(() -> {
-            if(context.getDirection().getReceptionSide().isClient()) {
+            if (context.getDirection().getReceptionSide().isClient()) {
                 Player player = Minecraft.getInstance().level.getPlayerByUUID(playerUUID);
                 if (player != null) {
                     GlowingEyesCapability.setGlowingEyesMap(player, capability.getGlowingEyesMap());
                     GlowingEyesCapability.setToggledOn(player, capability.isToggledOn());
                 }
             } else {
+                if(context.getSender() == null) return;
 
                 // check whether the sender is the player who has been updated
                 if (!context.getSender().getUUID().equals(playerUUID)) return;
-                try {
-                    GlowingEyesCapability.setGlowingEyesMap(context.getSender(), capability.getGlowingEyesMap());
-                    GlowingEyesCapability.setToggledOn(context.getSender(), capability.isToggledOn());
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
+                GlowingEyesCapability.setGlowingEyesMap(context.getSender(), capability.getGlowingEyesMap());
+                GlowingEyesCapability.setToggledOn(context.getSender(), capability.isToggledOn());
 
-                if(context.getSender().getServer() == null) {
-                    return;
-                }
+
+                if (context.getSender().getServer() == null) return;
 
                 List<ServerPlayer> players = context.getSender().getServer().getPlayerList()
                         .getPlayers()

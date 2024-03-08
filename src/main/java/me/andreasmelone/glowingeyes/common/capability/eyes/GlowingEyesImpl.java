@@ -25,7 +25,16 @@ public class GlowingEyesImpl implements IGlowingEyes {
     @Override
     public void setGlowingEyesMap(@Nonnull HashMap<Point, Color> glowingEyesMap) {
         this.glowingEyesMap = glowingEyesMap;
-        updateTexture();
+        try {
+            updateTexture();
+        } catch (Exception ignored) {
+            /*
+             this only happens when the game is running on the wrong thread,
+             which only happens when we are running on the wrong side (server instead of client)
+             or when the method is called from the wrong thread
+             since I have no idea how to check that, I'll just try catch it lol
+            */
+        }
     }
 
     @Override
@@ -45,21 +54,19 @@ public class GlowingEyesImpl implements IGlowingEyes {
     }
 
     private void updateTexture() {
-        Minecraft.getInstance().execute(() -> {
-            if (resourceLocation != null) {
-                Minecraft.getInstance().getTextureManager().release(resourceLocation);
-            }
+        if (resourceLocation != null) {
+            Minecraft.getInstance().getTextureManager().release(resourceLocation);
+        }
 
-            BufferedImage eyeOverlayTexture = new BufferedImage(64, 64, BufferedImage.TYPE_INT_ARGB);
-            for (Point point : glowingEyesMap.keySet()) {
-                Color color = glowingEyesMap.get(point);
-                eyeOverlayTexture.setRGB(point.x + (64 / 8), point.y + (64 / 8), color.getRGB());
-            }
-            DynamicTexture dynamicTexture = new DynamicTexture(Util.toNativeImage(eyeOverlayTexture));
-            Minecraft.getInstance().getTextureManager().register(
-                    resourceLocation = new ResourceLocation(GlowingEyes.MOD_ID + ":eyes_texture" + UUID.randomUUID()),
-                    dynamicTexture
-            );
-        });
+        BufferedImage eyeOverlayTexture = new BufferedImage(64, 64, BufferedImage.TYPE_INT_ARGB);
+        for (Point point : glowingEyesMap.keySet()) {
+            Color color = glowingEyesMap.get(point);
+            eyeOverlayTexture.setRGB(point.x + 8, point.y + 8, color.getRGB());
+        }
+        DynamicTexture dynamicTexture = new DynamicTexture(Util.toNativeImage(eyeOverlayTexture));
+        Minecraft.getInstance().getTextureManager().register(
+                resourceLocation = new ResourceLocation(GlowingEyes.MOD_ID + ":eyes_texture" + UUID.randomUUID()),
+                dynamicTexture
+        );
     }
 }

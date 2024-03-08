@@ -25,7 +25,8 @@ public class GlowingEyesClient {
         IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
 
         MinecraftForge.EVENT_BUS.register(Commands.class);
-        MinecraftForge.EVENT_BUS.register(ClientEvents.class);
+        MinecraftForge.EVENT_BUS.register(new GlowingEyesClientEvents());
+
         modEventBus.addListener(RenderManager::onAddLayers);
     }
 

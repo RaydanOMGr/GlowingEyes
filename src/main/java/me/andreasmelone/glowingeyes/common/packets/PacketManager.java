@@ -1,5 +1,6 @@
 package me.andreasmelone.glowingeyes.common.packets;
 
+import com.mojang.logging.LogUtils;
 import me.andreasmelone.glowingeyes.GlowingEyes;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
@@ -20,11 +21,18 @@ public class PacketManager {
             PROTOCOL_VERSION::equals
     );
 
-    public static void registerAll() {
-        register(CapabilityUpdatePacket.class, CapabilityUpdatePacket::encode, CapabilityUpdatePacket::decode, CapabilityUpdatePacket::messageConsumer);
+    public static void init() {
+        System.out.println("Init " + INSTANCE.getClass());
     }
 
-    static int i = 0;
+    public static void registerAll() {
+        System.out.println("Side: " + Thread.currentThread().getThreadGroup().toString());
+
+        register(CapabilityUpdatePacket.class, CapabilityUpdatePacket::encode, CapabilityUpdatePacket::decode, CapabilityUpdatePacket::messageConsumer);
+        register(HasModPacket.class, HasModPacket::encode, HasModPacket::decode, HasModPacket::messageConsumer);
+    }
+
+    private static int i = 0;
     public static <MSG> void register(Class<MSG> clazz, BiConsumer<MSG, FriendlyByteBuf> encoder,
                                       Function<FriendlyByteBuf, MSG> decoder,
                                       BiConsumer<MSG, Supplier<NetworkEvent.Context>> consumer) {
