@@ -3,6 +3,7 @@ package me.andreasmelone.glowingeyes.client.gui;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import me.andreasmelone.glowingeyes.GlowingEyes;
+import me.andreasmelone.glowingeyes.client.util.ColorUtil;
 import me.andreasmelone.glowingeyes.client.util.GuiUtil;
 import me.andreasmelone.glowingeyes.client.util.TextureLocations;
 import me.andreasmelone.glowingeyes.common.util.Util;
@@ -21,10 +22,11 @@ public class ColorPickerScreen extends Screen {
     }
 
     private int guiLeft, guiTop;
-    private final int xSize = 200;
+    private final int xSize = 252;
     private final int ySize = 143;
 
     private int colorWheelX, colorWheelY;
+    private int brightnessSliderX, brightnessSliderY;
 
     private final Screen parent;
     public ColorPickerScreen() {
@@ -51,12 +53,15 @@ public class ColorPickerScreen extends Screen {
         this.colorWheelX = this.guiLeft + 20;
         this.colorWheelY = (this.height / 2) - (100 / 2);
 
+        this.brightnessSliderX = this.colorWheelX + 120;
+        this.brightnessSliderY = this.colorWheelY;
+
         this.addEditBox(
                 red = new EditBox(
                         this.font,
                         this.guiLeft + this.xSize - 50, this.guiTop + 20,
                         40, 20,
-                        Component.literal(String.valueOf(Util.round(GuiUtil.getRedFromRGB(GlowingEyes.DEFAULT_COLOR.getRGB()) / 255)))
+                        Component.literal(String.valueOf(Util.round(ColorUtil.getRedFromRGB(GlowingEyes.DEFAULT_COLOR.getRGB()) / 255)))
                 )
         );
         this.addEditBox(
@@ -64,7 +69,7 @@ public class ColorPickerScreen extends Screen {
                         this.font,
                         this.guiLeft + this.xSize - 50, this.guiTop + 50,
                         40, 20,
-                        Component.literal(String.valueOf(Util.round(GuiUtil.getGreenFromRGB(GlowingEyes.DEFAULT_COLOR.getRGB()) / 255)))
+                        Component.literal(String.valueOf(Util.round(ColorUtil.getGreenFromRGB(GlowingEyes.DEFAULT_COLOR.getRGB()) / 255)))
                 )
         );
         this.addEditBox(
@@ -72,16 +77,16 @@ public class ColorPickerScreen extends Screen {
                         this.font,
                         this.guiLeft + this.xSize - 50, this.guiTop + 80,
                         40, 20,
-                        Component.literal(String.valueOf(Util.round(GuiUtil.getBlueFromRGB(GlowingEyes.DEFAULT_COLOR.getRGB()) / 255)))
+                        Component.literal(String.valueOf(Util.round(ColorUtil.getBlueFromRGB(GlowingEyes.DEFAULT_COLOR.getRGB()) / 255)))
                 )
         );
 
         selectedX = WheelRenderer.getPointFromColor(selectedColor).x;
         selectedY = WheelRenderer.getPointFromColor(selectedColor).y;
 
-        red.setValue(String.valueOf(Util.round(GuiUtil.getRedFromRGB(selectedColor) / 255, 2)));
-        green.setValue(String.valueOf(Util.round(GuiUtil.getGreenFromRGB(selectedColor) / 255, 2)));
-        blue.setValue(String.valueOf(Util.round(GuiUtil.getBlueFromRGB(selectedColor) / 255, 2)));
+        red.setValue(String.valueOf(Util.round(ColorUtil.getRedFromRGB(selectedColor) / 255, 2)));
+        green.setValue(String.valueOf(Util.round(ColorUtil.getGreenFromRGB(selectedColor) / 255, 2)));
+        blue.setValue(String.valueOf(Util.round(ColorUtil.getBlueFromRGB(selectedColor) / 255, 2)));
     }
 
     private void addEditBox(EditBox editBox) {
@@ -103,9 +108,9 @@ public class ColorPickerScreen extends Screen {
             if (value > 1) value = 1;
             if (value < 0) value = 0;
 
-            float redValue = GuiUtil.getRedFromRGB(selectedColor);
-            float greenValue = GuiUtil.getGreenFromRGB(selectedColor);
-            float blueValue = GuiUtil.getBlueFromRGB(selectedColor);
+            float redValue = ColorUtil.getRedFromRGB(selectedColor);
+            float greenValue = ColorUtil.getGreenFromRGB(selectedColor);
+            float blueValue = ColorUtil.getBlueFromRGB(selectedColor);
 
             if (editBox == red)
                 redValue = value * 255;
@@ -120,6 +125,10 @@ public class ColorPickerScreen extends Screen {
                     blueValue / 255f
             ).getRGB();
 
+            // change the brightness to the current brightness
+            WheelRenderer.brightness = ColorUtil.getHSBFromRGB(selectedColor)[2];
+            WheelRenderer.resetColorWheel();
+
             selectedX = WheelRenderer.getPointFromColor(selectedColor).x;
             selectedY = WheelRenderer.getPointFromColor(selectedColor).y;
         };
@@ -133,7 +142,7 @@ public class ColorPickerScreen extends Screen {
 
         this.renderBackground(poseStack);
         GuiUtil.drawBackground(poseStack,
-                TextureLocations.UI_BACKGROUND_SLIM, this.guiLeft, this.guiTop, this.xSize, this.ySize);
+                TextureLocations.UI_BACKGROUND_SLIM_LONG, this.guiLeft, this.guiTop, this.xSize, this.ySize);
 
         // draw the selected color on the right bottom
         fill(
@@ -146,6 +155,15 @@ public class ColorPickerScreen extends Screen {
         WheelRenderer.renderColorWheel(poseStack, colorWheelX, colorWheelY);
         renderCursor(poseStack);
 
+        int selectedColorBrightened = ColorUtil.getRGBFromBrightness(selectedColor, 1.0f);
+        fillGradient(
+                poseStack,
+                brightnessSliderX, brightnessSliderY,
+                brightnessSliderX + 30, brightnessSliderY + 100,
+                selectedColorBrightened, Color.BLACK.getRGB()
+        );
+        renderBrightnessCursor(poseStack);
+
         super.render(poseStack, mouseX, mouseY, delta);
     }
 
@@ -157,10 +175,24 @@ public class ColorPickerScreen extends Screen {
         RenderSystem.setShaderTexture(0, TextureLocations.CURSOR);
         blit(
                 poseStack,
-                relativeX, relativeY,
+                relativeX - 3, relativeY - 3,
                 0, 0,
                 8, 8,
                 8, 8
+        );
+    }
+
+    private void renderBrightnessCursor(PoseStack poseStack) {
+        int relativeY = (int) (brightnessSliderY + (1 - WheelRenderer.brightness) * 100);
+
+        RenderSystem.setShaderTexture(0, TextureLocations.BRIGHTNESS_CURSOR);
+        blit(
+                poseStack,
+                colorWheelX + 118, relativeY - 1,
+                34,4,
+                0, 0,
+                16, 3,
+                16, 16
         );
     }
 
@@ -176,13 +208,31 @@ public class ColorPickerScreen extends Screen {
             if(c == 0) return super.mouseClicked(mouseX, mouseY, button);
             selectedColor = c;
 
-            red.setValue(String.valueOf(Util.round(GuiUtil.getRedFromRGB(selectedColor) / 255, 2)));
-            green.setValue(String.valueOf(Util.round(GuiUtil.getGreenFromRGB(selectedColor) / 255, 2)));
-            blue.setValue(String.valueOf(Util.round(GuiUtil.getBlueFromRGB(selectedColor) / 255, 2)));
+            red.setValue(String.valueOf(Util.round(ColorUtil.getRedFromRGB(selectedColor) / 255, 2)));
+            green.setValue(String.valueOf(Util.round(ColorUtil.getGreenFromRGB(selectedColor) / 255, 2)));
+            blue.setValue(String.valueOf(Util.round(ColorUtil.getBlueFromRGB(selectedColor) / 255, 2)));
 
             selectedX = x;
             selectedY = y;
         }
+
+        // the fillGradient function is the brightness slider
+        if(mouseX >= brightnessSliderX && mouseX <= brightnessSliderX + 30 &&
+                mouseY >= brightnessSliderY && mouseY <= brightnessSliderY + 100) {
+            int y = (int) (mouseY - brightnessSliderY);
+            WheelRenderer.brightness = 1 - (y / 100f);
+            if(WheelRenderer.brightness > 1.0f) WheelRenderer.brightness = 1.0f;
+            if(WheelRenderer.brightness < 0.0f) WheelRenderer.brightness = 0.0f;
+            selectedColor = ColorUtil.getRGBFromBrightness(selectedColor, (int) (WheelRenderer.brightness * 255));
+
+            // set the edit boxes to the new color
+            red.setValue(String.valueOf(Util.round(ColorUtil.getRedFromRGB(selectedColor) / 255, 2)));
+            green.setValue(String.valueOf(Util.round(ColorUtil.getGreenFromRGB(selectedColor) / 255, 2)));
+            blue.setValue(String.valueOf(Util.round(ColorUtil.getBlueFromRGB(selectedColor) / 255, 2)));
+
+            WheelRenderer.resetColorWheel();
+        }
+
         return super.mouseClicked(mouseX, mouseY, button);
     }
 

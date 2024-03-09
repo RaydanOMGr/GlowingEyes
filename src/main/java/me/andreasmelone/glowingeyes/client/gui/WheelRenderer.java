@@ -14,6 +14,7 @@ import java.awt.*;
 import java.io.IOException;
 
 public class WheelRenderer {
+    public static float brightness = 1.0f;
     public final static int WHEEL_RADIUS = 256;
     public final static float SCALE = (WHEEL_RADIUS / 100.0f) * 2;
 
@@ -98,8 +99,8 @@ public class WheelRenderer {
                 angle += 360;
             }
             float saturation = distance / WHEEL_RADIUS;
-            float value = 1;
-            Color tmp = new Color(Color.HSBtoRGB(angle / 360, saturation, value));
+
+            Color tmp = new Color(Color.HSBtoRGB(angle / 360, saturation, brightness));
             return tmp.getRGB();
         } else {
             return 0;

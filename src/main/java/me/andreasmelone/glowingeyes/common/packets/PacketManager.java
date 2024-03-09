@@ -27,8 +27,6 @@ public class PacketManager {
     );
 
     public static void registerAll() {
-        System.out.println("Side: " + Thread.currentThread().getThreadGroup().toString());
-
         register(CapabilityUpdatePacket.class, CapabilityUpdatePacket::encode, CapabilityUpdatePacket::decode, CapabilityUpdatePacket::messageConsumer);
     }
 
@@ -44,13 +42,7 @@ public class PacketManager {
 
     public static boolean isModPresent(ServerPlayer player) {
         Connection connection = player.connection.getConnection();
-        final ConnectionData connectionData = NetworkHooks.getConnectionData(connection);
-        if (connectionData != null) {
-            return connectionData.getChannels().containsKey(IDENTIFIER);
-        }
-
-        // If the connection data is null, then we fallback to the vanilla channel list, via #isRemotePresent
-        return INSTANCE.isRemotePresent(connection);
+        return isModPresent(connection);
     }
 
     private static int i = 0;

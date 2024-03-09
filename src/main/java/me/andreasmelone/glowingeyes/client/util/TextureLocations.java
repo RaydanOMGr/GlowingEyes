@@ -15,6 +15,8 @@ public class TextureLocations {
 
     public static final ResourceLocation CURSOR =
             new ResourceLocation(GlowingEyes.MOD_ID, "textures/gui/cursor.png");
+    public static final ResourceLocation BRIGHTNESS_CURSOR =
+            new ResourceLocation(GlowingEyes.MOD_ID, "textures/gui/brightness_cursor.png");
 
     // 176x222
     public static final ResourceLocation UI_BACKGROUND =
@@ -28,6 +30,9 @@ public class TextureLocations {
     // 200x143
     public static final ResourceLocation UI_BACKGROUND_SLIM = 
             new ResourceLocation(GlowingEyes.MOD_ID, "textures/gui/background/background_slim.png");
+    // 252x143
+    public static final ResourceLocation UI_BACKGROUND_SLIM_LONG =
+            new ResourceLocation(GlowingEyes.MOD_ID, "textures/gui/background/background_slim_long.png");
     // 34x45
     public static final ResourceLocation UI_PLAYERBOX = 
             new ResourceLocation(GlowingEyes.MOD_ID, "textures/gui/playerbox.png");
