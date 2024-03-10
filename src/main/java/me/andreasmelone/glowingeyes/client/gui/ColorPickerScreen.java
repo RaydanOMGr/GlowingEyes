@@ -7,6 +7,7 @@ import me.andreasmelone.glowingeyes.client.util.ColorUtil;
 import me.andreasmelone.glowingeyes.client.util.GuiUtil;
 import me.andreasmelone.glowingeyes.client.util.TextureLocations;
 import me.andreasmelone.glowingeyes.common.util.Util;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
@@ -17,9 +18,6 @@ import java.util.function.Consumer;
 
 public class ColorPickerScreen extends Screen {
     private static int selectedColor = GlowingEyes.DEFAULT_COLOR.getRGB();
-    public static Color getSelectedColor() {
-        return new Color(selectedColor);
-    }
 
     private int guiLeft, guiTop;
     private final int xSize = 252;
@@ -27,6 +25,9 @@ public class ColorPickerScreen extends Screen {
 
     private int colorWheelX, colorWheelY;
     private int brightnessSliderX, brightnessSliderY;
+    private int selectedX, selectedY;
+
+    EditBox red, green, blue;
 
     private final Screen parent;
     public ColorPickerScreen() {
@@ -39,9 +40,6 @@ public class ColorPickerScreen extends Screen {
         this.parent = parent;
     }
 
-    EditBox red;
-    EditBox green;
-    EditBox blue;
 
     @Override
     protected void init() {
@@ -61,7 +59,7 @@ public class ColorPickerScreen extends Screen {
                         this.font,
                         this.guiLeft + this.xSize - 50, this.guiTop + 20,
                         40, 20,
-                        Component.literal(String.valueOf(Util.round(ColorUtil.getRedFromRGB(GlowingEyes.DEFAULT_COLOR.getRGB()) / 255)))
+                        Component.literal(String.valueOf(Util.round((float) ColorUtil.getRedFromRGB(GlowingEyes.DEFAULT_COLOR.getRGB()) / 255)))
                 )
         );
         this.addEditBox(
@@ -69,7 +67,7 @@ public class ColorPickerScreen extends Screen {
                         this.font,
                         this.guiLeft + this.xSize - 50, this.guiTop + 50,
                         40, 20,
-                        Component.literal(String.valueOf(Util.round(ColorUtil.getGreenFromRGB(GlowingEyes.DEFAULT_COLOR.getRGB()) / 255)))
+                        Component.literal(String.valueOf(Util.round((float) ColorUtil.getGreenFromRGB(GlowingEyes.DEFAULT_COLOR.getRGB()) / 255)))
                 )
         );
         this.addEditBox(
@@ -77,16 +75,111 @@ public class ColorPickerScreen extends Screen {
                         this.font,
                         this.guiLeft + this.xSize - 50, this.guiTop + 80,
                         40, 20,
-                        Component.literal(String.valueOf(Util.round(ColorUtil.getBlueFromRGB(GlowingEyes.DEFAULT_COLOR.getRGB()) / 255)))
+                        Component.literal(String.valueOf(Util.round((float) ColorUtil.getBlueFromRGB(GlowingEyes.DEFAULT_COLOR.getRGB()) / 255)))
                 )
         );
 
         selectedX = WheelRenderer.getPointFromColor(selectedColor).x;
         selectedY = WheelRenderer.getPointFromColor(selectedColor).y;
 
-        red.setValue(String.valueOf(Util.round(ColorUtil.getRedFromRGB(selectedColor) / 255, 2)));
-        green.setValue(String.valueOf(Util.round(ColorUtil.getGreenFromRGB(selectedColor) / 255, 2)));
-        blue.setValue(String.valueOf(Util.round(ColorUtil.getBlueFromRGB(selectedColor) / 255, 2)));
+        red.setValue(String.valueOf(Util.round((float) ColorUtil.getRedFromRGB(selectedColor) / 255, 2)));
+        green.setValue(String.valueOf(Util.round((float) ColorUtil.getGreenFromRGB(selectedColor) / 255, 2)));
+        blue.setValue(String.valueOf(Util.round((float) ColorUtil.getBlueFromRGB(selectedColor) / 255, 2)));
+    }
+
+    @Override
+    public void render(PoseStack poseStack, int mouseX, int mouseY, float delta) {
+        if(parent != null) {
+            parent.render(poseStack, mouseX, mouseY, delta);
+        }
+
+        this.renderBackground(poseStack);
+        GuiUtil.drawBackground(poseStack,
+                TextureLocations.UI_BACKGROUND_SLIM_LONG, this.guiLeft, this.guiTop, this.xSize, this.ySize);
+
+        // draw the selected color on the right bottom
+        fill(
+                poseStack,
+                this.guiLeft + this.xSize - 40, this.guiTop + this.ySize - 40,
+                this.guiLeft + this.xSize - 15, this.guiTop + this.ySize - 15,
+                selectedColor
+        );
+
+        WheelRenderer.renderColorWheel(poseStack, colorWheelX, colorWheelY);
+        renderCursor(poseStack);
+
+        int selectedColorBrightened = ColorUtil.getRGBFromBrightness(selectedColor, 1.0f);
+        fillGradient(
+                poseStack,
+                brightnessSliderX, brightnessSliderY,
+                brightnessSliderX + 30, brightnessSliderY + 100,
+                selectedColorBrightened, Color.BLACK.getRGB()
+        );
+        renderBrightnessCursor(poseStack);
+
+        super.render(poseStack, mouseX, mouseY, delta);
+    }
+
+    @Override
+    public boolean mouseDragged(double mouseX, double mouseY, int button, double dragX, double dragY) {
+        boolean isColorWheelClicked = mouseX >= colorWheelX && mouseX <= colorWheelX + 100 &&
+                mouseY >= colorWheelY && mouseY <= colorWheelY + 100;
+        boolean isBrightnessSliderClicked = mouseX >= brightnessSliderX && mouseX <= brightnessSliderX + 30 &&
+                mouseY >= brightnessSliderY && mouseY <= brightnessSliderY + 100 - 2;
+
+        if(isColorWheelClicked) {
+            colorWheelClicked(mouseX, mouseY);
+        }
+        if(isBrightnessSliderClicked) {
+            brightnessSliderClicked(mouseX, mouseY);
+        }
+
+        return super.mouseDragged(mouseX, mouseY, button, dragX, dragY);
+    }
+
+    @Override
+    public boolean isPauseScreen() {
+        return false;
+    }
+
+    @Override
+    public void onClose() {
+        if(parent != null) {
+            getMinecraft().setScreen(parent);
+            parent.init(
+                    getMinecraft(),
+                    getMinecraft().getWindow().getGuiScaledWidth(),
+                    getMinecraft().getWindow().getGuiScaledHeight()
+            );
+        }
+    }
+
+    private void colorWheelClicked(double mouseX, double mouseY) {
+        int x = (int) ((mouseX - colorWheelX) * WheelRenderer.SCALE);
+        int y = (int) ((mouseY - colorWheelY) * WheelRenderer.SCALE);
+
+        int c = WheelRenderer.getColorAt(x, y);
+        if (c == 0) return;
+        selectedColor = c;
+
+        red.setValue(String.valueOf(Util.round((float) ColorUtil.getRedFromRGB(selectedColor) / 255, 2)));
+        green.setValue(String.valueOf(Util.round((float) ColorUtil.getGreenFromRGB(selectedColor) / 255, 2)));
+        blue.setValue(String.valueOf(Util.round((float) ColorUtil.getBlueFromRGB(selectedColor) / 255, 2)));
+
+        selectedX = x;
+        selectedY = y;
+    }
+
+    private void brightnessSliderClicked(double mouseX, double mouseY) {
+        int y = (int) (mouseY - brightnessSliderY);
+        WheelRenderer.brightness = 1 - (y / 100f);
+        if (WheelRenderer.brightness > 1.0f) WheelRenderer.brightness = 1.0f;
+        if (WheelRenderer.brightness < 0.0f) WheelRenderer.brightness = 0.0f;
+        selectedColor = ColorUtil.getRGBFromBrightness(selectedColor, (int) (WheelRenderer.brightness * 255));
+
+        red.setValue(String.valueOf(Util.round((float) ColorUtil.getRedFromRGB(selectedColor) / 255, 2)));
+        green.setValue(String.valueOf(Util.round((float) ColorUtil.getGreenFromRGB(selectedColor) / 255, 2)));
+        blue.setValue(String.valueOf(Util.round((float) ColorUtil.getBlueFromRGB(selectedColor) / 255, 2)));
     }
 
     private void addEditBox(EditBox editBox) {
@@ -127,44 +220,10 @@ public class ColorPickerScreen extends Screen {
 
             // change the brightness to the current brightness
             WheelRenderer.brightness = ColorUtil.getHSBFromRGB(selectedColor)[2];
-            WheelRenderer.resetColorWheel();
 
             selectedX = WheelRenderer.getPointFromColor(selectedColor).x;
             selectedY = WheelRenderer.getPointFromColor(selectedColor).y;
         };
-    }
-
-    @Override
-    public void render(PoseStack poseStack, int mouseX, int mouseY, float delta) {
-        if(parent != null) {
-            parent.render(poseStack, mouseX, mouseY, delta);
-        }
-
-        this.renderBackground(poseStack);
-        GuiUtil.drawBackground(poseStack,
-                TextureLocations.UI_BACKGROUND_SLIM_LONG, this.guiLeft, this.guiTop, this.xSize, this.ySize);
-
-        // draw the selected color on the right bottom
-        fill(
-                poseStack,
-                this.guiLeft + this.xSize - 40, this.guiTop + this.ySize - 40,
-                this.guiLeft + this.xSize - 15, this.guiTop + this.ySize - 15,
-                selectedColor
-        );
-
-        WheelRenderer.renderColorWheel(poseStack, colorWheelX, colorWheelY);
-        renderCursor(poseStack);
-
-        int selectedColorBrightened = ColorUtil.getRGBFromBrightness(selectedColor, 1.0f);
-        fillGradient(
-                poseStack,
-                brightnessSliderX, brightnessSliderY,
-                brightnessSliderX + 30, brightnessSliderY + 100,
-                selectedColorBrightened, Color.BLACK.getRGB()
-        );
-        renderBrightnessCursor(poseStack);
-
-        super.render(poseStack, mouseX, mouseY, delta);
     }
 
     private void renderCursor(PoseStack poseStack) {
@@ -196,69 +255,10 @@ public class ColorPickerScreen extends Screen {
         );
     }
 
-    private int selectedX, selectedY;
-    @Override
-    public boolean mouseClicked(double mouseX, double mouseY, int button) {
-        if(mouseX >= colorWheelX && mouseX <= colorWheelX + 100 &&
-                mouseY >= colorWheelY && mouseY <= colorWheelY + 100) {
-            int x = (int) ((mouseX - colorWheelX) * WheelRenderer.SCALE);
-            int y = (int) ((mouseY - colorWheelY) * WheelRenderer.SCALE);
-
-            int c = WheelRenderer.getColorAt(x, y);
-            if(c == 0) return super.mouseClicked(mouseX, mouseY, button);
-            selectedColor = c;
-
-            red.setValue(String.valueOf(Util.round(ColorUtil.getRedFromRGB(selectedColor) / 255, 2)));
-            green.setValue(String.valueOf(Util.round(ColorUtil.getGreenFromRGB(selectedColor) / 255, 2)));
-            blue.setValue(String.valueOf(Util.round(ColorUtil.getBlueFromRGB(selectedColor) / 255, 2)));
-
-            selectedX = x;
-            selectedY = y;
-        }
-
-        // the fillGradient function is the brightness slider
-        if(mouseX >= brightnessSliderX && mouseX <= brightnessSliderX + 30 &&
-                mouseY >= brightnessSliderY && mouseY <= brightnessSliderY + 100) {
-            int y = (int) (mouseY - brightnessSliderY);
-            WheelRenderer.brightness = 1 - (y / 100f);
-            if(WheelRenderer.brightness > 1.0f) WheelRenderer.brightness = 1.0f;
-            if(WheelRenderer.brightness < 0.0f) WheelRenderer.brightness = 0.0f;
-            selectedColor = ColorUtil.getRGBFromBrightness(selectedColor, (int) (WheelRenderer.brightness * 255));
-
-            // set the edit boxes to the new color
-            red.setValue(String.valueOf(Util.round(ColorUtil.getRedFromRGB(selectedColor) / 255, 2)));
-            green.setValue(String.valueOf(Util.round(ColorUtil.getGreenFromRGB(selectedColor) / 255, 2)));
-            blue.setValue(String.valueOf(Util.round(ColorUtil.getBlueFromRGB(selectedColor) / 255, 2)));
-
-            WheelRenderer.resetColorWheel();
-        }
-
-        return super.mouseClicked(mouseX, mouseY, button);
+    public static Color getSelectedColor() {
+        return new Color(selectedColor);
     }
-
-    // on keyboard button click
-    @Override
-    public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
-        if(keyCode == GLFW.GLFW_KEY_F12) {
-            WheelRenderer.resetColorWheel();
-        }
-        return super.keyPressed(keyCode, scanCode, modifiers);
-    }
-
-    @Override
-    public boolean isPauseScreen() {
-        return false;
-    }
-
-    @Override
-    public void onClose() {
-        if(parent != null) {
-            getMinecraft().setScreen(parent);
-            parent.init(
-                    getMinecraft(),
-                    getMinecraft().getWindow().getGuiScaledWidth(),
-                    getMinecraft().getWindow().getGuiScaledHeight()
-            );
-        }
+    public static void setSelectedColor(Color color) {
+        selectedColor = color.getRGB();
     }
 }

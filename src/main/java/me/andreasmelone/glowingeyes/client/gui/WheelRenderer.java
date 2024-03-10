@@ -30,6 +30,7 @@ public class WheelRenderer {
             colorWheel = Minecraft.getInstance().getTextureManager().register(
                     GlowingEyes.MOD_ID + ".color_wheel", new DynamicTexture(image)
             );
+            System.out.println("Registered color wheel");
             renderColorWheel(posestack, colorWheelX, colorWheelY, colorWheelWidth, colorWheelHeight);
         } else {
             RenderSystem.setShaderTexture(0, colorWheel);
@@ -55,15 +56,6 @@ public class WheelRenderer {
     }
 
     public static void resetColorWheel() {
-        // some debugging stuff here
-        if(colorWheel != null) {
-            try {
-                getNativeImage().writeToFile("color_wheel.png");
-            } catch(IOException e) {
-                e.printStackTrace();
-            }
-        }
-
         Minecraft.getInstance().getTextureManager().release(colorWheel);
         colorWheel = null;
     }

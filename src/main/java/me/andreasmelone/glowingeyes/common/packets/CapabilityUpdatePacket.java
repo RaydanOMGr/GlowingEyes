@@ -31,16 +31,12 @@ public class CapabilityUpdatePacket {
     }
 
     public void encode(FriendlyByteBuf buffer) {
-        System.out.println("Encoding capability update packet");
-
         buffer.writeUUID(player.getUUID());
         buffer.writeBoolean(capability.isToggledOn());
         buffer.writeByteArray(Util.serializeMap(capability.getGlowingEyesMap()));
     }
 
     public static CapabilityUpdatePacket decode(FriendlyByteBuf buffer) {
-        System.out.println("Decoding capability update packet");
-
         UUID playerUUID = buffer.readUUID();
         boolean toggledOn = buffer.readBoolean();
         byte[] glowingEyesMap = buffer.readByteArray();

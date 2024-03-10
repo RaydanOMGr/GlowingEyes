@@ -20,15 +20,24 @@ public class ColorUtil {
         return (blue << 24) | (red << 16) | (green << 8) | alpha;
     }
 
-    public static float getRedFromRGB(int rgb) {
+    public static int RGBAtoARGB(int rgb) {
+        int red = (rgb >> 16) & 0xFF;
+        int green = (rgb >> 8) & 0xFF;
+        int blue = rgb & 0xFF;
+        int alpha = (rgb >> 24) & 0xFF;
+
+        return (alpha << 24) | (red << 16) | (green << 8) | blue;
+    }
+
+    public static int getRedFromRGB(int rgb) {
         return (rgb >> 16) & 0xFF;
     }
 
-    public static float getGreenFromRGB(int rgb) {
+    public static int getGreenFromRGB(int rgb) {
         return (rgb >> 8) & 0xFF;
     }
 
-    public static float getBlueFromRGB(int rgb) {
+    public static int getBlueFromRGB(int rgb) {
         return rgb & 0xFF;
     }
 
@@ -160,5 +169,15 @@ public class ColorUtil {
                 hsb
         );
         return hsb;
+    }
+
+    public static String intToHex(int color) {
+        String hex = Integer.toHexString(color);
+
+        if (hex.length() < 6) {
+            hex = String.format("%06X", color);
+        }
+
+        return "#" + hex;
     }
 }

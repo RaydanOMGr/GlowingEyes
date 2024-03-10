@@ -3,17 +3,18 @@ package me.andreasmelone.glowingeyes.client.gui;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.logging.LogUtils;
+import me.andreasmelone.glowingeyes.client.util.ColorUtil;
 import me.andreasmelone.glowingeyes.client.util.GuiUtil;
 import me.andreasmelone.glowingeyes.client.util.TextureLocations;
 import me.andreasmelone.glowingeyes.common.capability.eyes.GlowingEyesCapability;
-import me.andreasmelone.glowingeyes.common.packets.CapabilityUpdatePacket;
-import me.andreasmelone.glowingeyes.common.packets.PacketManager;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.ImageButton;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Player;
+import org.lwjgl.opengl.GL;
+import org.lwjgl.opengl.GL11;
 
 import java.awt.*;
 import java.util.List;
@@ -54,14 +55,14 @@ public class EyesEditorScreen extends Screen {
                 this.guiLeft + this.xSize - 30, this.guiTop + this.ySize - 30,
                 20, 20,
                 0, 0, 20,
-                TextureLocations.COLOR_PICKER,
+                TextureLocations.COLOR_PICKER_BUTTON,
                 64, 64,
                 button -> getMinecraft().setScreen(new ColorPickerScreen(this))
         ));
 
         // the preset menu button
         this.addRenderableWidget(new ImageButton(
-                this.guiLeft + this.xSize - 60, this.guiTop + this.ySize - 30,
+                this.guiLeft + this.xSize - 30, this.guiTop + this.ySize - 55,
                 20, 20,
                 0, 0, 20,
                 TextureLocations.PRESET_MENU_BUTTON,
@@ -96,6 +97,18 @@ public class EyesEditorScreen extends Screen {
                     if(mode == Mode.ERASER) button.active = false;
                 }
         ));
+//        modeButtons.add(new ImageButton(
+//                this.guiLeft + 8, this.guiTop + 120,
+//                20, 20,
+//                0, 0, 20,
+//                TextureLocations.COLOR_PICKER,
+//                64, 64,
+//                button -> {
+//                    mode = Mode.PICKER;
+//                    modeButtons.forEach(b -> b.active = true);
+//                    if(mode == Mode.PICKER) button.active = false;
+//                }
+//        ));
 
         modeButtons.get(0).onPress();
         modeButtons.forEach(this::addRenderableWidget);
@@ -182,7 +195,7 @@ public class EyesEditorScreen extends Screen {
     }
 
     @Override
-    public boolean mouseClicked(double mouseX, double mouseY, int mouseButton) {
+    public boolean mouseClicked(double mouseX, double mouseY, int button) {
         if(mouseX >= headX && mouseX <= endHeadX && mouseY >= headY && mouseY <= endHeadY) {
             int spaceBetweenPixels = 2;
             int pixelSize = 16;
@@ -191,20 +204,47 @@ public class EyesEditorScreen extends Screen {
             int y = (int) ((mouseY - headY) / (pixelSize + spaceBetweenPixels));
 
             if (mode == Mode.BRUSH) {
-                if (mouseButton == 0) {
+                if (button == 0) {
                     pixels.put(new Point(x, y), ColorPickerScreen.getSelectedColor());
-                } else if (mouseButton == 1) {
+                } else if (button == 1) {
                     pixels.remove(new Point(x, y));
                 }
             }
 
-            if (mode == Mode.ERASER && mouseButton == 0) {
+            if (mode == Mode.ERASER && button == 0) {
                 pixels.remove(new Point(x, y));
             }
 
+            if (mode == Mode.PICKER && button == 0) {
+                GL.createCapabilities();
+                GL11.glReadBuffer(GL11.GL_FRONT);
+
+                float[] pixel = new float[4];
+
+                double scaleX = (double) getMinecraft().getWindow().getWidth() / (double) getMinecraft().getWindow().getGuiScaledWidth();
+                double scaleY = (double) getMinecraft().getWindow().getHeight() / (double) getMinecraft().getWindow().getGuiScaledHeight();
+
+                GL11.glReadPixels(
+                        (int)(mouseX * scaleX), (int) (mouseY * scaleY),
+                        1, 1,
+                        GL11.GL_RGBA, GL11.GL_FLOAT,
+                        pixel
+                );
+
+                Color color = new Color(pixel[0], pixel[1], pixel[2], pixel[3]);
+                System.out.println("Color: " + ColorUtil.intToHex(color.getRGB()));
+                ColorPickerScreen.setSelectedColor(color);
+
+                modeButtons.get(0).onPress();
+            }
         }
 
-        return super.mouseClicked(mouseX, mouseY, mouseButton);
+        return super.mouseClicked(mouseX, mouseY, button);
+    }
+
+    @Override
+    public boolean mouseDragged(double mouseX, double mouseY, int button, double dragX, double dragY) {
+        return this.mouseClicked(mouseX, mouseY, button);
     }
     @Override
     public void onClose() {
@@ -230,6 +270,7 @@ public class EyesEditorScreen extends Screen {
     Mode mode = Mode.BRUSH;
     enum Mode {
         BRUSH,
-        ERASER
+        ERASER,
+        PICKER;
     }
 }
