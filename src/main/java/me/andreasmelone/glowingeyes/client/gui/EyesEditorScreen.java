@@ -3,6 +3,7 @@ package me.andreasmelone.glowingeyes.client.gui;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.logging.LogUtils;
+import me.andreasmelone.glowingeyes.client.gui.preset.PresetsScreen;
 import me.andreasmelone.glowingeyes.client.util.ColorUtil;
 import me.andreasmelone.glowingeyes.client.util.GuiUtil;
 import me.andreasmelone.glowingeyes.client.util.TextureLocations;
@@ -68,7 +69,7 @@ public class EyesEditorScreen extends Screen {
                 TextureLocations.PRESET_MENU_BUTTON,
                 64, 64,
                 button -> {
-
+                    getMinecraft().setScreen(new PresetsScreen(this));
                 }
         ));
 
@@ -265,6 +266,13 @@ public class EyesEditorScreen extends Screen {
     @Override
     public boolean isPauseScreen() {
         return false;
+    }
+
+    public void openAsParent() {
+        this.pixels.clear();
+        this.pixels.putAll(GlowingEyesCapability.getGlowingEyesMap(getMinecraft().player));
+
+        getMinecraft().setScreen(this);
     }
 
     Mode mode = Mode.BRUSH;

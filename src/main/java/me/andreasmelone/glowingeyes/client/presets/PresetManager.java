@@ -44,12 +44,10 @@ public class PresetManager {
                     GsonPresetsFileModel.class
             );
         } catch (JsonSyntaxException e) {
-            logger.error("Could not parse presets file due to it being malformed. Not loading data.");
-            e.printStackTrace();
+            logger.error("Could not parse presets file due to it being malformed. Not loading data.", e);
             return;
         } catch (IOException e) {
-            logger.error("Could not load presets file due to an IOException");
-            e.printStackTrace();
+            logger.error("Could not load presets file due to an IOException", e);
             return;
         }
 
@@ -68,8 +66,7 @@ public class PresetManager {
         try {
             Files.write(this.presetStorage.toPath(), json.getBytes());
         } catch (IOException e) {
-            logger.error("Could not save presets file due to an IOException");
-            e.printStackTrace();
+            logger.error("Could not save presets file due to an IOException", e);
         }
     }
 
@@ -83,8 +80,7 @@ public class PresetManager {
             Path dest = presetStorage.toPath();
             Files.copy(presetStream, dest);
         } catch (IOException e) {
-            logger.error("Could not save default presets file due to an IOException");
-            e.printStackTrace();
+            logger.error("Could not save default presets file due to an IOException", e);
             return;
         }
         this.loadPresets();
@@ -105,8 +101,7 @@ public class PresetManager {
         }
         Preset preset = this.presets.get(id);
 
-        Player player = Minecraft.getInstance().player;
-        GlowingEyesCapability.setGlowingEyesMap(player, preset.getContent());
+        GlowingEyesCapability.setGlowingEyesMap(Minecraft.getInstance().player, preset.getContent());
         GlowingEyesCapability.sendUpdate();
     }
 
