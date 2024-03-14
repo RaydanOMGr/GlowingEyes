@@ -186,6 +186,8 @@ tasks.named('jar', Jar).configure {
         ])
     }
 
+    archiveFileName = "GlowingEyes-${minecraft_version}-${project.version}.jar"
+
     // This is the preferred method to reobfuscate your jar file
     finalizedBy 'reobfJar'
 }
