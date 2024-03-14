@@ -14,6 +14,7 @@ import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.inventory.InventoryScreen;
 import net.minecraft.network.chat.Component;
+import org.lwjgl.glfw.GLFW;
 import org.lwjgl.opengl.GL11;
 
 import java.awt.*;
@@ -93,6 +94,7 @@ public class PresetsScreen extends Screen {
                         if(selectedPreset != -1) {
                             presetManager.applyPreset(selectedPreset);
                         }
+                        presetManager.savePresets();
                         if(parent instanceof EyesEditorScreen)
                             ((EyesEditorScreen)parent).openAsParent();
                         else
@@ -109,6 +111,7 @@ public class PresetsScreen extends Screen {
                         GlowingEyesCapability.setGlowingEyesMap(getMinecraft().player, savedPixelMap);
                         GlowingEyesCapability.setToggledOn(getMinecraft().player, toggledState);
 
+                        presetManager.savePresets();
                         getMinecraft().setScreen(parent);
                     }
                 }
@@ -144,7 +147,7 @@ public class PresetsScreen extends Screen {
                                 presetManager.removePreset(selectedPreset);
                                 switchPage(1);
                             }
-                            unselectPreset();
+                            this.unselectPreset();
                         });
                     }
                 }
@@ -173,9 +176,6 @@ public class PresetsScreen extends Screen {
             presetButtons.add(current = new PresetButton(
                     this.guiLeft + 10, this.guiTop + 10 + (j * 30),
                     preset, button -> {
-                        if (!presetManager.hasPreset(button.getPreset().getId())) {
-                            return;
-                        }
                         if (button.getPreset().getId() == selectedPreset) selectedPreset = -1;
                         else selectedPreset = button.getPreset().getId();
 
@@ -189,6 +189,7 @@ public class PresetsScreen extends Screen {
                         }
                     }
             ));
+            presetButtons.forEach(this::addRenderableWidget);
         }
     }
 
@@ -234,6 +235,22 @@ public class PresetsScreen extends Screen {
         GlStateManager._disableDepthTest();
 
         super.render(poseStack, mouseX, mouseY, partialTicks);
+    }
+
+    @Override
+    public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
+        if(keyCode == GLFW.GLFW_KEY_ESCAPE) {
+            if(parent != null) {
+                this.onClose();
+                getMinecraft().setScreen(parent);
+            }
+        }
+        return super.keyPressed(keyCode, scanCode, modifiers);
+    }
+
+    @Override
+    public boolean isPauseScreen() {
+        return false;
     }
 
     @Override

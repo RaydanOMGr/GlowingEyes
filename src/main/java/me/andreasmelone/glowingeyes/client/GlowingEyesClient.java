@@ -2,6 +2,7 @@ package me.andreasmelone.glowingeyes.client;
 
 import com.mojang.logging.LogUtils;
 import me.andreasmelone.glowingeyes.GlowingEyes;
+import me.andreasmelone.glowingeyes.client.presets.PresetManager;
 import me.andreasmelone.glowingeyes.client.render.RenderManager;
 import me.andreasmelone.glowingeyes.common.scheduler.CodeScheduler;
 import me.andreasmelone.glowingeyes.common.scheduler.Scheduler;
@@ -28,6 +29,8 @@ public class GlowingEyesClient {
         MinecraftForge.EVENT_BUS.register(new GlowingEyesClientEvents());
 
         modEventBus.addListener(RenderManager::onAddLayers);
+
+        PresetManager.getInstance().loadPresets();
     }
 
     public static Scheduler getClientScheduler() {

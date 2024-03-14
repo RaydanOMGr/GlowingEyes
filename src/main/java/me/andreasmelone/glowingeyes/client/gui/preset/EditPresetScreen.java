@@ -48,11 +48,12 @@ public class EditPresetScreen extends Screen {
 
         // make an "apply" and a cancel button
         this.addRenderableWidget(new Button(
-                0, this.guiLeft + 20,
-                this.guiTop + 100, 80 - 5,
+                this.guiLeft + 20, this.guiTop + 100,
+                80 - 5, 20,
                 Component.translatable("gui.apply"),
                 button -> {
                     if(parent != null) {
+                        future.complete(nameField.getValue());
                         this.getMinecraft().setScreen(parent);
                     }
                 }
@@ -86,12 +87,12 @@ public class EditPresetScreen extends Screen {
                 0xFFFFFF
         );
 
-        drawCenteredString(
-                poseStack, this.font,
-                Component.translatable("gui.name"),
-                this.width / 2, this.guiTop + 40,
-                0xFFFFFF
-        );
+//        drawCenteredString(
+//                poseStack, this.font,
+//                Component.translatable("gui.name"),
+//                this.width / 2, this.guiTop + 40,
+//                0xFFFFFF
+//        );
 
         super.render(poseStack, mouseX, mouseY, partialTicks);
     }
@@ -99,7 +100,7 @@ public class EditPresetScreen extends Screen {
     public static CompletableFuture<String> askForName(Screen parent, String elementName) {
         EditPresetScreen screen = new EditPresetScreen(parent);
         screen.elementName = elementName;
-        screen.getMinecraft().setScreen(screen);
+        parent.getMinecraft().setScreen(screen);
         CompletableFuture<String> future = new CompletableFuture<>();
         screen.future = future;
         return future;

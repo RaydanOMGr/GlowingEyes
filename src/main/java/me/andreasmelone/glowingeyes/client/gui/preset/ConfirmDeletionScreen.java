@@ -1,14 +1,16 @@
 package me.andreasmelone.glowingeyes.client.gui.preset;
 
+import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.vertex.PoseStack;
 import me.andreasmelone.glowingeyes.client.util.GuiUtil;
 import me.andreasmelone.glowingeyes.client.util.TextureLocations;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.components.Button;
-import net.minecraft.client.gui.components.MultiLineLabel;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.FormattedText;
+import net.minecraft.network.chat.Style;
 import net.minecraft.util.FormattedCharSequence;
+import org.apache.logging.log4j.core.config.builder.api.ComponentBuilder;
 
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
@@ -20,7 +22,6 @@ public class ConfirmDeletionScreen extends Screen {
     int guiLeft, guiTop, middleX, middleY;
 
     private String deletedElement;
-    private MultiLineLabel label;
     private Component labelComponent;
     private CompletableFuture<Boolean> future;
     private final Screen parent;
@@ -42,7 +43,7 @@ public class ConfirmDeletionScreen extends Screen {
         this.middleX = this.guiLeft + this.xSize / 2;
         this.middleY = this.guiTop + this.ySize / 2;
 
-        label = MultiLineLabel.create(this.font, labelComponent, this.xSize - (20 * 2));
+        labelComponent = Component.empty();
 
         this.addRenderableWidget(new Button(
                 this.guiLeft + 20, this.guiTop + 100,
@@ -70,15 +71,7 @@ public class ConfirmDeletionScreen extends Screen {
                     }
                 }
         ));
-        Component formated = Component.translatable("gui.delete.confirm", this.deletedElement);
-        StringBuilder builder = new StringBuilder();
-
-        // split the text up so it fits on the screen
-        List<FormattedCharSequence> lines = this.font.split(formated, this.xSize - (20 * 2));
-        for (FormattedCharSequence line : lines) {
-            builder.append(line).append("\n");
-        }
-        labelComponent = Component.literal(builder.toString());
+        labelComponent = Component.translatable("gui.delete.confirm", this.deletedElement);
     }
 
     @Override
@@ -92,7 +85,13 @@ public class ConfirmDeletionScreen extends Screen {
                 this.xSize, this.ySize
         );
 
-        this.label.renderCentered(poseStack, this.guiLeft + 20, this.guiTop + 50, this.xSize - (20 * 2), 20);
+        drawCenteredString(
+                poseStack,
+                this.font,
+                labelComponent,
+                this.middleX, this.middleY - 20,
+                0xFFFFFF
+        );
 
         super.render(poseStack, mouseX, mouseY, partialTicks);
     }
@@ -100,7 +99,7 @@ public class ConfirmDeletionScreen extends Screen {
     public static CompletableFuture<Boolean> askToDelete(Screen parent, String element) {
         ConfirmDeletionScreen screen = new ConfirmDeletionScreen(parent);
         screen.deletedElement = element;
-        screen.getMinecraft().setScreen(screen);
+        parent.getMinecraft().setScreen(screen);
         CompletableFuture<Boolean> future = new CompletableFuture<>();
         screen.future = future;
         return future;
