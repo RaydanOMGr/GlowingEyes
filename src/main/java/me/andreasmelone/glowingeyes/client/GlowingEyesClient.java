@@ -7,6 +7,7 @@ import me.andreasmelone.glowingeyes.client.render.RenderManager;
 import me.andreasmelone.glowingeyes.common.scheduler.CodeScheduler;
 import me.andreasmelone.glowingeyes.common.scheduler.Scheduler;
 import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.client.event.RegisterKeyMappingsEvent;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -22,15 +23,20 @@ public class GlowingEyesClient {
 
     @SubscribeEvent
     public static void onClientSetup(FMLClientSetupEvent event) {
-        LOGGER.info("Glowing Eyes client setup");
         IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
+        LOGGER.info("Glowing Eyes client setup");
+
+        modEventBus.addListener(RenderManager::onAddLayers);
 
         MinecraftForge.EVENT_BUS.register(Commands.class);
         MinecraftForge.EVENT_BUS.register(new GlowingEyesClientEvents());
 
-        modEventBus.addListener(RenderManager::onAddLayers);
-
         PresetManager.getInstance().loadPresets();
+    }
+
+    @SubscribeEvent
+    public static void onRegisterKeyMapping(RegisterKeyMappingsEvent event) {
+        GlowingEyesKeybindings.registerBindings(event);
     }
 
     public static Scheduler getClientScheduler() {
