@@ -1,11 +1,11 @@
 package me.andreasmelone.glowingeyes.common.scheduler;
 
-import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class CodeScheduler implements Scheduler {
     // task, ticks
-    Map<Task, Long> tasksToDelay = new HashMap<>();
+    Map<Task, Long> tasksToDelay = new ConcurrentHashMap<>();
 
     @Override
     public Task runLater(Runnable runnable, long ticks) {
