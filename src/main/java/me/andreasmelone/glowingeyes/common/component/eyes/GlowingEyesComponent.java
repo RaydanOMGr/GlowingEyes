@@ -87,7 +87,6 @@ public class GlowingEyesComponent {
      * @param receivingPlayer another player who will receive the update
      */
     public static void sendUpdate(ServerPlayer updatedPlayer, ServerPlayer receivingPlayer) {
-        System.out.println("Sending update about " + updatedPlayer.getName().getString() + " to " + receivingPlayer.getName().getString());
         new CapabilityUpdatePacket(updatedPlayer, getComponent(updatedPlayer)).sendToClient(receivingPlayer);
     }
 

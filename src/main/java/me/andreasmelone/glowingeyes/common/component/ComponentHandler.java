@@ -1,5 +1,6 @@
 package me.andreasmelone.glowingeyes.common.component;
 
+import com.mojang.logging.LogUtils;
 import dev.onyxstudios.cca.api.v3.component.ComponentKey;
 import dev.onyxstudios.cca.api.v3.component.ComponentRegistry;
 import dev.onyxstudios.cca.api.v3.entity.EntityComponentFactoryRegistry;
@@ -16,7 +17,7 @@ public class ComponentHandler implements EntityComponentInitializer {
 
     @Override
     public void registerEntityComponentFactories(EntityComponentFactoryRegistry registry) {
-        System.out.println("Registering Glowing Eyes component");
+        LogUtils.getLogger().info("Registering Glowing Eyes component");
         registry.registerForPlayers(GLOWING_EYES, player -> new GlowingEyesImpl(), RespawnCopyStrategy.ALWAYS_COPY);
     }
 }

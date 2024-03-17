@@ -38,10 +38,6 @@ public class CapabilityUpdatePacket {
         glowingEyes = new GlowingEyesImpl();
         glowingEyes.setToggledOn(buf.readBoolean());
         glowingEyes.setGlowingEyesMap(Util.deserializeMap(buf.readByteArray()));
-        System.out.println("Deserialized the packet");
-        System.out.println("The player UUID is " + playerUUID);
-        System.out.println("The glowing eyes map is " + glowingEyes.getGlowingEyesMap());
-        System.out.println("The toggled on status is " + glowingEyes.isToggledOn());
     }
 
     public void sendToServer() {
@@ -49,7 +45,6 @@ public class CapabilityUpdatePacket {
         buf.writeUUID(this.playerUUID);
         buf.writeBoolean(glowingEyes.isToggledOn());
         buf.writeByteArray(Util.serializeMap(glowingEyes.getGlowingEyesMap()));
-        System.out.println("Sending packet to server");
         ClientPlayNetworking.send(ID, buf);
     }
 
@@ -58,7 +53,6 @@ public class CapabilityUpdatePacket {
         buf.writeUUID(this.playerUUID);
         buf.writeBoolean(glowingEyes.isToggledOn());
         buf.writeByteArray(Util.serializeMap(glowingEyes.getGlowingEyesMap()));
-        System.out.println("Sending packet to client " + player.getName().getString());
         ServerPlayNetworking.send(player, ID, buf);
     }
 
