@@ -2,15 +2,13 @@ package me.andreasmelone.glowingeyes.client;
 
 import com.mojang.logging.LogUtils;
 import me.andreasmelone.glowingeyes.client.commands.EyesCommand;
-import me.andreasmelone.glowingeyes.client.gui.EyesEditorScreen;
 import me.andreasmelone.glowingeyes.client.presets.PresetManager;
+import me.andreasmelone.glowingeyes.client.render.RenderManager;
+import me.andreasmelone.glowingeyes.common.scheduler.CodeScheduler;
+import me.andreasmelone.glowingeyes.common.scheduler.Scheduler;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandRegistrationCallback;
-import net.minecraft.client.Minecraft;
-import net.minecraft.network.chat.Component;
 import org.slf4j.Logger;
-
-import static net.fabricmc.fabric.api.client.command.v2.ClientCommandManager.literal;
 
 public class GlowingEyesClient implements ClientModInitializer {
     private static final Logger LOGGER = LogUtils.getLogger();
@@ -23,6 +21,7 @@ public class GlowingEyesClient implements ClientModInitializer {
             EyesCommand.register(dispatcher);
         });
         GlowingEyesClientEvents.registerEvents();
+        RenderManager.init();
 
         PresetManager.getInstance().loadPresets();
     }

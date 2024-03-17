@@ -7,7 +7,8 @@ import me.andreasmelone.glowingeyes.client.gui.preset.PresetsScreen;
 import me.andreasmelone.glowingeyes.client.util.ColorUtil;
 import me.andreasmelone.glowingeyes.client.util.GuiUtil;
 import me.andreasmelone.glowingeyes.client.util.TextureLocations;
-import me.andreasmelone.glowingeyes.common.capability.eyes.GlowingEyesCapability;
+import me.andreasmelone.glowingeyes.common.component.eyes.GlowingEyesComponent;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.ImageButton;
@@ -42,9 +43,9 @@ public class EyesEditorScreen extends Screen {
         this.guiTop = (this.height - this.ySize) / 2;
 
         AtomicBoolean saved = new AtomicBoolean(false);
-        Player player = getMinecraft().player;
+        Player player = Minecraft.getInstance().player;
         if(player != null) {
-            pixels = GlowingEyesCapability.getGlowingEyesMap(player);
+            pixels = GlowingEyesComponent.getGlowingEyesMap(player);
             saved.set(true);
         }
         if(!saved.get()) {
@@ -58,7 +59,7 @@ public class EyesEditorScreen extends Screen {
                 0, 0, 20,
                 TextureLocations.COLOR_PICKER_BUTTON,
                 64, 64,
-                button -> getMinecraft().setScreen(new ColorPickerScreen(this))
+                button -> Minecraft.getInstance().setScreen(new ColorPickerScreen(this))
         ));
 
         // the preset menu button
@@ -69,7 +70,7 @@ public class EyesEditorScreen extends Screen {
                 TextureLocations.PRESET_MENU_BUTTON,
                 64, 64,
                 button -> {
-                    getMinecraft().setScreen(new PresetsScreen(this));
+                    Minecraft.getInstance().setScreen(new PresetsScreen(this));
                 }
         ));
 
@@ -150,7 +151,7 @@ public class EyesEditorScreen extends Screen {
                 new Color(160, 160, 160, 255).getRGB()
         );
 
-        RenderSystem.setShaderTexture(0, getMinecraft().player.getSkinTextureLocation());
+        RenderSystem.setShaderTexture(0, Minecraft.getInstance().player.getSkinTextureLocation());
 
         for (int y = 0; y < headSize; y++) {
             for (int x = 0; x < headSize; x++) {
@@ -222,8 +223,8 @@ public class EyesEditorScreen extends Screen {
 
                 float[] pixel = new float[4];
 
-                double scaleX = (double) getMinecraft().getWindow().getWidth() / (double) getMinecraft().getWindow().getGuiScaledWidth();
-                double scaleY = (double) getMinecraft().getWindow().getHeight() / (double) getMinecraft().getWindow().getGuiScaledHeight();
+                double scaleX = (double) Minecraft.getInstance().getWindow().getWidth() / (double) Minecraft.getInstance().getWindow().getGuiScaledWidth();
+                double scaleY = (double) Minecraft.getInstance().getWindow().getHeight() / (double) Minecraft.getInstance().getWindow().getGuiScaledHeight();
 
                 GL11.glReadPixels(
                         (int)(mouseX * scaleX), (int) (mouseY * scaleY),
@@ -250,12 +251,12 @@ public class EyesEditorScreen extends Screen {
     @Override
     public void onClose() {
         AtomicBoolean saved = new AtomicBoolean(false);
-        Player player = getMinecraft().player;
+        Player player = Minecraft.getInstance().player;
         if(player != null) {
-            GlowingEyesCapability.setGlowingEyesMap(player, pixels);
+            GlowingEyesComponent.setGlowingEyesMap(player, pixels);
             saved.set(true);
 
-            GlowingEyesCapability.sendUpdate();
+            GlowingEyesComponent.sendUpdate();
         }
         if(!saved.get()) {
             LogUtils.getLogger().error("Could not save glowing eyes map to player capability");
@@ -270,9 +271,9 @@ public class EyesEditorScreen extends Screen {
 
     public void openAsParent() {
         this.pixels.clear();
-        this.pixels.putAll(GlowingEyesCapability.getGlowingEyesMap(getMinecraft().player));
+        this.pixels.putAll(GlowingEyesComponent.getGlowingEyesMap(Minecraft.getInstance().player));
 
-        getMinecraft().setScreen(this);
+        Minecraft.getInstance().setScreen(this);
     }
 
     Mode mode = Mode.BRUSH;

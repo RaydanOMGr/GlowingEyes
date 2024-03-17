@@ -9,7 +9,8 @@ import me.andreasmelone.glowingeyes.client.presets.Preset;
 import me.andreasmelone.glowingeyes.client.presets.PresetManager;
 import me.andreasmelone.glowingeyes.client.util.GuiUtil;
 import me.andreasmelone.glowingeyes.client.util.TextureLocations;
-import me.andreasmelone.glowingeyes.common.capability.eyes.GlowingEyesCapability;
+import me.andreasmelone.glowingeyes.common.component.eyes.GlowingEyesComponent;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.inventory.InventoryScreen;
@@ -90,7 +91,7 @@ public class PresetsScreen extends Screen {
                 Component.translatable("gui.done"),
                 button -> {
                     if(parent != null) {
-                        GlowingEyesCapability.setToggledOn(getMinecraft().player, toggledState);
+                        GlowingEyesComponent.setToggledOn(Minecraft.getInstance().player, toggledState);
                         if(selectedPreset != -1) {
                             presetManager.applyPreset(selectedPreset);
                         }
@@ -98,7 +99,7 @@ public class PresetsScreen extends Screen {
                         if(parent instanceof EyesEditorScreen)
                             ((EyesEditorScreen)parent).openAsParent();
                         else
-                            getMinecraft().setScreen(parent);
+                            Minecraft.getInstance().setScreen(parent);
                     }
                 }
         ));
@@ -108,11 +109,11 @@ public class PresetsScreen extends Screen {
                 Component.translatable("gui.cancel"),
                 button -> {
                     if(parent != null) {
-                        GlowingEyesCapability.setGlowingEyesMap(getMinecraft().player, savedPixelMap);
-                        GlowingEyesCapability.setToggledOn(getMinecraft().player, toggledState);
+                        GlowingEyesComponent.setGlowingEyesMap(Minecraft.getInstance().player, savedPixelMap);
+                        GlowingEyesComponent.setToggledOn(Minecraft.getInstance().player, toggledState);
 
                         presetManager.savePresets();
-                        getMinecraft().setScreen(parent);
+                        Minecraft.getInstance().setScreen(parent);
                     }
                 }
         ));
@@ -133,7 +134,7 @@ public class PresetsScreen extends Screen {
                                 this.unselectPreset();
                             }
                         });
-                    } else getMinecraft().setScreen(new CreatePresetScreen(this));
+                    } else Minecraft.getInstance().setScreen(new CreatePresetScreen(this));
                 }
         ));
         this.addRenderableWidget(new Button(
@@ -162,8 +163,8 @@ public class PresetsScreen extends Screen {
                 }
         ));
 
-        savedPixelMap = GlowingEyesCapability.getGlowingEyesMap(getMinecraft().player);
-        toggledState = GlowingEyesCapability.isToggledOn(getMinecraft().player);
+        savedPixelMap = GlowingEyesComponent.getGlowingEyesMap(Minecraft.getInstance().player);
+        toggledState = GlowingEyesComponent.isToggledOn(Minecraft.getInstance().player);
 
         List<Preset> presets = new ArrayList<>(presetManager.getPresets().values());
         int j;
@@ -184,7 +185,7 @@ public class PresetsScreen extends Screen {
                         for (PresetButton b : this.presetButtons) {
                             b.setSelected(b.getPreset().getId() == selectedPreset);
                             if (b.getPreset().getId() == selectedPreset) {
-                                GlowingEyesCapability.setGlowingEyesMap(getMinecraft().player, b.getPreset().getContent());
+                                GlowingEyesComponent.setGlowingEyesMap(Minecraft.getInstance().player, b.getPreset().getContent());
                             }
                         }
                     }
@@ -229,7 +230,7 @@ public class PresetsScreen extends Screen {
                 scale,
                 (float) (isLocked ? 0 : (double) (this.guiLeft + this.xSize - 90 + 40) - mouseX),
                 (float) (isLocked ? 0 : (double) (this.guiTop + 110 - 20) - mouseY),
-                getMinecraft().player
+                Minecraft.getInstance().player
         );
 
         GlStateManager._disableDepthTest();
@@ -242,7 +243,7 @@ public class PresetsScreen extends Screen {
         if(keyCode == GLFW.GLFW_KEY_ESCAPE) {
             if(parent != null) {
                 this.onClose();
-                getMinecraft().setScreen(parent);
+                Minecraft.getInstance().setScreen(parent);
             }
         }
         return super.keyPressed(keyCode, scanCode, modifiers);
@@ -255,8 +256,8 @@ public class PresetsScreen extends Screen {
 
     @Override
     public void onClose() {
-        GlowingEyesCapability.setGlowingEyesMap(getMinecraft().player, savedPixelMap);
-        GlowingEyesCapability.setToggledOn(getMinecraft().player, toggledState);
+        GlowingEyesComponent.setGlowingEyesMap(Minecraft.getInstance().player, savedPixelMap);
+        GlowingEyesComponent.setToggledOn(Minecraft.getInstance().player, toggledState);
 
         presetManager.savePresets();
     }

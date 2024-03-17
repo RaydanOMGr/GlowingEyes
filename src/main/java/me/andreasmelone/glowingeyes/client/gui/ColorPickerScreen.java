@@ -44,7 +44,7 @@ public class ColorPickerScreen extends Screen {
     @Override
     protected void init() {
         super.init();
-        if(parent != null) parent.init(getMinecraft(), getMinecraft().getWindow().getGuiScaledWidth(), getMinecraft().getWindow().getGuiScaledHeight());
+        if(parent != null) parent.init(Minecraft.getInstance(), Minecraft.getInstance().getWindow().getGuiScaledWidth(), Minecraft.getInstance().getWindow().getGuiScaledHeight());
         this.guiLeft = (this.width - this.xSize) / 2;
         this.guiTop = (this.height - this.ySize) / 2;
 
@@ -59,7 +59,7 @@ public class ColorPickerScreen extends Screen {
                         this.font,
                         this.guiLeft + this.xSize - 50, this.guiTop + 20,
                         40, 20,
-                        Component.literal(String.valueOf(Util.round((float) ColorUtil.getRedFromRGB(GlowingEyes.DEFAULT_COLOR.getRGB()) / 255)))
+                        Component.empty() // the label should stay uninitialized for now
                 )
         );
         this.addEditBox(
@@ -67,7 +67,7 @@ public class ColorPickerScreen extends Screen {
                         this.font,
                         this.guiLeft + this.xSize - 50, this.guiTop + 50,
                         40, 20,
-                        Component.literal(String.valueOf(Util.round((float) ColorUtil.getGreenFromRGB(GlowingEyes.DEFAULT_COLOR.getRGB()) / 255)))
+                        Component.empty()
                 )
         );
         this.addEditBox(
@@ -75,7 +75,7 @@ public class ColorPickerScreen extends Screen {
                         this.font,
                         this.guiLeft + this.xSize - 50, this.guiTop + 80,
                         40, 20,
-                        Component.literal(String.valueOf(Util.round((float) ColorUtil.getBlueFromRGB(GlowingEyes.DEFAULT_COLOR.getRGB()) / 255)))
+                        Component.empty()
                 )
         );
 
@@ -145,11 +145,11 @@ public class ColorPickerScreen extends Screen {
     @Override
     public void onClose() {
         if(parent != null) {
-            getMinecraft().setScreen(parent);
+            Minecraft.getInstance().setScreen(parent);
             parent.init(
-                    getMinecraft(),
-                    getMinecraft().getWindow().getGuiScaledWidth(),
-                    getMinecraft().getWindow().getGuiScaledHeight()
+                    Minecraft.getInstance(),
+                    Minecraft.getInstance().getWindow().getGuiScaledWidth(),
+                    Minecraft.getInstance().getWindow().getGuiScaledHeight()
             );
         }
     }

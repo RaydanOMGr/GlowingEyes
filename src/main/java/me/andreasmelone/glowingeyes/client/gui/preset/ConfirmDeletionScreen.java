@@ -4,6 +4,7 @@ import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.vertex.PoseStack;
 import me.andreasmelone.glowingeyes.client.util.GuiUtil;
 import me.andreasmelone.glowingeyes.client.util.TextureLocations;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
@@ -54,7 +55,7 @@ public class ConfirmDeletionScreen extends Screen {
                         this.future.complete(true);
                     }
                     if(this.parent != null) {
-                        this.getMinecraft().setScreen(this.parent);
+                        Minecraft.getInstance().setScreen(this.parent);
                     }
                 }
         ));
@@ -67,7 +68,7 @@ public class ConfirmDeletionScreen extends Screen {
                         this.future.complete(false);
                     }
                     if(this.parent != null) {
-                        this.getMinecraft().setScreen(this.parent);
+                        Minecraft.getInstance().setScreen(this.parent);
                     }
                 }
         ));
@@ -99,7 +100,7 @@ public class ConfirmDeletionScreen extends Screen {
     public static CompletableFuture<Boolean> askToDelete(Screen parent, String element) {
         ConfirmDeletionScreen screen = new ConfirmDeletionScreen(parent);
         screen.deletedElement = element;
-        parent.getMinecraft().setScreen(screen);
+        Minecraft.getInstance().setScreen(screen);
         CompletableFuture<Boolean> future = new CompletableFuture<>();
         screen.future = future;
         return future;

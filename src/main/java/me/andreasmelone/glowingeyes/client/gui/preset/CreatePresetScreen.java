@@ -1,18 +1,15 @@
 package me.andreasmelone.glowingeyes.client.gui.preset;
 
 import com.mojang.blaze3d.vertex.PoseStack;
-import me.andreasmelone.glowingeyes.GlowingEyes;
 import me.andreasmelone.glowingeyes.client.presets.PresetManager;
 import me.andreasmelone.glowingeyes.client.util.GuiUtil;
 import me.andreasmelone.glowingeyes.client.util.TextureLocations;
-import me.andreasmelone.glowingeyes.common.capability.eyes.GlowingEyesCapability;
+import me.andreasmelone.glowingeyes.common.component.eyes.GlowingEyesComponent;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
-
-import java.io.IOException;
 
 public class CreatePresetScreen extends Screen {
     int xSize = 200;
@@ -48,8 +45,8 @@ public class CreatePresetScreen extends Screen {
                 80 - 5, 20,
                 Component.translatable("gui.create"),
                 button -> {
-                    PresetManager.getInstance().createPreset(nameField.getValue(), GlowingEyesCapability.getGlowingEyesMap(getMinecraft().player));
-                    getMinecraft().setScreen(parent);
+                    PresetManager.getInstance().createPreset(nameField.getValue(), GlowingEyesComponent.getGlowingEyesMap(Minecraft.getInstance().player));
+                    Minecraft.getInstance().setScreen(parent);
                 }
         ));
         this.addRenderableWidget(new Button(
@@ -57,7 +54,7 @@ public class CreatePresetScreen extends Screen {
                 80 - 5, 20,
                 Component.translatable("gui.cancel"),
                 button -> {
-                    getMinecraft().setScreen(parent);
+                    Minecraft.getInstance().setScreen(parent);
                 }
         ));
     }

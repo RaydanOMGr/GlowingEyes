@@ -54,7 +54,7 @@ public class EditPresetScreen extends Screen {
                 button -> {
                     if(parent != null) {
                         future.complete(nameField.getValue());
-                        this.getMinecraft().setScreen(parent);
+                        Minecraft.getInstance().setScreen(parent);
                     }
                 }
         ));
@@ -64,7 +64,7 @@ public class EditPresetScreen extends Screen {
                 Component.translatable("gui.cancel"),
                 button -> {
                     if(parent != null) {
-                        this.getMinecraft().setScreen(parent);
+                        Minecraft.getInstance().setScreen(parent);
                     }
                 }
         ));
@@ -100,7 +100,7 @@ public class EditPresetScreen extends Screen {
     public static CompletableFuture<String> askForName(Screen parent, String elementName) {
         EditPresetScreen screen = new EditPresetScreen(parent);
         screen.elementName = elementName;
-        parent.getMinecraft().setScreen(screen);
+        Minecraft.getInstance().setScreen(screen);
         CompletableFuture<String> future = new CompletableFuture<>();
         screen.future = future;
         return future;

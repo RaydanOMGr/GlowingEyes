@@ -1,7 +1,5 @@
 package me.andreasmelone.glowingeyes.common.scheduler;
 
-import me.andreasmelone.glowingeyes.common.exceptions.ToBeImplementedException;
-
 import java.util.HashMap;
 import java.util.Map;
 
@@ -18,7 +16,7 @@ public class CodeScheduler implements Scheduler {
 
     @Override
     public Task runRepeating(Runnable runnable, long delayTicks, long intervalTicks) {
-        throw new ToBeImplementedException();
+        throw new UnsupportedOperationException("Repeating tasks are not supported in this implementation of Scheduler");
     }
 
     @Override

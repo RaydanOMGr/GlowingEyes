@@ -1,6 +1,7 @@
 package me.andreasmelone.glowingeyes.client;
 
 import me.andreasmelone.glowingeyes.client.gui.EyesEditorScreen;
+import me.andreasmelone.glowingeyes.common.component.eyes.GlowingEyesComponent;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.minecraft.world.entity.player.Player;
 
@@ -13,7 +14,7 @@ public class GlowingEyesClientEvents {
             if(player == null) return;
 
             while(GlowingEyesKeybindings.TOGGLE_MAPPING.consumeClick()) {
-                GlowingEyesCapability.setToggledOn(player, !GlowingEyesCapability.isToggledOn(player));
+                GlowingEyesComponent.setToggledOn(player, !GlowingEyesComponent.isToggledOn(player));
             }
             while(GlowingEyesKeybindings.EYES_EDITOR_MAPPING.consumeClick()) {
                 if(client.screen != null) return;

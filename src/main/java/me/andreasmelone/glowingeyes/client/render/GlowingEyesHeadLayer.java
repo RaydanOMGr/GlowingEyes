@@ -2,9 +2,7 @@ package me.andreasmelone.glowingeyes.client.render;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
-import me.andreasmelone.glowingeyes.common.capability.eyes.GlowingEyesCapability;
-import me.andreasmelone.glowingeyes.common.capability.eyes.GlowingEyesImpl;
-import me.andreasmelone.glowingeyes.common.capability.eyes.IGlowingEyes;
+import me.andreasmelone.glowingeyes.common.component.eyes.GlowingEyesComponent;
 import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.renderer.MultiBufferSource;
@@ -16,16 +14,16 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
 
 public class GlowingEyesHeadLayer<T extends Player, Q extends HumanoidModel<T>> extends RenderLayer<T, Q> {
-    public GlowingEyesHeadLayer(RenderLayerParent<T, Q> pRenderer) {
-        super(pRenderer);
+    public GlowingEyesHeadLayer(RenderLayerParent<T, Q> renderer) {
+        super(renderer);
     }
 
     @Override
     public void render(PoseStack poseStack, MultiBufferSource multiBufferSource,
                        int i, T t, float v, float v1, float v2,
                        float v3, float v4, float v5) {
-        if(GlowingEyesCapability.isToggledOn(t) && !t.isInvisible()) {
-            ResourceLocation eyeOverlayResource = GlowingEyesCapability.getGlowingEyesTexture(t);
+        if(GlowingEyesComponent.isToggledOn(t) && !t.isInvisible()) {
+            ResourceLocation eyeOverlayResource = GlowingEyesComponent.getGlowingEyesTexture(t);
             if(eyeOverlayResource == null) return;
 
             RenderType eyeRenderType = RenderType.eyes(eyeOverlayResource);

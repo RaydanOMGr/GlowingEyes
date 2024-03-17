@@ -15,8 +15,12 @@ public class EyesCommand {
     public static void register(CommandDispatcher<FabricClientCommandSource> dispatcher) {
         LiteralArgumentBuilder<FabricClientCommandSource> eyes = literal("eyes");
         eyes.executes(context -> {
-            context.getSource().getClient().setScreen(new EyesEditorScreen());
+            GlowingEyesClient.getClientScheduler().runLater(
+                    () -> context.getSource().getClient().setScreen(new EyesEditorScreen()),
+                    1L
+            );
             return 1;
         });
+        dispatcher.register(eyes);
     }
 }
