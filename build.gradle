@@ -85,6 +85,8 @@ jar {
     from("LICENSE") {
         rename { "${it}_${project.archivesBaseName}"}
     }
+
+    archiveFileName = "GlowingEyes-${minecraft_version}-${project.version}.jar"
 }
 
 // configure the maven publication
