@@ -1,8 +1,10 @@
 package me.andreasmelone.glowingeyes.client;
 
 import me.andreasmelone.glowingeyes.client.gui.EyesEditorScreen;
+import me.andreasmelone.glowingeyes.common.component.data.PlayerDataComponent;
 import me.andreasmelone.glowingeyes.common.component.eyes.GlowingEyesComponent;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
+import net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents;
 import net.minecraft.world.entity.player.Player;
 
 public class GlowingEyesClientEvents {
@@ -21,5 +23,7 @@ public class GlowingEyesClientEvents {
                 client.setScreen(new EyesEditorScreen());
             }
         });
+
+        ClientPlayConnectionEvents.JOIN.register((handler, sender, client) -> PlayerDataComponent.sendRequest());
     }
 }

@@ -1,7 +1,7 @@
 package me.andreasmelone.glowingeyes.common.component.eyes;
 
 import me.andreasmelone.glowingeyes.common.component.ComponentHandler;
-import me.andreasmelone.glowingeyes.common.packet.CapabilityUpdatePacket;
+import me.andreasmelone.glowingeyes.common.packet.ComponentUpdatePacket;
 import net.minecraft.client.Minecraft;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
@@ -87,7 +87,7 @@ public class GlowingEyesComponent {
      * @param receivingPlayer another player who will receive the update
      */
     public static void sendUpdate(ServerPlayer updatedPlayer, ServerPlayer receivingPlayer) {
-        new CapabilityUpdatePacket(updatedPlayer, getComponent(updatedPlayer)).sendToClient(receivingPlayer);
+        new ComponentUpdatePacket(updatedPlayer, getComponent(updatedPlayer)).sendToClient(receivingPlayer);
     }
 
     /**
@@ -96,6 +96,6 @@ public class GlowingEyesComponent {
      */
     public static void sendUpdate() {
         Player localPlayer = Minecraft.getInstance().player;
-        new CapabilityUpdatePacket(localPlayer, getComponent(localPlayer)).sendToServer();
+        new ComponentUpdatePacket(localPlayer, getComponent(localPlayer)).sendToServer();
     }
 }

@@ -16,20 +16,20 @@ import net.minecraft.world.entity.player.Player;
 
 import java.util.UUID;
 
-public class CapabilityUpdatePacket {
+public class ComponentUpdatePacket {
     public static final ResourceLocation ID = new ResourceLocation(GlowingEyes.MOD_ID, "capability_update");
 
     private UUID playerUUID;
     private IGlowingEyes glowingEyes;
 
-    public CapabilityUpdatePacket() {}
+    public ComponentUpdatePacket() {}
 
-    public CapabilityUpdatePacket(UUID playerUUID, IGlowingEyes glowingEyes) {
+    public ComponentUpdatePacket(UUID playerUUID, IGlowingEyes glowingEyes) {
         this.playerUUID = playerUUID;
         this.glowingEyes = glowingEyes;
     }
 
-    public CapabilityUpdatePacket(Player player, IGlowingEyes glowingEyes) {
+    public ComponentUpdatePacket(Player player, IGlowingEyes glowingEyes) {
         this(player.getUUID(), glowingEyes);
     }
 
@@ -58,7 +58,7 @@ public class CapabilityUpdatePacket {
 
     public static void registerHandlers() {
         ServerPlayNetworking.registerGlobalReceiver(ID, (server, player, handler, buf, responseSender) -> {
-            CapabilityUpdatePacket packet = new CapabilityUpdatePacket();
+            ComponentUpdatePacket packet = new ComponentUpdatePacket();
             packet.deserialize(buf);
             server.execute(() -> {
                 Player target = server.getPlayerList().getPlayer(packet.playerUUID);
@@ -68,14 +68,14 @@ public class CapabilityUpdatePacket {
 
                 for (ServerPlayer serverPlayer : PlayerLookup.tracking(target)) {
                     if (serverPlayer == target) return;
-                    CapabilityUpdatePacket newPacket = new CapabilityUpdatePacket(target, packet.glowingEyes);
+                    ComponentUpdatePacket newPacket = new ComponentUpdatePacket(target, packet.glowingEyes);
                     newPacket.sendToClient(serverPlayer);
                 }
             });
         });
 
         ClientPlayNetworking.registerGlobalReceiver(ID, (client, handler, buf, responseSender) -> {
-            CapabilityUpdatePacket packet = new CapabilityUpdatePacket();
+            ComponentUpdatePacket packet = new ComponentUpdatePacket();
             packet.deserialize(buf);
             client.execute(() -> {
                 Player target = client.level.getPlayerByUUID(packet.playerUUID);

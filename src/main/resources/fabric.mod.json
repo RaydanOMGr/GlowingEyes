@@ -31,7 +31,8 @@
   },
   "custom": {
     "cardinal-components": [
-      "glowingeyes:glowingeyes"
+      "glowingeyes:glowingeyes",
+      "glowingeyes:playerdata"
     ]
   }
 }

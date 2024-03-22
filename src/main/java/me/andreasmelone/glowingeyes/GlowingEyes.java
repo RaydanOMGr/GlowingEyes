@@ -1,7 +1,7 @@
 package me.andreasmelone.glowingeyes;
 
 import me.andreasmelone.glowingeyes.common.GlowingEyesEvents;
-import me.andreasmelone.glowingeyes.common.packet.CapabilityUpdatePacket;
+import me.andreasmelone.glowingeyes.common.packet.PacketManager;
 import me.andreasmelone.glowingeyes.common.scheduler.CodeScheduler;
 import me.andreasmelone.glowingeyes.common.scheduler.Scheduler;
 import net.fabricmc.api.ModInitializer;
@@ -15,7 +15,7 @@ public class GlowingEyes implements ModInitializer {
 
     @Override
     public void onInitialize() {
-        CapabilityUpdatePacket.registerHandlers();
+        PacketManager.registerHandlers();
         GlowingEyesEvents.registerEvents();
     }
 
