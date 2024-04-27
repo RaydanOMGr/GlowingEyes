@@ -46,9 +46,7 @@ public class ConfirmDeletionScreen extends Screen {
 
         labelComponent = Component.empty();
 
-        this.addRenderableWidget(new Button(
-                this.guiLeft + 20, this.guiTop + 100,
-                80 - 5, 20,
+        this.addRenderableWidget(Button.builder(
                 Component.translatable("gui.confirm"),
                 button -> {
                     if(this.future != null) {
@@ -58,10 +56,8 @@ public class ConfirmDeletionScreen extends Screen {
                         Minecraft.getInstance().setScreen(this.parent);
                     }
                 }
-        ));
-        this.addRenderableWidget(new Button(
-                this.guiLeft + 100 + (5 * 2), this.guiTop + 100,
-                80 - 5, 20,
+        ).pos(this.guiLeft + 20, this.guiTop + 100).size(80 - 5, 20).build());
+        this.addRenderableWidget(Button.builder(
                 Component.translatable("gui.cancel"),
                 button -> {
                     if(this.future != null) {
@@ -71,7 +67,7 @@ public class ConfirmDeletionScreen extends Screen {
                         Minecraft.getInstance().setScreen(this.parent);
                     }
                 }
-        ));
+        ).pos(this.guiLeft + 100 + (5 * 2), this.guiTop + 100).size(80 - 5, 20).build());
         labelComponent = Component.translatable("gui.delete.confirm", this.deletedElement);
     }
 

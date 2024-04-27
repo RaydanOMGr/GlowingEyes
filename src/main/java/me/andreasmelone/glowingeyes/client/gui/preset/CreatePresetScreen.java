@@ -38,25 +38,21 @@ public class CreatePresetScreen extends Screen {
                 this.xSize - (20 * 2), 20,
                 Component.empty()
         ));
-        nameField.setFocus(true);
+        nameField.setFocused(true);
 
-        this.addRenderableWidget(new Button(
-                this.guiLeft + 20, this.guiTop + 100,
-                80 - 5, 20,
+        this.addRenderableWidget(Button.builder(
                 Component.translatable("gui.create"),
                 button -> {
                     PresetManager.getInstance().createPreset(nameField.getValue(), GlowingEyesComponent.getGlowingEyesMap(Minecraft.getInstance().player));
                     Minecraft.getInstance().setScreen(parent);
                 }
-        ));
-        this.addRenderableWidget(new Button(
-                this.guiLeft + 100 + (5 * 2), this.guiTop + 100,
-                80 - 5, 20,
+        ).pos(this.guiLeft + 20, this.guiTop + 100).size(80 - 5, 20).build());
+        this.addRenderableWidget(Button.builder(
                 Component.translatable("gui.cancel"),
                 button -> {
                     Minecraft.getInstance().setScreen(parent);
                 }
-        ));
+        ).pos(this.guiLeft + 100 + (5 * 2), this.guiTop + 100).size(80 - 5, 20).build());
     }
 
     @Override

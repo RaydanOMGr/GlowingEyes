@@ -44,12 +44,10 @@ public class EditPresetScreen extends Screen {
                 this.xSize - (20 * 2), 20,
                 Component.literal(this.elementName)
         ));
-        nameField.setFocus(true);
+        nameField.setFocused(true);
 
         // make an "apply" and a cancel button
-        this.addRenderableWidget(new Button(
-                this.guiLeft + 20, this.guiTop + 100,
-                80 - 5, 20,
+        this.addRenderableWidget(Button.builder(
                 Component.translatable("gui.apply"),
                 button -> {
                     if(parent != null) {
@@ -57,17 +55,15 @@ public class EditPresetScreen extends Screen {
                         Minecraft.getInstance().setScreen(parent);
                     }
                 }
-        ));
-        this.addRenderableWidget(new Button(
-                this.guiLeft + 100 + (5 * 2), this.guiTop + 100,
-                80 - 5, 20,
+        ).pos(this.guiLeft + 20, this.guiTop + 100).size(80 - 5, 20).build());
+        this.addRenderableWidget(Button.builder(
                 Component.translatable("gui.cancel"),
                 button -> {
                     if(parent != null) {
                         Minecraft.getInstance().setScreen(parent);
                     }
                 }
-        ));
+        ).pos(this.guiLeft + 100 + (5 * 2), this.guiTop + 100).size(80 - 5, 20).build());
     }
 
     @Override

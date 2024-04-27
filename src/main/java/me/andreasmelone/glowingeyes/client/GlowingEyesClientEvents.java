@@ -11,17 +11,6 @@ public class GlowingEyesClientEvents {
     public static void registerEvents() {
         ClientTickEvents.END_CLIENT_TICK.register(client -> {
             GlowingEyesClient.CLIENT_SCHEDULER.tick();
-
-            Player player = client.player;
-            if(player == null) return;
-
-            while(GlowingEyesKeybindings.TOGGLE_MAPPING.consumeClick()) {
-                GlowingEyesComponent.setToggledOn(player, !GlowingEyesComponent.isToggledOn(player));
-            }
-            while(GlowingEyesKeybindings.EYES_EDITOR_MAPPING.consumeClick()) {
-                if(client.screen != null) return;
-                client.setScreen(new EyesEditorScreen());
-            }
         });
 
         ClientPlayConnectionEvents.JOIN.register((handler, sender, client) -> PlayerDataComponent.sendRequest());

@@ -7,18 +7,21 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.network.chat.Component;
 
+import java.util.function.Supplier;
+
 public class BigSelectableButton extends Button {
     private boolean isSelected = false;
 
-    public BigSelectableButton(int x, int y, Component buttonText, OnPress pressedAction) {
-        super(x, y, 128, 29, buttonText, pressedAction);
+    public BigSelectableButton(int x, int y, Component buttonText, Button.OnPress pressedAction) {
+        super(x, y, 128, 29, buttonText, pressedAction, Supplier::get);
     }
 
     @Override
-    public void renderButton(PoseStack poseStack, int mouseX, int mouseY, float partialTicks) {
+    public void render(PoseStack poseStack, int mouseX, int mouseY, float partialTicks) {
         if(this.visible) {
             RenderSystem.setShaderTexture(0, TextureLocations.BIG_BUTTON);
-            boolean flag = mouseX >= this.x && mouseY >= this.y && mouseX < this.x + this.width && mouseY < this.y + this.height;
+            boolean flag = mouseX >= this.getX() && mouseY >= this.getY()
+                    && mouseX < this.getX() + this.width && mouseY < this.getY() + this.height;
 
             int i = 0;
             if(flag) {
@@ -31,7 +34,7 @@ public class BigSelectableButton extends Button {
 
             blit(
                     poseStack,
-                    this.x, this.y,
+                    this.getX(), this.getY(),
                     0, i,
                     128, 29,
                     128, 128
@@ -41,8 +44,8 @@ public class BigSelectableButton extends Button {
             mc.font.draw(
                     poseStack,
                     this.getMessage(),
-                    this.x + (float) this.width / 2 - (float) mc.font.width(this.getMessage()) / 2,
-                    this.y + (float) (this.height - 8) / 2,
+                    this.getX() + (float) this.width / 2 - (float) mc.font.width(this.getMessage()) / 2,
+                    this.getY() + (float) (this.height - 8) / 2,
                     0xFFFFFF
             );
         }

@@ -20,6 +20,7 @@ public class GlowingEyesClient implements ClientModInitializer {
         ClientCommandRegistrationCallback.EVENT.register((dispatcher, dedicated) -> {
             EyesCommand.register(dispatcher);
         });
+        GlowingEyesKeybindings.register();
         GlowingEyesClientEvents.registerEvents();
         RenderManager.init();
 

@@ -69,25 +69,19 @@ public class PresetsScreen extends Screen {
         int leftButtonX = (int) (this.guiLeft + 128 * ((double)1 / 4));
         int rightButtonX = (int) (this.guiLeft + 128 * ((double)3 / 4));
 
-        this.addRenderableWidget(new Button(
-                leftButtonX, this.guiTop - 20 + ((pageSize + 1) * 30),
-                20, 20,
+        this.addRenderableWidget(Button.builder(
                 Component.literal("<"),
                 button -> {
                     switchPage(page - 1);
                 }
-        ));
-        this.addRenderableWidget(new Button(
-                rightButtonX, this.guiTop - 20 + ((pageSize + 1) * 30),
-                20, 20,
+        ).pos(leftButtonX, this.guiTop - 20 + ((pageSize + 1) * 30)).size(20, 20).build());
+        this.addRenderableWidget(Button.builder(
                 Component.literal(">"),
                 button -> {
                     switchPage(page + 1);
                 }
-        ));
-        this.addRenderableWidget(new Button(
-                this.guiLeft + this.xSize - 90, this.guiTop + 120,
-                80, 20,
+        ).pos(rightButtonX, this.guiTop - 20 + ((pageSize + 1) * 30)).size(20, 20).build());
+        this.addRenderableWidget(Button.builder(
                 Component.translatable("gui.done"),
                 button -> {
                     if(parent != null) {
@@ -102,10 +96,8 @@ public class PresetsScreen extends Screen {
                             Minecraft.getInstance().setScreen(parent);
                     }
                 }
-        ));
-        this.addRenderableWidget(new Button(
-                this.guiLeft + this.xSize - 90, this.guiTop + 142,
-                80, 20,
+        ).pos(this.guiLeft + this.xSize - 90, this.guiTop + 120).size(80, 20).build());
+        this.addRenderableWidget(Button.builder(
                 Component.translatable("gui.cancel"),
                 button -> {
                     if(parent != null) {
@@ -116,10 +108,8 @@ public class PresetsScreen extends Screen {
                         Minecraft.getInstance().setScreen(parent);
                     }
                 }
-        ));
-        this.addRenderableWidget(createEditButton = new Button(
-                this.guiLeft + 10, this.guiTop + 5 + ((pageSize + 1) * 30),
-                128 / 2 - 3, 20,
+        ).pos(this.guiLeft + this.xSize - 90, this.guiTop + 142).size(80, 20).build());
+        this.addRenderableWidget(createEditButton = Button.builder(
                 Component.translatable("gui.presets.create"),
                 button -> {
                     if(editing) {
@@ -136,10 +126,8 @@ public class PresetsScreen extends Screen {
                         });
                     } else Minecraft.getInstance().setScreen(new CreatePresetScreen(this));
                 }
-        ));
-        this.addRenderableWidget(new Button(
-                this.guiLeft + 10 + (128 / 2) + (3 * 2), this.guiTop + 5 + ((pageSize + 1) * 30),
-                128 / 2 - 3, 20,
+        ).pos(this.guiLeft + 10, this.guiTop + 5 + ((pageSize + 1) * 30)).size(128 / 2 - 3, 20).build());
+        this.addRenderableWidget(Button.builder(
                 Component.translatable("gui.presets.delete"),
                 button -> {
                     if(selectedPreset != -1) {
@@ -152,16 +140,14 @@ public class PresetsScreen extends Screen {
                         });
                     }
                 }
-        ));
-        this.addRenderableWidget(new Button(
-                this.guiLeft + this.xSize - 90, this.guiTop + 164,
-                80, 20,
+        ).pos(this.guiLeft + 10 + (128 / 2) + (3 * 2), this.guiTop + 5 + ((pageSize + 1) * 30)).size(128 / 2 - 3, 20).build());
+        this.addRenderableWidget(Button.builder(
                 Component.translatable("gui.presets.lock"),
                 button -> {
                     isLocked = !isLocked;
                     button.setMessage(isLocked ? Component.translatable("gui.presets.unlock") : Component.translatable("gui.presets.lock"));
                 }
-        ));
+        ).pos(this.guiLeft + this.xSize - 90, this.guiTop + 164).size(80, 20).build());
 
         savedPixelMap = GlowingEyesComponent.getGlowingEyesMap(Minecraft.getInstance().player);
         toggledState = GlowingEyesComponent.isToggledOn(Minecraft.getInstance().player);
@@ -224,7 +210,8 @@ public class PresetsScreen extends Screen {
         GlStateManager._enableDepthTest();
         GlStateManager._depthFunc(GL11.GL_LEQUAL);
 
-        InventoryScreen.renderEntityInInventory(
+        InventoryScreen.renderEntityInInventoryFollowsMouse(
+                poseStack,
                 this.guiLeft + this.xSize - 90 + 40,
                 this.guiTop + 110,
                 scale,
