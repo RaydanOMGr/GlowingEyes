@@ -1,4 +1,4 @@
-package me.andreasmelone.glowingeyes.common.component.data;
+package me.andreasmelone.glowingeyes.server.component.data;
 
 import dev.onyxstudios.cca.api.v3.component.Component;
 import net.minecraft.world.entity.player.Player;

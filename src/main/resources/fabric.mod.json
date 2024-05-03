@@ -21,7 +21,7 @@
       "me.andreasmelone.glowingeyes.GlowingEyes"
     ],
     "cardinal-components": [
-      "me.andreasmelone.glowingeyes.common.component.ComponentHandler"
+      "me.andreasmelone.glowingeyes.server.component.ComponentHandler"
     ]
   },
   "depends": {

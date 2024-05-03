@@ -3,11 +3,12 @@ package me.andreasmelone.glowingeyes.client.gui;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.logging.LogUtils;
+import me.andreasmelone.glowingeyes.client.component.eyes.ClientGlowingEyesComponent;
 import me.andreasmelone.glowingeyes.client.gui.preset.PresetsScreen;
 import me.andreasmelone.glowingeyes.client.util.ColorUtil;
 import me.andreasmelone.glowingeyes.client.util.GuiUtil;
 import me.andreasmelone.glowingeyes.client.util.TextureLocations;
-import me.andreasmelone.glowingeyes.common.component.eyes.GlowingEyesComponent;
+import me.andreasmelone.glowingeyes.server.component.eyes.GlowingEyesComponent;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.components.Button;
@@ -256,7 +257,7 @@ public class EyesEditorScreen extends Screen {
             GlowingEyesComponent.setGlowingEyesMap(player, pixels);
             saved.set(true);
 
-            GlowingEyesComponent.sendUpdate();
+            ClientGlowingEyesComponent.sendUpdate();
         }
         if(!saved.get()) {
             LogUtils.getLogger().error("Could not save glowing eyes map to player capability");

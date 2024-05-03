@@ -1,31 +1,26 @@
-package me.andreasmelone.glowingeyes.common.packet;
+package me.andreasmelone.glowingeyes.server.packet;
 
 import me.andreasmelone.glowingeyes.GlowingEyes;
-import me.andreasmelone.glowingeyes.common.component.data.PlayerDataComponent;
-import me.andreasmelone.glowingeyes.common.component.eyes.GlowingEyesComponent;
-import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
+import me.andreasmelone.glowingeyes.server.component.data.PlayerDataComponent;
+import me.andreasmelone.glowingeyes.server.component.eyes.GlowingEyesComponent;
 import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
 
-public class HasModPacket {
+public class S2CHasModPacket {
     public static final ResourceLocation ID = new ResourceLocation(GlowingEyes.MOD_ID, "has_mod");
-
-    public static void sendToServer() {
-        ClientPlayNetworking.send(ID, PacketByteBufs.create());
-    }
 
     public static void sendToClient(ServerPlayer player) {
         ServerPlayNetworking.send(player, ID, PacketByteBufs.create());
     }
 
     public static void registerHandlers() {
-        ServerPlayNetworking.registerGlobalReceiver(ID, (server, player, handler, buf, responseSender) -> {
+        ServerPlayNetworking.registerGlobalReceiver(S2CHasModPacket.ID, (server, player, handler, buf, responseSender) -> {
             server.execute(() -> {
                 PlayerDataComponent.setHasMod(player, true);
-                sendToClient(player);
+                S2CHasModPacket.sendToClient(player);
 
                 GlowingEyesComponent.sendUpdate(player);
                 for (Player trackedByPlayer : PlayerDataComponent.getTrackedBy(player)) {
@@ -35,12 +30,6 @@ public class HasModPacket {
                     }
                     GlowingEyesComponent.sendUpdate(player, trackedBy);
                 }
-            });
-        });
-
-        ClientPlayNetworking.registerGlobalReceiver(ID, (client, handler, buf, responseSender) -> {
-            client.execute(() -> {
-                PlayerDataComponent.setHasMod(client.player, true);
             });
         });
     }

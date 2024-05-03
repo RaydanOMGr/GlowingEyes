@@ -2,7 +2,8 @@ package me.andreasmelone.glowingeyes.client.render;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
-import me.andreasmelone.glowingeyes.common.component.eyes.GlowingEyesComponent;
+import me.andreasmelone.glowingeyes.client.util.DynamicTextureCache;
+import me.andreasmelone.glowingeyes.server.component.eyes.GlowingEyesComponent;
 import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.renderer.MultiBufferSource;
@@ -23,7 +24,7 @@ public class GlowingEyesHeadLayer<T extends Player, Q extends HumanoidModel<T>> 
                        int i, T t, float v, float v1, float v2,
                        float v3, float v4, float v5) {
         if(GlowingEyesComponent.isToggledOn(t) && !t.isInvisible()) {
-            ResourceLocation eyeOverlayResource = GlowingEyesComponent.getGlowingEyesTexture(t);
+            ResourceLocation eyeOverlayResource = DynamicTextureCache.getTexture(GlowingEyesComponent.getGlowingEyesMap(t));
             if(eyeOverlayResource == null) return;
 
             RenderType eyeRenderType = RenderType.eyes(eyeOverlayResource);

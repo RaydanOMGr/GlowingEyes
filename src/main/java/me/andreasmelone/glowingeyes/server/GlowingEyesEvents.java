@@ -1,8 +1,8 @@
-package me.andreasmelone.glowingeyes.common;
+package me.andreasmelone.glowingeyes.server;
 
 import me.andreasmelone.glowingeyes.GlowingEyes;
-import me.andreasmelone.glowingeyes.common.component.data.PlayerDataComponent;
-import me.andreasmelone.glowingeyes.common.component.eyes.GlowingEyesComponent;
+import me.andreasmelone.glowingeyes.server.component.data.PlayerDataComponent;
+import me.andreasmelone.glowingeyes.server.component.eyes.GlowingEyesComponent;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
 import net.fabricmc.fabric.api.networking.v1.EntityTrackingEvents;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;

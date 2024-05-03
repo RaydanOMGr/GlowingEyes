@@ -1,4 +1,4 @@
-package me.andreasmelone.glowingeyes.common.scheduler;
+package me.andreasmelone.glowingeyes.server.scheduler;
 
 public class CodeTask implements Task {
     private final Runnable runnable;

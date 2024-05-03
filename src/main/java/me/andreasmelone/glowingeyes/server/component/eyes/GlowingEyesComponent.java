@@ -1,9 +1,7 @@
-package me.andreasmelone.glowingeyes.common.component.eyes;
+package me.andreasmelone.glowingeyes.server.component.eyes;
 
-import me.andreasmelone.glowingeyes.common.component.ComponentHandler;
-import me.andreasmelone.glowingeyes.common.packet.ComponentUpdatePacket;
-import net.minecraft.client.Minecraft;
-import net.minecraft.resources.ResourceLocation;
+import me.andreasmelone.glowingeyes.server.component.ComponentHandler;
+import me.andreasmelone.glowingeyes.server.packet.S2CComponentUpdatePacket;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
 
@@ -64,14 +62,6 @@ public class GlowingEyesComponent {
         getComponent(player).setToggledOn(toggledOn);
     }
 
-    /**
-     * Gets the texture for the glowing eyes for a player
-     * @param player the player to get the glowing eyes texture for
-     * @return the glowing eyes texture
-     */
-    public static ResourceLocation getGlowingEyesTexture(Player player) {
-        return getComponent(player).getGlowingEyesTexture();
-    }
 
     /**
      * Server-side only method to send the updated component to the client
@@ -87,15 +77,6 @@ public class GlowingEyesComponent {
      * @param receivingPlayer another player who will receive the update
      */
     public static void sendUpdate(ServerPlayer updatedPlayer, ServerPlayer receivingPlayer) {
-        new ComponentUpdatePacket(updatedPlayer, getComponent(updatedPlayer)).sendToClient(receivingPlayer);
-    }
-
-    /**
-     * Client-side only method to send an update to the server
-     * Throws an exception when ran on the wrong side, so make sure to check the side before calling this method
-     */
-    public static void sendUpdate() {
-        Player localPlayer = Minecraft.getInstance().player;
-        new ComponentUpdatePacket(localPlayer, getComponent(localPlayer)).sendToServer();
+        new S2CComponentUpdatePacket(updatedPlayer, getComponent(updatedPlayer)).sendToClient(receivingPlayer);
     }
 }

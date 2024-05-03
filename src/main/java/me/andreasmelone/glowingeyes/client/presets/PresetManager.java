@@ -5,9 +5,10 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonSyntaxException;
 import com.mojang.logging.LogUtils;
+import me.andreasmelone.glowingeyes.client.component.eyes.ClientGlowingEyesComponent;
 import me.andreasmelone.glowingeyes.client.presets.gson.GsonPresetsFileModel;
 import me.andreasmelone.glowingeyes.client.presets.gson.PointColorMapSerializer;
-import me.andreasmelone.glowingeyes.common.component.eyes.GlowingEyesComponent;
+import me.andreasmelone.glowingeyes.server.component.eyes.GlowingEyesComponent;
 import net.minecraft.client.Minecraft;
 import org.slf4j.Logger;
 
@@ -100,7 +101,7 @@ public class PresetManager {
         Preset preset = this.presets.get(id);
 
         GlowingEyesComponent.setGlowingEyesMap(Minecraft.getInstance().player, preset.getContent());
-        GlowingEyesComponent.sendUpdate();
+        ClientGlowingEyesComponent.sendUpdate();
     }
 
     public boolean hasPreset(int id) {

@@ -1,9 +1,9 @@
 package me.andreasmelone.glowingeyes;
 
-import me.andreasmelone.glowingeyes.common.GlowingEyesEvents;
-import me.andreasmelone.glowingeyes.common.packet.PacketManager;
-import me.andreasmelone.glowingeyes.common.scheduler.CodeScheduler;
-import me.andreasmelone.glowingeyes.common.scheduler.Scheduler;
+import me.andreasmelone.glowingeyes.server.GlowingEyesEvents;
+import me.andreasmelone.glowingeyes.server.packet.PacketManager;
+import me.andreasmelone.glowingeyes.server.scheduler.CodeScheduler;
+import me.andreasmelone.glowingeyes.server.scheduler.Scheduler;
 import net.fabricmc.api.ModInitializer;
 
 import java.awt.*;

@@ -1,7 +1,6 @@
-package me.andreasmelone.glowingeyes.common.component.data;
+package me.andreasmelone.glowingeyes.server.component.data;
 
-import me.andreasmelone.glowingeyes.common.component.ComponentHandler;
-import me.andreasmelone.glowingeyes.common.packet.HasModPacket;
+import me.andreasmelone.glowingeyes.server.component.ComponentHandler;
 import net.minecraft.world.entity.player.Player;
 
 import java.util.Set;
@@ -63,13 +62,5 @@ public class PlayerDataComponent {
      */
     public static void removeTrackedBy(Player playerTracked, Player trackedBy) {
         getComponent(playerTracked).removeTrackedBy(trackedBy);
-    }
-
-    /**
-     * Sends a packet to the server so it knows the player has the mod installed
-     * This is needed, so the server can send the player the glowing eyes data
-     */
-    public static void sendRequest() {
-        HasModPacket.sendToServer();
     }
 }

@@ -1,4 +1,4 @@
-package me.andreasmelone.glowingeyes.common.component;
+package me.andreasmelone.glowingeyes.server.component;
 
 import com.mojang.logging.LogUtils;
 import dev.onyxstudios.cca.api.v3.component.ComponentKey;
@@ -7,10 +7,10 @@ import dev.onyxstudios.cca.api.v3.entity.EntityComponentFactoryRegistry;
 import dev.onyxstudios.cca.api.v3.entity.EntityComponentInitializer;
 import dev.onyxstudios.cca.api.v3.entity.RespawnCopyStrategy;
 import me.andreasmelone.glowingeyes.GlowingEyes;
-import me.andreasmelone.glowingeyes.common.component.data.IPlayerData;
-import me.andreasmelone.glowingeyes.common.component.data.PlayerDataImpl;
-import me.andreasmelone.glowingeyes.common.component.eyes.GlowingEyesImpl;
-import me.andreasmelone.glowingeyes.common.component.eyes.IGlowingEyes;
+import me.andreasmelone.glowingeyes.server.component.data.IPlayerData;
+import me.andreasmelone.glowingeyes.server.component.data.PlayerDataImpl;
+import me.andreasmelone.glowingeyes.server.component.eyes.GlowingEyesImpl;
+import me.andreasmelone.glowingeyes.server.component.eyes.IGlowingEyes;
 import net.minecraft.resources.ResourceLocation;
 
 public class ComponentHandler implements EntityComponentInitializer {

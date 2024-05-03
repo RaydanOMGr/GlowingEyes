@@ -1,4 +1,4 @@
-package me.andreasmelone.glowingeyes.common.scheduler;
+package me.andreasmelone.glowingeyes.server.scheduler;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
