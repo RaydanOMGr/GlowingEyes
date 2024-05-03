@@ -27,7 +27,7 @@
   "depends": {
     "fabricloader": ">=${loader_version}",
     "fabric": "*",
-    "minecraft": ">=1.19.4"
+    "minecraft": "1.19.4"
   },
   "custom": {
     "cardinal-components": [
