@@ -1,4 +1,4 @@
-package me.andreasmelone.glowingeyes.common.capability.data;
+package me.andreasmelone.glowingeyes.server.capability.data;
 
 import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.common.capabilities.Capability;

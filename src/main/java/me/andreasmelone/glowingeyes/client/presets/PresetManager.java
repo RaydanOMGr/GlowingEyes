@@ -7,9 +7,8 @@ import com.google.gson.JsonSyntaxException;
 import com.mojang.logging.LogUtils;
 import me.andreasmelone.glowingeyes.client.presets.gson.GsonPresetsFileModel;
 import me.andreasmelone.glowingeyes.client.presets.gson.PointColorMapSerializer;
-import me.andreasmelone.glowingeyes.common.capability.eyes.GlowingEyesCapability;
+import me.andreasmelone.glowingeyes.server.capability.eyes.GlowingEyesCapability;
 import net.minecraft.client.Minecraft;
-import net.minecraft.world.entity.player.Player;
 import org.slf4j.Logger;
 
 import javax.annotation.Nullable;

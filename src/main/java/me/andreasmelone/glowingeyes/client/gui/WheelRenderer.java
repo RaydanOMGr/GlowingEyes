@@ -5,13 +5,12 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import me.andreasmelone.glowingeyes.GlowingEyes;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiComponent;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.renderer.texture.DynamicTexture;
 import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.NotNull;
 
 import java.awt.*;
-import java.io.IOException;
 
 public class WheelRenderer {
     public static float brightness = 1.0f;
@@ -19,11 +18,11 @@ public class WheelRenderer {
     public final static float SCALE = (WHEEL_RADIUS / 100.0f) * 2;
 
     static ResourceLocation colorWheel = null;
-    public static void renderColorWheel(PoseStack posestack, int colorWheelX, int colorWheelY) {
-        renderColorWheel(posestack, colorWheelX, colorWheelY, 100, 100);
+    public static void renderColorWheel(GuiGraphics guiGraphics, int colorWheelX, int colorWheelY) {
+        renderColorWheel(guiGraphics, colorWheelX, colorWheelY, 100, 100);
     }
 
-    public static void renderColorWheel(PoseStack posestack, int colorWheelX, int colorWheelY,
+    public static void renderColorWheel(GuiGraphics guiGraphics, int colorWheelX, int colorWheelY,
                                         int colorWheelWidth, int colorWheelHeight) {
         if(colorWheel == null) {
             NativeImage image = getNativeImage();
@@ -31,11 +30,10 @@ public class WheelRenderer {
                     GlowingEyes.MOD_ID + ".color_wheel", new DynamicTexture(image)
             );
             System.out.println("Registered color wheel");
-            renderColorWheel(posestack, colorWheelX, colorWheelY, colorWheelWidth, colorWheelHeight);
+            renderColorWheel(guiGraphics, colorWheelX, colorWheelY, colorWheelWidth, colorWheelHeight);
         } else {
-            RenderSystem.setShaderTexture(0, colorWheel);
-            GuiComponent.blit(
-                    posestack,
+            guiGraphics.blit(
+                    colorWheel,
                     colorWheelX, colorWheelY,
                     0, 0,
                     colorWheelWidth, colorWheelHeight,

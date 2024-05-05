@@ -1,4 +1,4 @@
-package me.andreasmelone.glowingeyes.common.capability.data;
+package me.andreasmelone.glowingeyes.server.capability.data;
 
 import java.util.HashSet;
 import java.util.Set;

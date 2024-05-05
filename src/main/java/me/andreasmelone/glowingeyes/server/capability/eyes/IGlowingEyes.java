@@ -1,6 +1,8 @@
-package me.andreasmelone.glowingeyes.common.capability.eyes;
+package me.andreasmelone.glowingeyes.server.capability.eyes;
 
 import net.minecraft.resources.ResourceLocation;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 
 import javax.annotation.Nonnull;
 import java.awt.*;
@@ -13,6 +15,4 @@ public interface IGlowingEyes extends Serializable {
     void setGlowingEyesMap(@Nonnull HashMap<Point, Color> glowingEyesMap);
     boolean isToggledOn();
     void setToggledOn(boolean toggledOn);
-
-    ResourceLocation getGlowingEyesTexture();
 }

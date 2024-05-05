@@ -1,7 +1,6 @@
-package me.andreasmelone.glowingeyes.common.packets;
+package me.andreasmelone.glowingeyes.server.packets;
 
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.network.ConnectionData;
 import net.minecraftforge.network.NetworkHooks;
 import me.andreasmelone.glowingeyes.GlowingEyes;
@@ -41,7 +40,7 @@ public class PacketManager {
     }
 
     public static boolean isModPresent(ServerPlayer player) {
-        Connection connection = player.connection.getConnection();
+        Connection connection = player.connection.connection;
         return isModPresent(connection);
     }
 

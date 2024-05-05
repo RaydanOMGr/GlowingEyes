@@ -1,14 +1,13 @@
 package me.andreasmelone.glowingeyes.client.gui;
 
-import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.logging.LogUtils;
 import me.andreasmelone.glowingeyes.client.gui.preset.PresetsScreen;
 import me.andreasmelone.glowingeyes.client.util.ColorUtil;
 import me.andreasmelone.glowingeyes.client.util.GuiUtil;
 import me.andreasmelone.glowingeyes.client.util.TextureLocations;
-import me.andreasmelone.glowingeyes.common.capability.eyes.GlowingEyesCapability;
-import net.minecraft.client.gui.Gui;
+import me.andreasmelone.glowingeyes.server.capability.eyes.GlowingEyesCapability;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.ImageButton;
 import net.minecraft.client.gui.screens.Screen;
@@ -42,7 +41,7 @@ public class EyesEditorScreen extends Screen {
         this.guiTop = (this.height - this.ySize) / 2;
 
         AtomicBoolean saved = new AtomicBoolean(false);
-        Player player = getMinecraft().player;
+        Player player = Minecraft.getInstance().player;
         if(player != null) {
             pixels = GlowingEyesCapability.getGlowingEyesMap(player);
             saved.set(true);
@@ -58,7 +57,7 @@ public class EyesEditorScreen extends Screen {
                 0, 0, 20,
                 TextureLocations.COLOR_PICKER_BUTTON,
                 64, 64,
-                button -> getMinecraft().setScreen(new ColorPickerScreen(this))
+                button -> Minecraft.getInstance().setScreen(new ColorPickerScreen(this))
         ));
 
         // the preset menu button
@@ -69,7 +68,7 @@ public class EyesEditorScreen extends Screen {
                 TextureLocations.PRESET_MENU_BUTTON,
                 64, 64,
                 button -> {
-                    getMinecraft().setScreen(new PresetsScreen(this));
+                    Minecraft.getInstance().setScreen(new PresetsScreen(this));
                 }
         ));
 
@@ -122,16 +121,16 @@ public class EyesEditorScreen extends Screen {
 
     /**
      * The method that renders the screen
-     * @param poseStack The PoseStack, a stack of transformations to apply to the rendering
+     * @param guiGraphics The guiGraphics object that handles rendering
      * @param mouseX The x position of the mouse
      * @param mouseY The y position of the mouse
      * @param deltaTime The time since the last frame
      */
     @Override
-    public void render(PoseStack poseStack, int mouseX, int mouseY, float deltaTime) {
-        renderBackground(poseStack);
+    public void render(GuiGraphics guiGraphics, int mouseX, int mouseY, float deltaTime) {
+        renderBackground(guiGraphics);
 
-        GuiUtil.drawBackground(poseStack,
+        GuiUtil.drawBackground(guiGraphics,
                 TextureLocations.UI_BACKGROUND_BROAD, this.guiLeft, this.guiTop, this.xSize, this.ySize);
 
         int spaceBetweenPixels = 2;
@@ -143,20 +142,17 @@ public class EyesEditorScreen extends Screen {
         endHeadX = headX + headSize * pixelSize + (headSize - 1) * spaceBetweenPixels;
         endHeadY = headY + headSize * pixelSize + (headSize - 1) * spaceBetweenPixels;
 
-        fill(
-                poseStack,
+        guiGraphics.fill(
                 headX - spaceBetweenPixels, headY - spaceBetweenPixels,
                 endHeadX + spaceBetweenPixels, endHeadY + spaceBetweenPixels,
                 new Color(160, 160, 160, 255).getRGB()
         );
 
-        RenderSystem.setShaderTexture(0, getMinecraft().player.getSkinTextureLocation());
-
         for (int y = 0; y < headSize; y++) {
             for (int x = 0; x < headSize; x++) {
                 Point point = new Point(x, y);
-                Gui.blit(
-                        poseStack,
+                guiGraphics.blit(
+                        Minecraft.getInstance().player.getSkinTextureLocation(),
                         headX + x * pixelSize + x * spaceBetweenPixels,
                         headY + y * pixelSize + y * spaceBetweenPixels,
                         pixelSize,
@@ -167,8 +163,7 @@ public class EyesEditorScreen extends Screen {
                 );
 
                 if(pixels.containsKey(point)) {
-                    fill(
-                            poseStack,
+                    guiGraphics.fill(
                             headX + x * pixelSize + x * spaceBetweenPixels,
                             headY + y * pixelSize + y * spaceBetweenPixels,
                             headX + x * pixelSize + x * spaceBetweenPixels + pixelSize,
@@ -178,8 +173,8 @@ public class EyesEditorScreen extends Screen {
                 }
 
                 if(displaySecondLayer) {
-                    Gui.blit(
-                            poseStack,
+                    guiGraphics.blit(
+                            Minecraft.getInstance().player.getSkinTextureLocation(),
                             headX + x * pixelSize + x * spaceBetweenPixels,
                             headY + y * pixelSize + y * spaceBetweenPixels,
                             pixelSize,
@@ -192,7 +187,7 @@ public class EyesEditorScreen extends Screen {
             }
         }
 
-        super.render(poseStack, mouseX, mouseY, deltaTime);
+        super.render(guiGraphics, mouseX, mouseY, deltaTime);
     }
 
     @Override
@@ -222,8 +217,8 @@ public class EyesEditorScreen extends Screen {
 
                 float[] pixel = new float[4];
 
-                double scaleX = (double) getMinecraft().getWindow().getWidth() / (double) getMinecraft().getWindow().getGuiScaledWidth();
-                double scaleY = (double) getMinecraft().getWindow().getHeight() / (double) getMinecraft().getWindow().getGuiScaledHeight();
+                double scaleX = (double) Minecraft.getInstance().getWindow().getWidth() / (double) Minecraft.getInstance().getWindow().getGuiScaledWidth();
+                double scaleY = (double) Minecraft.getInstance().getWindow().getHeight() / (double) Minecraft.getInstance().getWindow().getGuiScaledHeight();
 
                 GL11.glReadPixels(
                         (int)(mouseX * scaleX), (int) (mouseY * scaleY),
@@ -250,7 +245,7 @@ public class EyesEditorScreen extends Screen {
     @Override
     public void onClose() {
         AtomicBoolean saved = new AtomicBoolean(false);
-        Player player = getMinecraft().player;
+        Player player = Minecraft.getInstance().player;
         if(player != null) {
             GlowingEyesCapability.setGlowingEyesMap(player, pixels);
             saved.set(true);
@@ -270,9 +265,9 @@ public class EyesEditorScreen extends Screen {
 
     public void openAsParent() {
         this.pixels.clear();
-        this.pixels.putAll(GlowingEyesCapability.getGlowingEyesMap(getMinecraft().player));
+        this.pixels.putAll(GlowingEyesCapability.getGlowingEyesMap(Minecraft.getInstance().player));
 
-        getMinecraft().setScreen(this);
+        Minecraft.getInstance().setScreen(this);
     }
 
     Mode mode = Mode.BRUSH;

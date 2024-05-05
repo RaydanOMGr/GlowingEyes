@@ -6,12 +6,12 @@ import me.andreasmelone.glowingeyes.GlowingEyes;
 import me.andreasmelone.glowingeyes.client.util.ColorUtil;
 import me.andreasmelone.glowingeyes.client.util.GuiUtil;
 import me.andreasmelone.glowingeyes.client.util.TextureLocations;
-import me.andreasmelone.glowingeyes.common.util.Util;
+import me.andreasmelone.glowingeyes.server.util.Util;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
-import org.lwjgl.glfw.GLFW;
 
 import java.awt.*;
 import java.util.function.Consumer;
@@ -44,7 +44,7 @@ public class ColorPickerScreen extends Screen {
     @Override
     protected void init() {
         super.init();
-        if(parent != null) parent.init(getMinecraft(), getMinecraft().getWindow().getGuiScaledWidth(), getMinecraft().getWindow().getGuiScaledHeight());
+        if(parent != null) parent.init(Minecraft.getInstance(), Minecraft.getInstance().getWindow().getGuiScaledWidth(), Minecraft.getInstance().getWindow().getGuiScaledHeight());
         this.guiLeft = (this.width - this.xSize) / 2;
         this.guiTop = (this.height - this.ySize) / 2;
 
@@ -59,7 +59,7 @@ public class ColorPickerScreen extends Screen {
                         this.font,
                         this.guiLeft + this.xSize - 50, this.guiTop + 20,
                         40, 20,
-                        Component.literal(String.valueOf(Util.round((float) ColorUtil.getRedFromRGB(GlowingEyes.DEFAULT_COLOR.getRGB()) / 255)))
+                        Component.empty() // the label should stay uninitialized for now
                 )
         );
         this.addEditBox(
@@ -67,7 +67,7 @@ public class ColorPickerScreen extends Screen {
                         this.font,
                         this.guiLeft + this.xSize - 50, this.guiTop + 50,
                         40, 20,
-                        Component.literal(String.valueOf(Util.round((float) ColorUtil.getGreenFromRGB(GlowingEyes.DEFAULT_COLOR.getRGB()) / 255)))
+                        Component.empty()
                 )
         );
         this.addEditBox(
@@ -75,7 +75,7 @@ public class ColorPickerScreen extends Screen {
                         this.font,
                         this.guiLeft + this.xSize - 50, this.guiTop + 80,
                         40, 20,
-                        Component.literal(String.valueOf(Util.round((float) ColorUtil.getBlueFromRGB(GlowingEyes.DEFAULT_COLOR.getRGB()) / 255)))
+                        Component.empty()
                 )
         );
 
@@ -88,36 +88,34 @@ public class ColorPickerScreen extends Screen {
     }
 
     @Override
-    public void render(PoseStack poseStack, int mouseX, int mouseY, float delta) {
+    public void render(GuiGraphics guiGraphics, int mouseX, int mouseY, float delta) {
         if(parent != null) {
-            parent.render(poseStack, mouseX, mouseY, delta);
+            parent.render(guiGraphics, mouseX, mouseY, delta);
         }
 
-        this.renderBackground(poseStack);
-        GuiUtil.drawBackground(poseStack,
+        this.renderBackground(guiGraphics);
+        GuiUtil.drawBackground(guiGraphics,
                 TextureLocations.UI_BACKGROUND_SLIM_LONG, this.guiLeft, this.guiTop, this.xSize, this.ySize);
 
         // draw the selected color on the right bottom
-        fill(
-                poseStack,
+        guiGraphics.fill(
                 this.guiLeft + this.xSize - 40, this.guiTop + this.ySize - 40,
                 this.guiLeft + this.xSize - 15, this.guiTop + this.ySize - 15,
                 selectedColor
         );
 
-        WheelRenderer.renderColorWheel(poseStack, colorWheelX, colorWheelY);
-        renderCursor(poseStack);
+        WheelRenderer.renderColorWheel(guiGraphics, colorWheelX, colorWheelY);
+        renderCursor(guiGraphics);
 
         int selectedColorBrightened = ColorUtil.getRGBFromBrightness(selectedColor, 1.0f);
-        fillGradient(
-                poseStack,
+        guiGraphics.fillGradient(
                 brightnessSliderX, brightnessSliderY,
                 brightnessSliderX + 30, brightnessSliderY + 100,
                 selectedColorBrightened, Color.BLACK.getRGB()
         );
-        renderBrightnessCursor(poseStack);
+        renderBrightnessCursor(guiGraphics);
 
-        super.render(poseStack, mouseX, mouseY, delta);
+        super.render(guiGraphics, mouseX, mouseY, delta);
     }
 
     @Override
@@ -145,11 +143,11 @@ public class ColorPickerScreen extends Screen {
     @Override
     public void onClose() {
         if(parent != null) {
-            getMinecraft().setScreen(parent);
+            Minecraft.getInstance().setScreen(parent);
             parent.init(
-                    getMinecraft(),
-                    getMinecraft().getWindow().getGuiScaledWidth(),
-                    getMinecraft().getWindow().getGuiScaledHeight()
+                    Minecraft.getInstance(),
+                    Minecraft.getInstance().getWindow().getGuiScaledWidth(),
+                    Minecraft.getInstance().getWindow().getGuiScaledHeight()
             );
         }
     }
@@ -226,14 +224,13 @@ public class ColorPickerScreen extends Screen {
         };
     }
 
-    private void renderCursor(PoseStack poseStack) {
+    private void renderCursor(GuiGraphics guiGraphics) {
         // the x and y are relative to the color wheel, we need to get the position relative to this whole screen
         int relativeX = (int) (selectedX / WheelRenderer.SCALE) + colorWheelX;
         int relativeY = (int) (selectedY / WheelRenderer.SCALE) + colorWheelY;
 
-        RenderSystem.setShaderTexture(0, TextureLocations.CURSOR);
-        blit(
-                poseStack,
+        guiGraphics.blit(
+                TextureLocations.CURSOR,
                 relativeX - 3, relativeY - 3,
                 0, 0,
                 8, 8,
@@ -241,12 +238,11 @@ public class ColorPickerScreen extends Screen {
         );
     }
 
-    private void renderBrightnessCursor(PoseStack poseStack) {
+    private void renderBrightnessCursor(GuiGraphics guiGraphics) {
         int relativeY = (int) (brightnessSliderY + (1 - WheelRenderer.brightness) * 100);
 
-        RenderSystem.setShaderTexture(0, TextureLocations.BRIGHTNESS_CURSOR);
-        blit(
-                poseStack,
+        guiGraphics.blit(
+                TextureLocations.BRIGHTNESS_CURSOR,
                 colorWheelX + 118, relativeY - 1,
                 34,4,
                 0, 0,

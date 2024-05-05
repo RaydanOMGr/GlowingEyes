@@ -5,13 +5,12 @@
 # This workflow will build a Java project with Gradle and cache/restore any dependencies to improve the workflow execution time
 # For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-java-with-gradle
 
-name: Build GlowingEyes for forge/1.19.2
-
+name: Build GlowingEyes for forge/1.20.1
 on:
   push:
-    branches: [ "forge/1.19.2" ]
+    branches: [ "forge/1.20.1" ]
   pull_request:
-    branches: [ "forge/1.19.2" ]
+    branches: [ "forge/1.20.1" ]
 
 jobs:
   build:
@@ -54,6 +53,8 @@ jobs:
     #
     # - name: Build with Gradle 8.5
     #   run: gradle build
+    #
+    # hi
 
   dependency-submission:
 

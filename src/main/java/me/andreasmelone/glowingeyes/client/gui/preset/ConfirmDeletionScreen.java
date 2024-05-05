@@ -1,16 +1,12 @@
 package me.andreasmelone.glowingeyes.client.gui.preset;
 
-import com.mojang.blaze3d.platform.GlStateManager;
-import com.mojang.blaze3d.vertex.PoseStack;
 import me.andreasmelone.glowingeyes.client.util.GuiUtil;
 import me.andreasmelone.glowingeyes.client.util.TextureLocations;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.FormattedText;
-import net.minecraft.network.chat.Style;
-import net.minecraft.util.FormattedCharSequence;
-import org.apache.logging.log4j.core.config.builder.api.ComponentBuilder;
 
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
@@ -45,61 +41,56 @@ public class ConfirmDeletionScreen extends Screen {
 
         labelComponent = Component.empty();
 
-        this.addRenderableWidget(new Button(
-                this.guiLeft + 20, this.guiTop + 100,
-                80 - 5, 20,
+        this.addRenderableWidget(Button.builder(
                 Component.translatable("gui.confirm"),
                 button -> {
                     if(this.future != null) {
                         this.future.complete(true);
                     }
                     if(this.parent != null) {
-                        this.getMinecraft().setScreen(this.parent);
+                        Minecraft.getInstance().setScreen(this.parent);
                     }
                 }
-        ));
-        this.addRenderableWidget(new Button(
-                this.guiLeft + 100 + (5 * 2), this.guiTop + 100,
-                80 - 5, 20,
+        ).pos(this.guiLeft + 20, this.guiTop + 100).size(80 - 5, 20).build());
+        this.addRenderableWidget(Button.builder(
                 Component.translatable("gui.cancel"),
                 button -> {
                     if(this.future != null) {
                         this.future.complete(false);
                     }
                     if(this.parent != null) {
-                        this.getMinecraft().setScreen(this.parent);
+                        Minecraft.getInstance().setScreen(this.parent);
                     }
                 }
-        ));
+        ).pos(this.guiLeft + 100 + (5 * 2), this.guiTop + 100).size(80 - 5, 20).build());
         labelComponent = Component.translatable("gui.delete.confirm", this.deletedElement);
     }
 
     @Override
-    public void render(PoseStack poseStack, int mouseX, int mouseY, float partialTicks) {
-        parent.render(poseStack, mouseX, mouseY, partialTicks);
-        this.renderBackground(poseStack);
+    public void render(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTicks) {
+        parent.render(guiGraphics, mouseX, mouseY, partialTicks);
+        this.renderBackground(guiGraphics);
 
         GuiUtil.drawBackground(
-                poseStack, TextureLocations.UI_BACKGROUND_SLIM,
+                guiGraphics, TextureLocations.UI_BACKGROUND_SLIM,
                 this.guiLeft, this.guiTop,
                 this.xSize, this.ySize
         );
 
-        drawCenteredString(
-                poseStack,
+        guiGraphics.drawCenteredString(
                 this.font,
                 labelComponent,
                 this.middleX, this.middleY - 20,
                 0xFFFFFF
         );
 
-        super.render(poseStack, mouseX, mouseY, partialTicks);
+        super.render(guiGraphics, mouseX, mouseY, partialTicks);
     }
 
     public static CompletableFuture<Boolean> askToDelete(Screen parent, String element) {
         ConfirmDeletionScreen screen = new ConfirmDeletionScreen(parent);
         screen.deletedElement = element;
-        parent.getMinecraft().setScreen(screen);
+        Minecraft.getInstance().setScreen(screen);
         CompletableFuture<Boolean> future = new CompletableFuture<>();
         screen.future = future;
         return future;

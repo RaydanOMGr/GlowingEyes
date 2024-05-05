@@ -1,18 +1,15 @@
 package me.andreasmelone.glowingeyes.client.gui.preset;
 
-import com.mojang.blaze3d.vertex.PoseStack;
-import me.andreasmelone.glowingeyes.GlowingEyes;
 import me.andreasmelone.glowingeyes.client.presets.PresetManager;
 import me.andreasmelone.glowingeyes.client.util.GuiUtil;
 import me.andreasmelone.glowingeyes.client.util.TextureLocations;
-import me.andreasmelone.glowingeyes.common.capability.eyes.GlowingEyesCapability;
+import me.andreasmelone.glowingeyes.server.capability.eyes.GlowingEyesCapability;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
-
-import java.io.IOException;
 
 public class CreatePresetScreen extends Screen {
     int xSize = 200;
@@ -41,44 +38,40 @@ public class CreatePresetScreen extends Screen {
                 this.xSize - (20 * 2), 20,
                 Component.empty()
         ));
-        nameField.setFocus(true);
+        nameField.setFocused(true);
 
-        this.addRenderableWidget(new Button(
-                this.guiLeft + 20, this.guiTop + 100,
-                80 - 5, 20,
+        this.addRenderableWidget(Button.builder(
                 Component.translatable("gui.create"),
                 button -> {
-                    PresetManager.getInstance().createPreset(nameField.getValue(), GlowingEyesCapability.getGlowingEyesMap(getMinecraft().player));
-                    getMinecraft().setScreen(parent);
+                    PresetManager.getInstance().createPreset(nameField.getValue(), GlowingEyesCapability.getGlowingEyesMap(Minecraft.getInstance().player));
+                    Minecraft.getInstance().setScreen(parent);
                 }
-        ));
-        this.addRenderableWidget(new Button(
-                this.guiLeft + 100 + (5 * 2), this.guiTop + 100,
-                80 - 5, 20,
+        ).pos(this.guiLeft + 20, this.guiTop + 100).size(80 - 5, 20).build());
+        this.addRenderableWidget(Button.builder(
                 Component.translatable("gui.cancel"),
                 button -> {
-                    getMinecraft().setScreen(parent);
+                    Minecraft.getInstance().setScreen(parent);
                 }
-        ));
+        ).pos(this.guiLeft + 100 + (5 * 2), this.guiTop + 100).size(80 - 5, 20).build());
     }
 
     @Override
-    public void render(PoseStack poseStack, int mouseX, int mouseY, float partialTicks) {
-        parent.render(poseStack, mouseX, mouseY, partialTicks);
-        this.renderBackground(poseStack);
+    public void render(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTicks) {
+        parent.render(guiGraphics, mouseX, mouseY, partialTicks);
+        this.renderBackground(guiGraphics);
         GuiUtil.drawBackground(
-                poseStack, TextureLocations.UI_BACKGROUND_SLIM,
+                guiGraphics, TextureLocations.UI_BACKGROUND_SLIM,
                 this.guiLeft, this.guiTop,
                 this.xSize, this.ySize
         );
 
-        drawCenteredString(
-                poseStack, this.font,
+        guiGraphics.drawCenteredString(
+                this.font,
                 Component.translatable("gui.create.title"),
                 this.width / 2, this.guiTop + 10,
                 0xFFFFFF
         );
 
-        super.render(poseStack, mouseX, mouseY, partialTicks);
+        super.render(guiGraphics, mouseX, mouseY, partialTicks);
     }
 }

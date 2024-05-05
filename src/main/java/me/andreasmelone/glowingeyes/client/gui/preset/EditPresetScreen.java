@@ -4,6 +4,7 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import me.andreasmelone.glowingeyes.client.util.GuiUtil;
 import me.andreasmelone.glowingeyes.client.util.TextureLocations;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.screens.Screen;
@@ -44,44 +45,40 @@ public class EditPresetScreen extends Screen {
                 this.xSize - (20 * 2), 20,
                 Component.literal(this.elementName)
         ));
-        nameField.setFocus(true);
+        nameField.setFocused(true);
 
         // make an "apply" and a cancel button
-        this.addRenderableWidget(new Button(
-                this.guiLeft + 20, this.guiTop + 100,
-                80 - 5, 20,
+        this.addRenderableWidget(Button.builder(
                 Component.translatable("gui.apply"),
                 button -> {
                     if(parent != null) {
                         future.complete(nameField.getValue());
-                        this.getMinecraft().setScreen(parent);
+                        Minecraft.getInstance().setScreen(parent);
                     }
                 }
-        ));
-        this.addRenderableWidget(new Button(
-                this.guiLeft + 100 + (5 * 2), this.guiTop + 100,
-                80 - 5, 20,
+        ).pos(this.guiLeft + 20, this.guiTop + 100).size(80 - 5, 20).build());
+        this.addRenderableWidget(Button.builder(
                 Component.translatable("gui.cancel"),
                 button -> {
                     if(parent != null) {
-                        this.getMinecraft().setScreen(parent);
+                        Minecraft.getInstance().setScreen(parent);
                     }
                 }
-        ));
+        ).pos(this.guiLeft + 100 + (5 * 2), this.guiTop + 100).size(80 - 5, 20).build());
     }
 
     @Override
-    public void render(PoseStack poseStack, int mouseX, int mouseY, float partialTicks) {
-        parent.render(poseStack, mouseX, mouseY, partialTicks);
-        this.renderBackground(poseStack);
+    public void render(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTicks) {
+        parent.render(guiGraphics, mouseX, mouseY, partialTicks);
+        this.renderBackground(guiGraphics);
         GuiUtil.drawBackground(
-                poseStack, TextureLocations.UI_BACKGROUND_SLIM,
+                guiGraphics, TextureLocations.UI_BACKGROUND_SLIM,
                 this.guiLeft, this.guiTop,
                 this.xSize, this.ySize
         );
 
-        drawCenteredString(
-                poseStack, this.font,
+        guiGraphics.drawCenteredString(
+                this.font,
                 Component.translatable("gui.edit.title"),
                 this.width / 2, this.guiTop + 10,
                 0xFFFFFF
@@ -94,13 +91,13 @@ public class EditPresetScreen extends Screen {
 //                0xFFFFFF
 //        );
 
-        super.render(poseStack, mouseX, mouseY, partialTicks);
+        super.render(guiGraphics, mouseX, mouseY, partialTicks);
     }
 
     public static CompletableFuture<String> askForName(Screen parent, String elementName) {
         EditPresetScreen screen = new EditPresetScreen(parent);
         screen.elementName = elementName;
-        parent.getMinecraft().setScreen(screen);
+        Minecraft.getInstance().setScreen(screen);
         CompletableFuture<String> future = new CompletableFuture<>();
         screen.future = future;
         return future;
