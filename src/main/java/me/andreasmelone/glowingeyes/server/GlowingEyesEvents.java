@@ -1,8 +1,8 @@
-package me.andreasmelone.glowingeyes.common;
+package me.andreasmelone.glowingeyes.server;
 
-import me.andreasmelone.glowingeyes.common.capability.data.PlayerDataCapability;
-import me.andreasmelone.glowingeyes.common.capability.eyes.GlowingEyesCapability;
-import me.andreasmelone.glowingeyes.common.packets.PacketManager;
+import me.andreasmelone.glowingeyes.server.capability.data.PlayerDataCapability;
+import me.andreasmelone.glowingeyes.server.capability.eyes.GlowingEyesCapability;
+import me.andreasmelone.glowingeyes.server.packets.PacketManager;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.event.entity.player.PlayerEvent;

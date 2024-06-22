@@ -1,4 +1,4 @@
-package me.andreasmelone.glowingeyes.common.exceptions;
+package me.andreasmelone.glowingeyes.server.exceptions;
 
 public class ToBeImplementedException extends RuntimeException {
     public ToBeImplementedException() {

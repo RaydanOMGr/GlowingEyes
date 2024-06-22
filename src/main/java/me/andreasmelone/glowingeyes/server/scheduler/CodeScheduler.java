@@ -1,6 +1,6 @@
-package me.andreasmelone.glowingeyes.common.scheduler;
+package me.andreasmelone.glowingeyes.server.scheduler;
 
-import me.andreasmelone.glowingeyes.common.exceptions.ToBeImplementedException;
+import me.andreasmelone.glowingeyes.server.exceptions.ToBeImplementedException;
 
 import java.util.HashMap;
 import java.util.Map;

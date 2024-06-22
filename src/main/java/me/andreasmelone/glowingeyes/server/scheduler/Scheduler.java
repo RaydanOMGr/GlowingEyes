@@ -1,4 +1,4 @@
-package me.andreasmelone.glowingeyes.common.scheduler;
+package me.andreasmelone.glowingeyes.server.scheduler;
 
 public interface Scheduler {
     Task runLater(Runnable runnable, long ticks);

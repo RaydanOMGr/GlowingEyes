@@ -6,7 +6,6 @@ import net.minecraft.client.renderer.entity.LivingEntityRenderer;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.client.event.EntityRenderersEvent;
-import net.minecraftforge.eventbus.api.Event;
 
 public class RenderManager {
     static <T extends Player, Q extends EntityModel<T>,

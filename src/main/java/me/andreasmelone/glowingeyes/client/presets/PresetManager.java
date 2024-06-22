@@ -7,14 +7,15 @@ import com.google.gson.JsonSyntaxException;
 import com.mojang.logging.LogUtils;
 import me.andreasmelone.glowingeyes.client.presets.gson.GsonPresetsFileModel;
 import me.andreasmelone.glowingeyes.client.presets.gson.PointColorMapSerializer;
-import me.andreasmelone.glowingeyes.common.capability.eyes.GlowingEyesCapability;
+import me.andreasmelone.glowingeyes.server.capability.eyes.GlowingEyesCapability;
 import net.minecraft.client.Minecraft;
-import net.minecraft.world.entity.player.Player;
 import org.slf4j.Logger;
 
 import javax.annotation.Nullable;
 import java.awt.*;
-import java.io.*;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.HashMap;

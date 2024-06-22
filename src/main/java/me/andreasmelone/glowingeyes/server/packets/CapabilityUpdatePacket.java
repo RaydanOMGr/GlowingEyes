@@ -1,15 +1,14 @@
-package me.andreasmelone.glowingeyes.common.packets;
+package me.andreasmelone.glowingeyes.server.packets;
 
-import me.andreasmelone.glowingeyes.common.capability.eyes.GlowingEyesCapability;
-import me.andreasmelone.glowingeyes.common.capability.eyes.GlowingEyesImpl;
-import me.andreasmelone.glowingeyes.common.capability.eyes.IGlowingEyes;
-import me.andreasmelone.glowingeyes.common.util.Util;
+import me.andreasmelone.glowingeyes.server.capability.eyes.GlowingEyesCapability;
+import me.andreasmelone.glowingeyes.server.capability.eyes.GlowingEyesImpl;
+import me.andreasmelone.glowingeyes.server.capability.eyes.IGlowingEyes;
+import me.andreasmelone.glowingeyes.server.util.Util;
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.network.NetworkEvent;
-import net.minecraftforge.network.PacketDistributor;
 
 import java.util.List;
 import java.util.UUID;

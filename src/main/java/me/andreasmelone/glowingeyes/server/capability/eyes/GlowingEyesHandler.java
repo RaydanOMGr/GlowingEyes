@@ -1,7 +1,7 @@
-package me.andreasmelone.glowingeyes.common.capability.eyes;
+package me.andreasmelone.glowingeyes.server.capability.eyes;
 
 import me.andreasmelone.glowingeyes.GlowingEyes;
-import me.andreasmelone.glowingeyes.common.util.Util;
+import me.andreasmelone.glowingeyes.server.util.Util;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
