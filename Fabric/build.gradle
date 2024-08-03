@@ -1,0 +1,90 @@
+plugins {
+    id 'fabric-loom' version '1.6-SNAPSHOT'
+    id 'maven-publish'
+    id 'idea'
+}
+
+version = version
+group = group
+
+base {
+    archivesName = "${mod_name}-fabric-${minecraft_version}"
+}
+
+dependencies {
+    minecraft "com.mojang:minecraft:${minecraft_version}"
+    mappings loom.layered() {
+        officialMojangMappings()
+        parchment("org.parchmentmc.data:parchment-${minecraft_version}:${parchment_version}@zip")
+    }
+
+    modImplementation "dev.onyxstudios.cardinal-components-api:cardinal-components-entity:${cca_version}"
+    include "dev.onyxstudios.cardinal-components-api:cardinal-components-base:${cca_version}"
+    include "dev.onyxstudios.cardinal-components-api:cardinal-components-entity:${cca_version}"
+
+    modImplementation include("me.andreasmelone:forge-like-packets:1.0.2")
+
+    modImplementation "net.fabricmc:fabric-loader:${fabric_loader_version}"
+    modImplementation "net.fabricmc.fabric-api:fabric-api:${fabric_version}"
+
+    modImplementation "curse.maven:lazydfu-433518:3821870"
+
+    implementation group: 'com.google.code.findbugs', name: 'jsr305', version: '3.0.1'
+    implementation project(":Common")
+}
+
+loom {
+    runs {
+        client {
+            client()
+            setConfigName("Fabric Client 1")
+            ideConfigGenerated(true)
+            runDir("run")
+            programArgs("--username Dev1")
+        }
+        server {
+            server()
+            setConfigName("Fabric Server")
+            ideConfigGenerated(true)
+            runDir("run")
+        }
+        client2 {
+            client()
+            setConfigName("Fabric Client 2")
+            ideConfigGenerated(true)
+            runDir("run")
+            programArgs("--username Dev2")
+        }
+    }
+}
+
+
+processResources {
+    from project(":Common").sourceSets.main.resources
+    inputs.property "version", project.version
+
+    filesMatching("fabric.mod.json") {
+        expand "version": project.version
+    }
+}
+
+tasks.withType(JavaCompile) {
+    source(project(":Common").sourceSets.main.allSource)
+}
+
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            groupId project.group
+            artifactId project.archivesBaseName
+            version project.version
+            from components.java
+        }
+    }
+
+    repositories {
+        maven {
+            url "file://" + System.getenv("local_maven")
+        }
+    }
+}

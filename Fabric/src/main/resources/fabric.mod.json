@@ -1,0 +1,40 @@
+{
+  "schemaVersion": 1,
+  "id": "glowingeyes",
+  "version": "${version}",
+  "name": "Glowing Eyes",
+  "description": "Make your eyes glow as if you were a vampire!",
+  "authors": [
+    "AndreasMelone"
+  ],
+  "contact": {
+    "repo": "https://github.com/RaydanOMGr/glowingeyes"
+  },
+  "license": "LGPL-3.0",
+  "icon": "assets/glowingeyes/icon.png",
+  "environment": "*",
+  "entrypoints": {
+    "main": [
+      "me.andreasmelone.glowingeyes.fabric.GlowingEyesFabric"
+    ],
+    "client": [
+      "me.andreasmelone.glowingeyes.fabric.client.GlowingEyesClient"
+    ],
+    "cardinal-components": [
+      "me.andreasmelone.glowingeyes.fabric.common.component.ComponentHandler"
+    ]
+  },
+  "depends": {
+    "fabricloader": ">=0.14",
+    "fabric": "*",
+    "minecraft": ">=1.19 <=1.19.3",
+    "java": ">=17"
+  },
+  "custom": {
+    "cardinal-components": [
+      "glowingeyes:glowingeyes",
+      "glowingeyes:playerdata"
+    ]
+  }
+}
+  
