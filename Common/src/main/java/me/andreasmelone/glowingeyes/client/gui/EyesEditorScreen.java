@@ -100,18 +100,18 @@ public class EyesEditorScreen extends Screen {
                     if(mode == Mode.ERASER) button.active = false;
                 }
         ));
-//        modeButtons.add(new ImageButton(
-//                this.guiLeft + 8, this.guiTop + 120,
-//                20, 20,
-//                0, 0, 20,
-//                TextureLocations.COLOR_PICKER,
-//                64, 64,
-//                button -> {
-//                    mode = Mode.PICKER;
-//                    modeButtons.forEach(b -> b.active = true);
-//                    if(mode == Mode.PICKER) button.active = false;
-//                }
-//        ));
+        modeButtons.add(new ImageButton(
+                this.guiLeft + 8, this.guiTop + 120,
+                20, 20,
+                0, 0, 20,
+                TextureLocations.PIPETTE_BUTTON,
+                64, 64,
+                button -> {
+                    mode = Mode.PICKER;
+                    modeButtons.forEach(b -> b.active = true);
+                    if(mode == Mode.PICKER) button.active = false;
+                }
+        ));
 
         modeButtons.get(0).onPress();
         modeButtons.forEach(this::addRenderableWidget);
