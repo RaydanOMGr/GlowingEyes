@@ -60,6 +60,11 @@ subprojects {
             name = "CurseMaven"
             url = "https://cursemaven.com"
         }
+
+        maven {
+            name "radRepoPublic"
+            url "https://maven.radsteve.net/public"
+        }
     }
 
     tasks.withType(JavaCompile).configureEach {
