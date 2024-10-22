@@ -42,13 +42,13 @@ jobs:
     - name: Upload Fabric Artifacts
       uses: actions/upload-artifact@v4.3.1
       with: 
-        name: GlowingEyes-Fabric-build
+        name: GlowingEyes-Fabric
         path: Fabric/build/libs/*.jar
 
     - name: Upload Forge Artifacts
       uses: actions/upload-artifact@v4.3.1
       with: 
-        name: GlowingEyes-Fabric-build
+        name: GlowingEyes-Forge
         path: Forge/build/libs/*.jar
         
     # NOTE: The Gradle Wrapper is the default and recommended way to run Gradle (https://docs.gradle.org/current/userguide/gradle_wrapper.html).
