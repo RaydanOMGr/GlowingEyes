@@ -21,11 +21,8 @@ import org.lwjgl.opengl.GL;
 import org.lwjgl.opengl.GL11;
 
 import java.awt.*;
-import java.util.List;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 public class EyesEditorScreen extends Screen {
     public EyesEditorScreen() {
