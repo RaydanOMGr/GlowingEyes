@@ -12,7 +12,7 @@ import net.minecraftforge.common.capabilities.RegisterCapabilitiesEvent;
 import net.minecraftforge.network.PacketDistributor;
 
 import java.awt.*;
-import java.util.HashMap;
+import java.util.Map;
 
 public class GlowingEyesComponentImpl implements IGlowingEyesComponent {
     protected static final Capability<IGlowingEyes> INSTANCE = CapabilityManager.get(new CapabilityToken<>() {});
@@ -35,12 +35,12 @@ public class GlowingEyesComponentImpl implements IGlowingEyesComponent {
     }
 
     @Override
-    public HashMap<Point, Color> getGlowingEyesMap(Player player) {
+    public Map<Point, Color> getGlowingEyesMap(Player player) {
         return getComponent(player).getGlowingEyesMap();
     }
 
     @Override
-    public void setGlowingEyesMap(Player player, HashMap<Point, Color> glowingEyesMap) {
+    public void setGlowingEyesMap(Player player, Map<Point, Color> glowingEyesMap) {
         getComponent(player).setGlowingEyesMap(glowingEyesMap);
     }
 

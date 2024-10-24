@@ -2,12 +2,11 @@ package me.andreasmelone.glowingeyes.fabric.common.component.eyes;
 
 import me.andreasmelone.glowingeyes.common.component.eyes.IGlowingEyesComponent;
 import me.andreasmelone.glowingeyes.fabric.common.component.ComponentHandler;
-import me.andreasmelone.glowingeyes.fabric.common.packet.ComponentUpdatePacket;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
 
 import java.awt.*;
-import java.util.HashMap;
+import java.util.Map;
 
 public class GlowingEyesComponentImpl implements IGlowingEyesComponent {
     private final IGlowingEyes localComponent = new GlowingEyesImpl();
@@ -18,12 +17,12 @@ public class GlowingEyesComponentImpl implements IGlowingEyesComponent {
     }
 
     @Override
-    public HashMap<Point, Color> getGlowingEyesMap(Player player) {
+    public Map<Point, Color> getGlowingEyesMap(Player player) {
         return getComponent(player).getGlowingEyesMap();
     }
 
     @Override
-    public void setGlowingEyesMap(Player player, HashMap<Point, Color> glowingEyesMap) {
+    public void setGlowingEyesMap(Player player, Map<Point, Color> glowingEyesMap) {
         getComponent(player).setGlowingEyesMap(glowingEyesMap);
     }
 

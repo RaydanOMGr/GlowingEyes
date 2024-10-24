@@ -4,7 +4,7 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
 
 import java.awt.*;
-import java.util.HashMap;
+import java.util.Map;
 
 public class GlowingEyesComponent {
     private static IGlowingEyesComponent instance;
@@ -14,7 +14,7 @@ public class GlowingEyesComponent {
      * @param player the player to get the glowing eyes map from
      * @return the glowing eyes map (Point, Color)
      */
-    public static HashMap<Point, Color> getGlowingEyesMap(Player player) {
+    public static Map<Point, Color> getGlowingEyesMap(Player player) {
         return instance.getGlowingEyesMap(player);
     }
 
@@ -24,7 +24,7 @@ public class GlowingEyesComponent {
      * @param player the player to set the glowing eyes map for
      * @param glowingEyesMap the glowing eyes map to set
      */
-    public static void setGlowingEyesMap(Player player, HashMap<Point, Color> glowingEyesMap) {
+    public static void setGlowingEyesMap(Player player, Map<Point, Color> glowingEyesMap) {
         instance.setGlowingEyesMap(player, glowingEyesMap);
     }
 

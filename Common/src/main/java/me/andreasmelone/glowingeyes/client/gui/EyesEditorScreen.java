@@ -15,6 +15,7 @@ import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.ImageButton;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
 import org.lwjgl.opengl.GL;
 import org.lwjgl.opengl.GL11;
@@ -23,19 +24,24 @@ import java.awt.*;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 public class EyesEditorScreen extends Screen {
     public EyesEditorScreen() {
         super(Component.empty());
     }
-    private int guiLeft, guiTop;
+    private int guiLeft, guiTop,
+            headX, headY,
+            endHeadX, endHeadY;
+    private boolean displaySecondLayer = false;
+    private int xSize = 256;
+    private int ySize = 222;
 
-    protected int xSize = 256;
-    protected int ySize = 222;
-
-    HashMap<Point, Color> pixels = new HashMap<>();
-    List<Button> modeButtons = new ArrayList<>();
+    Map<Point, Color> pixels = new HashMap<>();
+    Map<Mode, Button> modeButtons = new HashMap<>();
+    Color headBackgroundColor = new Color(160, 160, 160, 255);
+    Mode mode = Mode.BRUSH;
 
     @Override
     protected void init() {
@@ -43,13 +49,10 @@ public class EyesEditorScreen extends Screen {
         this.guiLeft = (this.width - this.xSize) / 2;
         this.guiTop = (this.height - this.ySize) / 2;
 
-        AtomicBoolean saved = new AtomicBoolean(false);
         Player player = Minecraft.getInstance().player;
         if(player != null) {
             pixels = GlowingEyesComponent.getGlowingEyesMap(player);
-            saved.set(true);
-        }
-        if(!saved.get()) {
+        } else {
             LogUtils.getLogger().error("Could not load glowing eyes map from player capability");
         }
 
@@ -70,57 +73,18 @@ public class EyesEditorScreen extends Screen {
                 0, 0, 20,
                 TextureLocations.PRESET_MENU_BUTTON,
                 64, 64,
-                button -> {
-                    Minecraft.getInstance().setScreen(new PresetsScreen(this));
-                }
+                button -> Minecraft.getInstance().setScreen(new PresetsScreen(this))
         ));
 
-        modeButtons.clear();
-        modeButtons.add(new ImageButton(
-                this.guiLeft + 8, this.guiTop + 70,
-                20, 20,
-                0, 0, 20,
-                TextureLocations.BRUSH_BUTTON,
-                64, 64,
-                button -> {
-                    mode = Mode.BRUSH;
-                    modeButtons.forEach(b -> b.active = true);
-                    if(mode == Mode.BRUSH) button.active = false;
-                }
-        ));
-        modeButtons.add(new ImageButton(
-                this.guiLeft + 8, this.guiTop + 95,
-                20, 20,
-                0, 0, 20,
-                TextureLocations.ERASER_BUTTON,
-                64, 64,
-                button -> {
-                    mode = Mode.ERASER;
-                    modeButtons.forEach(b -> b.active = true);
-                    if(mode == Mode.ERASER) button.active = false;
-                }
-        ));
-        modeButtons.add(new ImageButton(
-                this.guiLeft + 8, this.guiTop + 120,
-                20, 20,
-                0, 0, 20,
-                TextureLocations.PIPETTE_BUTTON,
-                64, 64,
-                button -> {
-                    mode = Mode.PICKER;
-                    modeButtons.forEach(b -> b.active = true);
-                    if(mode == Mode.PICKER) button.active = false;
-                }
-        ));
+        this.modeButtons.clear();
 
-        modeButtons.get(0).onPress();
-        modeButtons.forEach(this::addRenderableWidget);
+        this.createModeButton(8, 70, TextureLocations.BRUSH_BUTTON, Mode.BRUSH);
+        this.createModeButton(8, 95, TextureLocations.ERASER_BUTTON, Mode.ERASER);
+        this.createModeButton(8, 120, TextureLocations.PIPETTE_BUTTON, Mode.PICKER);
+
+        this.modeButtons.get(Mode.BRUSH).onPress();
+        this.modeButtons.forEach((mode, button) -> this.addRenderableWidget(button));
     }
-
-    int headX, headY;
-    int endHeadX, endHeadY;
-
-    boolean displaySecondLayer = false;
 
     /**
      * The method that renders the screen
@@ -131,7 +95,7 @@ public class EyesEditorScreen extends Screen {
      */
     @Override
     public void render(PoseStack poseStack, int mouseX, int mouseY, float deltaTime) {
-        renderBackground(poseStack);
+        this.renderBackground(poseStack);
 
         GuiUtil.drawBackground(poseStack,
                 TextureLocations.UI_BACKGROUND_BROAD, this.guiLeft, this.guiTop, this.xSize, this.ySize);
@@ -140,16 +104,13 @@ public class EyesEditorScreen extends Screen {
         int pixelSize = 16;
         final int headSize = 8;
 
-        headX = this.guiLeft + (this.xSize - (headSize * pixelSize + (headSize - 1) * spaceBetweenPixels)) / 2;
-        headY = this.guiTop + (this.ySize - (headSize * pixelSize + (headSize - 1) * spaceBetweenPixels)) / 2;
-        endHeadX = headX + headSize * pixelSize + (headSize - 1) * spaceBetweenPixels;
-        endHeadY = headY + headSize * pixelSize + (headSize - 1) * spaceBetweenPixels;
+        this.calculateHeadSize(headSize, pixelSize, spaceBetweenPixels);
 
-        fill(
+        Gui.fill(
                 poseStack,
                 headX - spaceBetweenPixels, headY - spaceBetweenPixels,
                 endHeadX + spaceBetweenPixels, endHeadY + spaceBetweenPixels,
-                new Color(160, 160, 160, 255).getRGB()
+                headBackgroundColor.getRGB()
         );
 
         RenderSystem.setShaderTexture(0, Minecraft.getInstance().player.getSkinTextureLocation());
@@ -169,7 +130,7 @@ public class EyesEditorScreen extends Screen {
                 );
 
                 if(pixels.containsKey(point)) {
-                    fill(
+                    Gui.fill(
                             poseStack,
                             headX + x * pixelSize + x * spaceBetweenPixels,
                             headY + y * pixelSize + y * spaceBetweenPixels,
@@ -184,8 +145,7 @@ public class EyesEditorScreen extends Screen {
                             poseStack,
                             headX + x * pixelSize + x * spaceBetweenPixels,
                             headY + y * pixelSize + y * spaceBetweenPixels,
-                            pixelSize,
-                            pixelSize,
+                            pixelSize, pixelSize,
                             40f + x, 8f + y,
                             1, 1,
                             64, 64
@@ -238,7 +198,7 @@ public class EyesEditorScreen extends Screen {
                 System.out.println("Color: " + ColorUtil.intToHex(color.getRGB()));
                 ColorPickerScreen.setSelectedColor(color);
 
-                modeButtons.get(0).onPress();
+                modeButtons.get(Mode.BRUSH).onPress();
             }
         }
 
@@ -249,17 +209,14 @@ public class EyesEditorScreen extends Screen {
     public boolean mouseDragged(double mouseX, double mouseY, int button, double dragX, double dragY) {
         return this.mouseClicked(mouseX, mouseY, button);
     }
+
     @Override
     public void onClose() {
-        AtomicBoolean saved = new AtomicBoolean(false);
         Player player = Minecraft.getInstance().player;
         if(player != null) {
             GlowingEyesComponent.setGlowingEyesMap(player, pixels);
-            saved.set(true);
-
             ClientGlowingEyesComponent.sendUpdate();
-        }
-        if(!saved.get()) {
+        } else {
             LogUtils.getLogger().error("Could not save glowing eyes map to player capability");
         }
         super.onClose();
@@ -277,7 +234,31 @@ public class EyesEditorScreen extends Screen {
         Minecraft.getInstance().setScreen(this);
     }
 
-    Mode mode = Mode.BRUSH;
+    private void calculateHeadSize(int headSize, int pixelSize, int spaceBetweenPixels) {
+        int head = headSize * pixelSize + (headSize - 1) * spaceBetweenPixels;
+        headX = this.guiLeft + (this.xSize - head) / 2;
+        headY = this.guiTop + (this.ySize - head) / 2;
+        endHeadX = headX + head;
+        endHeadY = headY + head;
+    }
+
+    private ImageButton createModeButton(int x, int y, ResourceLocation texture, Mode buttonMode) {
+        ImageButton imageButton = new ImageButton(
+                this.guiLeft + x, this.guiTop + y,
+                20, 20,
+                0, 0, 20,
+                texture,
+                64, 64,
+                button -> {
+                    mode = buttonMode;
+                    modeButtons.forEach((m, b) -> b.active = true);
+                    button.active = false;
+                }
+        );
+        modeButtons.put(buttonMode, imageButton);
+        return imageButton;
+    }
+
     enum Mode {
         BRUSH,
         ERASER,

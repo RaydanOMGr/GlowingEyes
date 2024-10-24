@@ -4,7 +4,7 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
 
 import java.awt.*;
-import java.util.HashMap;
+import java.util.Map;
 
 public interface IGlowingEyesComponent {
     /**
@@ -12,7 +12,7 @@ public interface IGlowingEyesComponent {
      * @param player the player to get the glowing eyes map from
      * @return the glowing eyes map (Point, Color)
      */
-    HashMap<Point, Color> getGlowingEyesMap(Player player);
+    Map<Point, Color> getGlowingEyesMap(Player player);
 
     /**
      * Sets the glowing eyes map (should only be using when completely overwriting the map)
@@ -20,7 +20,7 @@ public interface IGlowingEyesComponent {
      * @param player the player to set the glowing eyes map for
      * @param glowingEyesMap the glowing eyes map to set
      */
-    void setGlowingEyesMap(Player player, HashMap<Point, Color> glowingEyesMap);
+    void setGlowingEyesMap(Player player, Map<Point, Color> glowingEyesMap);
 
     /**
      * Gets whether the glowing eyes are toggled on for a player

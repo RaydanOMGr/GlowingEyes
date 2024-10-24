@@ -22,5 +22,4 @@ pluginManagement {
 
 rootProject.name = 'glowingeyes'
 include("Common", "Fabric", "Forge")
-include 'Server'
 

@@ -4,11 +4,11 @@ import dev.onyxstudios.cca.api.v3.component.Component;
 
 import java.awt.Color;
 import java.awt.Point;
-import java.util.HashMap;
+import java.util.Map;
 
 public interface IGlowingEyes extends Component {
-    HashMap<Point, Color> getGlowingEyesMap();
-    void setGlowingEyesMap(HashMap<Point, Color> glowingEyesMap);
+    Map<Point, Color> getGlowingEyesMap();
+    void setGlowingEyesMap(Map<Point, Color> glowingEyesMap);
     boolean isToggledOn();
     void setToggledOn(boolean toggledOn);
 }
