@@ -26,7 +26,7 @@ public class ColorPickerScreen extends Screen {
     private int brightnessSliderX, brightnessSliderY;
     private int selectedX, selectedY;
 
-    EditBox red, green, blue;
+    private EditBox red, green, blue;
 
     private final Screen parent;
     public ColorPickerScreen() {
@@ -39,11 +39,10 @@ public class ColorPickerScreen extends Screen {
         this.parent = parent;
     }
 
-
     @Override
     protected void init() {
         super.init();
-        if(parent != null) parent.init(Minecraft.getInstance(), Minecraft.getInstance().getWindow().getGuiScaledWidth(), Minecraft.getInstance().getWindow().getGuiScaledHeight());
+        if(parent != null) parent.init(minecraft, minecraft.getWindow().getGuiScaledWidth(), minecraft.getWindow().getGuiScaledHeight());
         this.guiLeft = (this.width - this.xSize) / 2;
         this.guiTop = (this.height - this.ySize) / 2;
 
