@@ -1,5 +1,6 @@
 package me.andreasmelone.glowingeyes.client.gui;
 
+import com.mojang.blaze3d.platform.Window;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.logging.LogUtils;
@@ -17,8 +18,7 @@ import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
-import org.lwjgl.opengl.GL;
-import org.lwjgl.opengl.GL11;
+import org.lwjgl.opengl.*;
 
 import java.awt.*;
 import java.util.HashMap;
@@ -43,6 +43,7 @@ public class EyesEditorScreen extends Screen {
     @Override
     protected void init() {
         super.init();
+        GL.createCapabilities();
         this.guiLeft = (this.width - this.xSize) / 2;
         this.guiTop = (this.height - this.ySize) / 2;
 
@@ -129,10 +130,10 @@ public class EyesEditorScreen extends Screen {
                 if(pixels.containsKey(point)) {
                     Gui.fill(
                             poseStack,
-                            headX + x * pixelSize + x * spaceBetweenPixels,
-                            headY + y * pixelSize + y * spaceBetweenPixels,
-                            headX + x * pixelSize + x * spaceBetweenPixels + pixelSize,
-                            headY + y * pixelSize + y * spaceBetweenPixels + pixelSize,
+                            headX + x * pixelSize + x * spaceBetweenPixels - 1,
+                            headY + y * pixelSize + y * spaceBetweenPixels - 1,
+                            headX + x * pixelSize + x * spaceBetweenPixels + pixelSize + 1,
+                            headY + y * pixelSize + y * spaceBetweenPixels + pixelSize + 1,
                             pixels.get(point).getRGB()
                     );
                 }
@@ -149,6 +150,14 @@ public class EyesEditorScreen extends Screen {
                     );
                 }
             }
+        }
+
+        if(mode == Mode.PICKER && mouseX >= headX && mouseX <= endHeadX && mouseY >= headY && mouseY <= endHeadY) {
+            Color color = this.getPixelColor(mouseX, mouseY);
+
+            Gui.fill(poseStack, mouseX - 10, mouseY - 10 - 25, mouseX + 10, mouseY + 10 - 25, color.getRGB());
+            Gui.drawCenteredString(poseStack, minecraft.font, ColorUtil.intToHex(color.getRGB()),
+                    mouseX, mouseY - 10, 0xFFFFFF);
         }
 
         super.render(poseStack, mouseX, mouseY, deltaTime);
@@ -176,23 +185,7 @@ public class EyesEditorScreen extends Screen {
             }
 
             if (mode == Mode.PICKER && button == 0) {
-                GL.createCapabilities();
-                GL11.glReadBuffer(GL11.GL_FRONT);
-
-                float[] pixel = new float[4];
-
-                double scaleX = (double) Minecraft.getInstance().getWindow().getWidth() / (double) Minecraft.getInstance().getWindow().getGuiScaledWidth();
-                double scaleY = (double) Minecraft.getInstance().getWindow().getHeight() / (double) Minecraft.getInstance().getWindow().getGuiScaledHeight();
-
-                GL11.glReadPixels(
-                        (int)(mouseX * scaleX), (int) (mouseY * scaleY),
-                        1, 1,
-                        GL11.GL_RGBA, GL11.GL_FLOAT,
-                        pixel
-                );
-
-                Color color = new Color(pixel[0], pixel[1], pixel[2], pixel[3]);
-                System.out.println("Color: " + ColorUtil.intToHex(color.getRGB()));
+                Color color = this.getPixelColor(mouseX, mouseY);
                 ColorPickerScreen.setSelectedColor(color);
 
                 modeButtons.get(Mode.BRUSH).onPress();
@@ -230,6 +223,32 @@ public class EyesEditorScreen extends Screen {
 
         Minecraft.getInstance().setScreen(this);
     }
+
+    private Color getPixelColor(double x, double y) {
+        Window window = minecraft.getWindow();
+        if (x < 0 || x > window.getWidth()) {
+            throw new IllegalArgumentException("x must be within the screen width: 0 to " + window.getWidth() + ". Provided: " + x);
+        }
+        if (y < 0 || y > window.getHeight()) {
+            throw new IllegalArgumentException("y must be within the screen height: 0 to " + window.getHeight() + ". Provided: " + y);
+        }
+
+        float[] pixel = new float[4];
+
+        // Divides the actual width/height by the scaled width/height to find out by what factor it was scaled
+        double scaleX = (double) window.getWidth() / window.getGuiScaledWidth();
+        double scaleY = (double) window.getHeight() / window.getGuiScaledHeight();
+        // Calculates the actual position of the pixel
+        int pixelX = (int) (x * scaleX);
+        int pixelY = (int) ((window.getGuiScaledHeight() - y) * scaleY); // The y value needs
+                                                                         // to be inverted relative to the height
+                                                                         // since minecraft's 0-point is top-left
+                                                                         // while gl's 0-point is bottom-left
+        GL11.glReadPixels(pixelX, pixelY, 1, 1, GL11.GL_RGBA, GL11.GL_FLOAT, pixel);
+
+        return new Color(pixel[0], pixel[1], pixel[2], pixel[3]);
+    }
+
 
     private void calculateHeadSize(int headSize, int pixelSize, int spaceBetweenPixels) {
         int head = headSize * pixelSize + (headSize - 1) * spaceBetweenPixels;
