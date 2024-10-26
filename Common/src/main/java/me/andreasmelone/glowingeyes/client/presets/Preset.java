@@ -8,13 +8,14 @@ import net.minecraft.resources.ResourceLocation;
 
 import java.awt.*;
 import java.util.HashMap;
+import java.util.Map;
 
 public class Preset {
     private String name;
     private final ResourceLocation id;
-    private final HashMap<Point, Color> content;
+    private final Map<Point, Color> content;
 
-    public Preset(String name, ResourceLocation id, HashMap<Point, Color> content) {
+    public Preset(String name, ResourceLocation id, Map<Point, Color> content) {
         this.name = name;
         this.id = id;
         this.content = content;
@@ -36,7 +37,7 @@ public class Preset {
         );
     }
 
-    public HashMap<Point, Color> getContent() {
+    public Map<Point, Color> getContent() {
         // return a copy so that the original content can't be modified
         return new HashMap<>(this.content);
     }

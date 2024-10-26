@@ -5,18 +5,19 @@ import net.minecraft.nbt.CompoundTag;
 
 import java.awt.*;
 import java.util.HashMap;
+import java.util.Map;
 
 public class GlowingEyesImpl implements IGlowingEyes {
     private boolean toggledOn = true;
-    private HashMap<Point, Color> glowingEyesMap = new HashMap<>();
+    private Map<Point, Color> glowingEyesMap = new HashMap<>();
 
     @Override
-    public HashMap<Point, Color> getGlowingEyesMap() {
+    public Map<Point, Color> getGlowingEyesMap() {
         return this.glowingEyesMap;
     }
 
     @Override
-    public void setGlowingEyesMap(HashMap<Point, Color> glowingEyesMap) {
+    public void setGlowingEyesMap(Map<Point, Color> glowingEyesMap) {
         this.glowingEyesMap = glowingEyesMap;
     }
 

@@ -27,7 +27,7 @@ import java.util.List;
 public class PresetManager {
     private static final PresetManager INSTANCE = new PresetManager();
     Gson gson = new GsonBuilder()
-            .registerTypeAdapter(HashMap.class, new PointColorMapSerializer())
+            .registerTypeAdapter(Map.class, new PointColorMapSerializer())
             .registerTypeAdapter(ResourceLocation.class, new ResourceLocationSerializer())
             .setPrettyPrinting()
             .create();
@@ -175,17 +175,17 @@ public class PresetManager {
         return this.presets.size() - 1;
     }
 
-    public int createPreset(String name, HashMap<Point, Color> content) {
+    public int createPreset(String name, Map<Point, Color> content) {
         return this.createPreset(name, content, new ResourceLocation(GlowingEyes.MOD_ID, "preset_" + sanitizeForId(name)));
     }
 
-    public int createPreset(String name, HashMap<Point, Color> content, ResourceLocation id) {
+    public int createPreset(String name, Map<Point, Color> content, ResourceLocation id) {
         int minX = 0;
         int minY = 0;
         int maxX = 15;
         int maxY = 15;
 
-        HashMap<Point, Color> contentCopy = new HashMap<>(content);
+        Map<Point, Color> contentCopy = new HashMap<>(content);
         // check if the content has pixels outside range x 0, y 0 - x 16, y 16
         for(Point point : contentCopy.keySet()) {
             if(point.x < minX || point.x > maxX || point.y < minY || point.y > maxY) {

@@ -21,8 +21,8 @@ import org.lwjgl.opengl.GL11;
 
 import java.awt.*;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class PresetsScreen extends Screen {
     private int guiLeft, guiTop;
@@ -40,7 +40,7 @@ public class PresetsScreen extends Screen {
     boolean isLocked = false;
     boolean editing = false;
 
-    HashMap<Point, Color> savedPixelMap = null;
+    Map<Point, Color> savedPixelMap = null;
     List<PresetButton> presetButtons;
     Button createEditButton;
     private Screen parent;
