@@ -12,8 +12,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
-public class DynamicTextureCache {
-    private DynamicTextureCache() {
+public class EyesTextureCache {
+    private EyesTextureCache() {
     }
 
     private static final Map<Map<Point, Color>, ResourceLocation> cache = new HashMap<>();
@@ -46,22 +46,6 @@ public class DynamicTextureCache {
 
         NativeImage nativeImage = GuiUtil.toNativeImage(image);
         DynamicTexture dynamicTexture = new DynamicTexture(nativeImage);
-        return Minecraft.getInstance().getTextureManager().register(GlowingEyes.MOD_ID + "_" + UUID.randomUUID(), dynamicTexture);
-    }
-
-    private static <K, V> boolean areEqual(Map<K, V> map1, Map<K, V> map2) {
-        if (map1.size() != map2.size()) {
-            return false;
-        }
-
-        for (Map.Entry<K, V> entry : map1.entrySet()) {
-            K key = entry.getKey();
-            V value = entry.getValue();
-            if (!map2.containsKey(key) || !map2.get(key).equals(value)) {
-                return false;
-            }
-        }
-
-        return true;
+        return Minecraft.getInstance().getTextureManager().register(GlowingEyes.MOD_ID + "_dyntex_" + UUID.randomUUID(), dynamicTexture);
     }
 }

@@ -1,6 +1,7 @@
 package me.andreasmelone.glowingeyes.forge.client;
 
 import me.andreasmelone.glowingeyes.GlowingEyes;
+import me.andreasmelone.glowingeyes.client.mod.ClientModContext;
 import me.andreasmelone.glowingeyes.common.component.eyes.GlowingEyesComponent;
 import me.andreasmelone.glowingeyes.client.gui.EyesEditorScreen;
 import net.minecraft.client.Minecraft;
@@ -9,6 +10,12 @@ import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 
 public class GlowingEyesClientEvents {
+    private final ClientModContext mod;
+
+    public GlowingEyesClientEvents(ClientModContext mod) {
+        this.mod = mod;
+    }
+
     @SubscribeEvent
     public void onClientTick(TickEvent.ClientTickEvent event) {
         if (event.phase == TickEvent.Phase.END) {
@@ -22,7 +29,7 @@ public class GlowingEyesClientEvents {
             }
             while(GlowingEyesKeybindings.EYES_EDITOR_MAPPING.consumeClick()) {
                 if(Minecraft.getInstance().screen != null) return;
-                Minecraft.getInstance().setScreen(new EyesEditorScreen());
+                Minecraft.getInstance().setScreen(new EyesEditorScreen(mod));
             }
         }
     }

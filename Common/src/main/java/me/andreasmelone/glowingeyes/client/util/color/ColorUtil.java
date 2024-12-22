@@ -1,4 +1,4 @@
-package me.andreasmelone.glowingeyes.client.util;
+package me.andreasmelone.glowingeyes.client.util.color;
 
 import java.awt.*;
 
@@ -140,7 +140,7 @@ public class ColorUtil {
                 rgb & 0xFF,
                 hsb
         );
-        hsb[2] = brightness / 255f;
+        hsb[2] = brightness / 100f;
         return new Color(
                 Color.HSBtoRGB(hsb[0], hsb[1], hsb[2])
         ).getRGB();
@@ -179,5 +179,12 @@ public class ColorUtil {
         }
 
         return "#" + hex;
+    }
+
+    public static int hexToInt(String hex) {
+        if (hex.charAt(0) == '#') {
+            hex = hex.substring(1);
+        }
+        return Integer.parseInt(hex, 16);
     }
 }

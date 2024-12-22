@@ -64,7 +64,7 @@ public class GlowingEyesComponent {
         instance.sendUpdate(updatedPlayer, receivingPlayer);
     }
 
-    public static void setImplementation(IGlowingEyesComponent implementation) {
+    public static synchronized void setImplementation(IGlowingEyesComponent implementation) {
         if(GlowingEyesComponent.instance != null) {
             throw new IllegalStateException("GlowingEyesComponent implementation is already set");
         }

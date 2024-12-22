@@ -28,7 +28,6 @@ public class BigSelectableButton extends Button {
                 i += this.height * 2;
             }
 
-
             blit(
                     poseStack,
                     this.x, this.y,

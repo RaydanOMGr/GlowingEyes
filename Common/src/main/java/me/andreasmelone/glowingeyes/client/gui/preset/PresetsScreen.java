@@ -3,7 +3,6 @@ package me.andreasmelone.glowingeyes.client.gui.preset;
 import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
-import me.andreasmelone.glowingeyes.client.gui.EyesEditorScreen;
 import me.andreasmelone.glowingeyes.client.gui.button.PresetButton;
 import me.andreasmelone.glowingeyes.client.presets.Preset;
 import me.andreasmelone.glowingeyes.client.presets.PresetManager;
@@ -31,7 +30,6 @@ public class PresetsScreen extends Screen {
     protected int ySize = 222; // the size of the texture is 256x222
 
     int page = 0;
-    int offset = 0;
 
     ResourceLocation selectedPreset = null;
     int pageSize;
@@ -93,9 +91,9 @@ public class PresetsScreen extends Screen {
                             presetManager.applyPreset(selectedPreset);
                         }
                         presetManager.savePresets();
-                        if (parent instanceof EyesEditorScreen)
-                            ((EyesEditorScreen) parent).openAsParent();
-                        else
+//                        if (parent instanceof EyesEditorScreen eyesEditorScreen)
+//                            eyesEditorScreen.openAsParent();
+//                        else
                             Minecraft.getInstance().setScreen(parent);
                     }
                 }

@@ -2,7 +2,7 @@ package me.andreasmelone.glowingeyes.fabric.client;
 
 import me.andreasmelone.glowingeyes.GlowingEyes;
 import me.andreasmelone.glowingeyes.client.component.data.ClientPlayerDataComponent;
-import me.andreasmelone.glowingeyes.client.util.DynamicTextureCache;
+import me.andreasmelone.glowingeyes.client.util.EyesTextureCache;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents;
 
@@ -13,6 +13,6 @@ public class GlowingEyesClientEvents {
         });
 
         ClientPlayConnectionEvents.JOIN.register((handler, sender, client) -> ClientPlayerDataComponent.sendRequest());
-        ClientPlayConnectionEvents.DISCONNECT.register((handler, client) -> DynamicTextureCache.clear());
+        ClientPlayConnectionEvents.DISCONNECT.register((handler, client) -> EyesTextureCache.clear());
     }
 }

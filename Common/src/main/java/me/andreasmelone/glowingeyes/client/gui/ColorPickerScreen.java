@@ -1,42 +1,49 @@
 package me.andreasmelone.glowingeyes.client.gui;
 
-import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
-import me.andreasmelone.glowingeyes.GlowingEyes;
-import me.andreasmelone.glowingeyes.client.util.ColorUtil;
+import me.andreasmelone.glowingeyes.client.gui.widget.BrightnessSliderWidget;
+import me.andreasmelone.glowingeyes.client.gui.widget.ColorWheelWidget;
+import me.andreasmelone.glowingeyes.client.mod.ClientModContext;
 import me.andreasmelone.glowingeyes.client.util.GuiUtil;
 import me.andreasmelone.glowingeyes.client.util.TextureLocations;
-import me.andreasmelone.glowingeyes.common.util.Util;
+import me.andreasmelone.glowingeyes.client.util.color.ColorType;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.Gui;
+import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 
 import java.awt.*;
-import java.util.function.Consumer;
+import java.util.EnumMap;
+import java.util.Map;
+import java.util.function.Predicate;
+import java.util.function.Supplier;
 
 public class ColorPickerScreen extends Screen {
-    private static int selectedColor = GlowingEyes.DEFAULT_COLOR.getRGB();
-
+    private final int xSize = 256;
+    private final int ySize = 222;
     private int guiLeft, guiTop;
-    private final int xSize = 252;
-    private final int ySize = 143;
-
+    
     private int colorWheelX, colorWheelY;
     private int brightnessSliderX, brightnessSliderY;
-    private int selectedX, selectedY;
 
-    private EditBox red, green, blue;
+    private ColorWheelWidget colorWheel = null;
+    private BrightnessSliderWidget brightnessSlider = null;
+    private Map<ColorType, EditBox> editBoxMap = new EnumMap<>(ColorType.class);
 
     private final Screen parent;
-    public ColorPickerScreen() {
+    private final ClientModContext mod;
+    public ColorPickerScreen(ClientModContext mod) {
         super(Component.empty());
         parent = null;
+        this.mod = mod;
     }
 
-    public ColorPickerScreen(Screen parent) {
+    public ColorPickerScreen(ClientModContext mod, Screen parent) {
         super(Component.empty());
         this.parent = parent;
+        this.mod = mod;
     }
 
     @Override
@@ -52,37 +59,51 @@ public class ColorPickerScreen extends Screen {
         this.brightnessSliderX = this.colorWheelX + 120;
         this.brightnessSliderY = this.colorWheelY;
 
-        this.addEditBox(
-                red = new EditBox(
-                        this.font,
-                        this.guiLeft + this.xSize - 50, this.guiTop + 20,
-                        40, 20,
-                        Component.empty() // the label should stay uninitialized for now
-                )
-        );
-        this.addEditBox(
-                green = new EditBox(
-                        this.font,
-                        this.guiLeft + this.xSize - 50, this.guiTop + 50,
-                        40, 20,
-                        Component.empty()
-                )
-        );
-        this.addEditBox(
-                blue = new EditBox(
-                        this.font,
-                        this.guiLeft + this.xSize - 50, this.guiTop + 80,
-                        40, 20,
-                        Component.empty()
-                )
-        );
+        this.editBoxMap.clear();
+        this.editBoxMap.put(ColorType.RED,
+                this.createEditBox(this.guiLeft + this.xSize - 70, this.guiTop + 20,  Component.empty()));
 
-        selectedX = WheelRenderer.getPointFromColor(selectedColor).x;
-        selectedY = WheelRenderer.getPointFromColor(selectedColor).y;
+        this.editBoxMap.put(ColorType.GREEN,
+                this.createEditBox(this.guiLeft + this.xSize - 70, this.guiTop + 50, Component.empty()));
 
-        red.setValue(String.valueOf(Util.round((float) ColorUtil.getRedFromRGB(selectedColor) / 255, 2)));
-        green.setValue(String.valueOf(Util.round((float) ColorUtil.getGreenFromRGB(selectedColor) / 255, 2)));
-        blue.setValue(String.valueOf(Util.round((float) ColorUtil.getBlueFromRGB(selectedColor) / 255, 2)));
+        this.editBoxMap.put(ColorType.BLUE,
+                this.createEditBox(this.guiLeft + this.xSize - 70, this.guiTop + 80, Component.empty()));
+
+        this.editBoxMap.put(ColorType.HEX,
+                this.createEditBox(this.guiLeft + this.xSize - 70, this.guiTop + 110, Component.empty()));
+
+        this.editBoxMap.forEach((type, field) -> {
+            field.setResponder((string) -> {
+                if (!field.isFocused() || string.isEmpty()) return;
+                this.editBoxMap.forEach((t, f) -> { if(t != type) f.setFocus(false); });
+                this.changeColor(type.parseAndUpdate(mod.getModVariables().getSelectedColor(), string),
+                        mod.getModVariables().getBrightness(), t -> t == type);
+            });
+            this.addRenderableWidget(field);
+        });
+
+        colorWheel = createOrUpdateWidget(colorWheel, colorWheelX, colorWheelY, () -> {
+            ColorWheelWidget widget = new ColorWheelWidget(colorWheelX, colorWheelY, 100, mod.getModVariables().getSelectedColor());
+            widget.onChange(wheel -> {
+                    this.changeColor(wheel.getSelectedColor(), mod.getModVariables().getBrightness());
+                    brightnessSlider.setColor(wheel.getSelectedColor().getRGB());
+            });
+            return widget;
+        });
+        brightnessSlider = createOrUpdateWidget(brightnessSlider, brightnessSliderX, brightnessSliderY, () -> {
+            BrightnessSliderWidget widget = new BrightnessSliderWidget(
+                    brightnessSliderX, brightnessSliderY, 30, 100,
+                    mod.getModVariables().getSelectedColor().getRGB(),
+                    mod.getModVariables().getBrightness());
+            widget.onChange(slider -> {
+                this.changeColor(mod.getModVariables().getSelectedColor(), slider.getSelectedBrightness());
+            });
+            return widget;
+        });
+
+        this.addRenderableWidget(colorWheel);
+        this.addRenderableWidget(brightnessSlider);
+        this.changeColor(mod.getModVariables().getSelectedColor(), mod.getModVariables().getBrightness());
     }
 
     @Override
@@ -93,46 +114,17 @@ public class ColorPickerScreen extends Screen {
 
         this.renderBackground(poseStack);
         GuiUtil.drawBackground(poseStack,
-                TextureLocations.UI_BACKGROUND_SLIM_LONG, this.guiLeft, this.guiTop, this.xSize, this.ySize);
+                TextureLocations.UI_BACKGROUND_BROAD, this.guiLeft, this.guiTop, this.xSize, this.ySize);
 
         // draw the selected color on the right bottom
-        fill(
+        Gui.fill(
                 poseStack,
                 this.guiLeft + this.xSize - 40, this.guiTop + this.ySize - 40,
                 this.guiLeft + this.xSize - 15, this.guiTop + this.ySize - 15,
-                selectedColor
+                mod.getModVariables().getFinalColor().getRGB()
         );
-
-        WheelRenderer.renderColorWheel(poseStack, colorWheelX, colorWheelY);
-        renderCursor(poseStack);
-
-        int selectedColorBrightened = ColorUtil.getRGBFromBrightness(selectedColor, 1.0f);
-        fillGradient(
-                poseStack,
-                brightnessSliderX, brightnessSliderY,
-                brightnessSliderX + 30, brightnessSliderY + 100,
-                selectedColorBrightened, Color.BLACK.getRGB()
-        );
-        renderBrightnessCursor(poseStack);
 
         super.render(poseStack, mouseX, mouseY, delta);
-    }
-
-    @Override
-    public boolean mouseDragged(double mouseX, double mouseY, int button, double dragX, double dragY) {
-        boolean isColorWheelClicked = mouseX >= colorWheelX && mouseX <= colorWheelX + 100 &&
-                mouseY >= colorWheelY && mouseY <= colorWheelY + 100;
-        boolean isBrightnessSliderClicked = mouseX >= brightnessSliderX && mouseX <= brightnessSliderX + 30 &&
-                mouseY >= brightnessSliderY && mouseY <= brightnessSliderY + 100 - 2;
-
-        if(isColorWheelClicked) {
-            colorWheelClicked(mouseX, mouseY);
-        }
-        if(isBrightnessSliderClicked) {
-            brightnessSliderClicked(mouseX, mouseY);
-        }
-
-        return super.mouseDragged(mouseX, mouseY, button, dragX, dragY);
     }
 
     @Override
@@ -152,111 +144,36 @@ public class ColorPickerScreen extends Screen {
         }
     }
 
-    private void colorWheelClicked(double mouseX, double mouseY) {
-        int x = (int) ((mouseX - colorWheelX) * WheelRenderer.SCALE);
-        int y = (int) ((mouseY - colorWheelY) * WheelRenderer.SCALE);
-
-        int c = WheelRenderer.getColorAt(x, y);
-        if (c == 0) return;
-        selectedColor = c;
-
-        red.setValue(String.valueOf(Util.round((float) ColorUtil.getRedFromRGB(selectedColor) / 255, 2)));
-        green.setValue(String.valueOf(Util.round((float) ColorUtil.getGreenFromRGB(selectedColor) / 255, 2)));
-        blue.setValue(String.valueOf(Util.round((float) ColorUtil.getBlueFromRGB(selectedColor) / 255, 2)));
-
-        selectedX = x;
-        selectedY = y;
+    private void changeColor(Color color, float brightness) {
+        changeColor(color, brightness, (type) -> false);
     }
 
-    private void brightnessSliderClicked(double mouseX, double mouseY) {
-        int y = (int) (mouseY - brightnessSliderY);
-        WheelRenderer.brightness = 1 - (y / 100f);
-        if (WheelRenderer.brightness > 1.0f) WheelRenderer.brightness = 1.0f;
-        if (WheelRenderer.brightness < 0.0f) WheelRenderer.brightness = 0.0f;
-        selectedColor = ColorUtil.getRGBFromBrightness(selectedColor, (int) (WheelRenderer.brightness * 255));
-
-        red.setValue(String.valueOf(Util.round((float) ColorUtil.getRedFromRGB(selectedColor) / 255, 2)));
-        green.setValue(String.valueOf(Util.round((float) ColorUtil.getGreenFromRGB(selectedColor) / 255, 2)));
-        blue.setValue(String.valueOf(Util.round((float) ColorUtil.getBlueFromRGB(selectedColor) / 255, 2)));
+    private void changeColor(Color color, float brightness, Predicate<ColorType> predicate) {
+        mod.getModVariables().setSelectedColor(color);
+        mod.getModVariables().setBrightness(brightness);
+        editBoxMap.forEach((type, box) -> {
+            if(predicate.test(type)) return;
+            box.setValue(type.get(mod.getModVariables().getFinalColor()));
+        });
     }
 
-    private void addEditBox(EditBox editBox) {
-        editBox.setResponder(getColorResponder(editBox));
-        this.addRenderableWidget(editBox);
-    }
-
-    private Consumer<String> getColorResponder(EditBox editBox) {
-        return (s) -> {
-            if (!editBox.isFocused() || s.isEmpty()) return;
-
-            float value;
-            try {
-                value = Float.parseFloat(s);
-            } catch (NumberFormatException e) {
-                return;
-            }
-
-            if (value > 1) value = 1;
-            if (value < 0) value = 0;
-
-            float redValue = ColorUtil.getRedFromRGB(selectedColor);
-            float greenValue = ColorUtil.getGreenFromRGB(selectedColor);
-            float blueValue = ColorUtil.getBlueFromRGB(selectedColor);
-
-            if (editBox == red)
-                redValue = value * 255;
-            else if (editBox == green)
-                greenValue = value * 255;
-            else if (editBox == blue)
-                blueValue = value * 255;
-
-            selectedColor = new Color(
-                    redValue / 255f,
-                    greenValue / 255f,
-                    blueValue / 255f
-            ).getRGB();
-
-            // change the brightness to the current brightness
-            WheelRenderer.brightness = ColorUtil.getHSBFromRGB(selectedColor)[2];
-
-            selectedX = WheelRenderer.getPointFromColor(selectedColor).x;
-            selectedY = WheelRenderer.getPointFromColor(selectedColor).y;
-        };
-    }
-
-    private void renderCursor(PoseStack poseStack) {
-        // the x and y are relative to the color wheel, we need to get the position relative to this whole screen
-        int relativeX = (int) (selectedX / WheelRenderer.SCALE) + colorWheelX;
-        int relativeY = (int) (selectedY / WheelRenderer.SCALE) + colorWheelY;
-
-        RenderSystem.setShaderTexture(0, TextureLocations.CURSOR);
-        blit(
-                poseStack,
-                relativeX - 3, relativeY - 3,
-                0, 0,
-                8, 8,
-                8, 8
+    private EditBox createEditBox(int x, int y, Component component) {
+        return new EditBox(
+                this.font,
+                x, y,
+                60, 20,
+                component
         );
     }
 
-    private void renderBrightnessCursor(PoseStack poseStack) {
-        int relativeY = (int) (brightnessSliderY + (1 - WheelRenderer.brightness) * 100);
-
-        RenderSystem.setShaderTexture(0, TextureLocations.BRIGHTNESS_CURSOR);
-        blit(
-                poseStack,
-                colorWheelX + 118, relativeY - 1,
-                34,4,
-                0, 0,
-                16, 3,
-                16, 16
-        );
+    private <T extends AbstractWidget> T createOrUpdateWidget(T widget, int x, int y, Supplier<T> widgetFactory) {
+        if (widget == null) {
+            widget = widgetFactory.get();
+        } else {
+            widget.x = x;
+            widget.y = y;
+        }
+        return widget;
     }
 
-    public static Color getSelectedColor() {
-        return new Color(selectedColor);
-    }
-    public static void setSelectedColor(Color color) {
-        selectedColor = color.getRGB();
-    }
 }

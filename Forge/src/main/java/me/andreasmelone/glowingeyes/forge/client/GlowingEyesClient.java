@@ -4,7 +4,9 @@ import com.mojang.logging.LogUtils;
 import me.andreasmelone.glowingeyes.GlowingEyes;
 import me.andreasmelone.glowingeyes.client.component.data.ClientPlayerDataComponent;
 import me.andreasmelone.glowingeyes.client.component.eyes.ClientGlowingEyesComponent;
+import me.andreasmelone.glowingeyes.client.mod.ClientModContext;
 import me.andreasmelone.glowingeyes.client.presets.PresetManager;
+import me.andreasmelone.glowingeyes.client.mod.ClientModVariables;
 import me.andreasmelone.glowingeyes.forge.client.component.data.ClientPlayerDataComponentImpl;
 import me.andreasmelone.glowingeyes.forge.client.component.eyes.ClientGlowingEyesComponentImpl;
 import me.andreasmelone.glowingeyes.forge.client.render.RenderManager;
@@ -19,11 +21,14 @@ import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import org.slf4j.Logger;
 
 @Mod.EventBusSubscriber(modid = GlowingEyes.MOD_ID, bus = Mod.EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
-public class GlowingEyesClient {
+public class GlowingEyesClient implements ClientModContext {
     private static final Logger LOGGER = LogUtils.getLogger();
+    private final ClientModVariables variables = new ClientModVariables();
 
     @SubscribeEvent
     public static void onClientSetup(FMLClientSetupEvent event) {
+        GlowingEyesClient glowingEyesClient = new GlowingEyesClient();
+
         IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
         LOGGER.info("Glowing Eyes client setup");
         ClientGlowingEyesComponent.setImplementation(new ClientGlowingEyesComponentImpl());
@@ -31,8 +36,8 @@ public class GlowingEyesClient {
 
         modEventBus.addListener(RenderManager::onAddLayers);
 
-        MinecraftForge.EVENT_BUS.register(Commands.class);
-        MinecraftForge.EVENT_BUS.register(new GlowingEyesClientEvents());
+        MinecraftForge.EVENT_BUS.register(new Commands(glowingEyesClient));
+        MinecraftForge.EVENT_BUS.register(new GlowingEyesClientEvents(glowingEyesClient));
 
         PresetManager.getInstance().loadPresets();
     }
@@ -40,5 +45,10 @@ public class GlowingEyesClient {
     @SubscribeEvent
     public static void onRegisterKeyMapping(RegisterKeyMappingsEvent event) {
         GlowingEyesKeybindings.registerBindings(event);
+    }
+
+    @Override
+    public ClientModVariables getModVariables() {
+        return variables;
     }
 }

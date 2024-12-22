@@ -2,6 +2,7 @@ package me.andreasmelone.glowingeyes.fabric.client;
 
 import com.mojang.blaze3d.platform.InputConstants;
 import me.andreasmelone.glowingeyes.client.gui.EyesEditorScreen;
+import me.andreasmelone.glowingeyes.client.mod.ClientModContext;
 import me.andreasmelone.glowingeyes.common.component.eyes.GlowingEyesComponent;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
@@ -23,7 +24,7 @@ public class GlowingEyesKeybindings {
             "key.categories.glowingeyes"
     ));
 
-    public static void register() {
+    public static void register(ClientModContext mod) {
         ClientTickEvents.END_CLIENT_TICK.register(client -> {
             Player player = client.player;
             if(player == null) return;
@@ -33,7 +34,7 @@ public class GlowingEyesKeybindings {
             }
             while(GlowingEyesKeybindings.EYES_EDITOR_MAPPING.consumeClick()) {
                 if(client.screen != null) return;
-                client.setScreen(new EyesEditorScreen());
+                client.setScreen(new EyesEditorScreen(mod));
             }
         });
     }

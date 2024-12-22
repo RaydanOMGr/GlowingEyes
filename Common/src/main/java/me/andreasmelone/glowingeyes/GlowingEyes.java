@@ -2,8 +2,6 @@ package me.andreasmelone.glowingeyes;
 
 import me.andreasmelone.glowingeyes.common.scheduler.CodeScheduler;
 import me.andreasmelone.glowingeyes.common.scheduler.Scheduler;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.awt.*;
 
