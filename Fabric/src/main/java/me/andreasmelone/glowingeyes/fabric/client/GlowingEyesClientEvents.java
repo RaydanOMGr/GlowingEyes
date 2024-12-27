@@ -2,12 +2,13 @@ package me.andreasmelone.glowingeyes.fabric.client;
 
 import me.andreasmelone.glowingeyes.GlowingEyes;
 import me.andreasmelone.glowingeyes.client.component.data.ClientPlayerDataComponent;
+import me.andreasmelone.glowingeyes.client.mod.ClientModContext;
 import me.andreasmelone.glowingeyes.client.util.EyesTextureCache;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents;
 
 public class GlowingEyesClientEvents {
-    public static void registerEvents() {
+    public static void registerEvents(ClientModContext mod) {
         ClientTickEvents.END_CLIENT_TICK.register(client -> {
             GlowingEyes.SCHEDULER_CLIENT.tick();
         });

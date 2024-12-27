@@ -14,6 +14,9 @@ public class TextureLocations {
             new ResourceLocation(GlowingEyes.MOD_ID, "textures/gui/button/color_picker_button.png");
     public static final ResourceLocation PRESET_MENU_BUTTON =
             new ResourceLocation(GlowingEyes.MOD_ID, "textures/gui/button/preset_menu_button.png");
+    public static final ResourceLocation SECOND_LAYER_TOGGLE_BUTTON =
+            new ResourceLocation(GlowingEyes.MOD_ID, "textures/gui/button/second_layer_toggle_button.png");
+
 
     public static final ResourceLocation CURSOR =
             new ResourceLocation(GlowingEyes.MOD_ID, "textures/gui/cursor.png");

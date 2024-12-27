@@ -1,12 +1,13 @@
 package me.andreasmelone.glowingeyes.client.gui;
 
 import com.mojang.blaze3d.vertex.PoseStack;
-import me.andreasmelone.glowingeyes.client.gui.widget.BrightnessSliderWidget;
-import me.andreasmelone.glowingeyes.client.gui.widget.ColorWheelWidget;
+import me.andreasmelone.glowingeyes.client.gui.widget.ColorPickerWidget;
+import me.andreasmelone.glowingeyes.client.gui.widget.ColorSliderWidget;
 import me.andreasmelone.glowingeyes.client.mod.ClientModContext;
 import me.andreasmelone.glowingeyes.client.util.GuiUtil;
 import me.andreasmelone.glowingeyes.client.util.TextureLocations;
 import me.andreasmelone.glowingeyes.client.util.color.ColorType;
+import me.andreasmelone.glowingeyes.client.util.color.ColorUtil;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.components.AbstractWidget;
@@ -14,7 +15,6 @@ import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 
-import java.awt.*;
 import java.util.EnumMap;
 import java.util.Map;
 import java.util.function.Predicate;
@@ -28,8 +28,8 @@ public class ColorPickerScreen extends Screen {
     private int colorWheelX, colorWheelY;
     private int brightnessSliderX, brightnessSliderY;
 
-    private ColorWheelWidget colorWheel = null;
-    private BrightnessSliderWidget brightnessSlider = null;
+    private ColorPickerWidget colorPickerWidget;
+    private ColorSliderWidget colorSliderWidget;
     private Map<ColorType, EditBox> editBoxMap = new EnumMap<>(ColorType.class);
 
     private final Screen parent;
@@ -76,34 +76,32 @@ public class ColorPickerScreen extends Screen {
             field.setResponder((string) -> {
                 if (!field.isFocused() || string.isEmpty()) return;
                 this.editBoxMap.forEach((t, f) -> { if(t != type) f.setFocus(false); });
-                this.changeColor(type.parseAndUpdate(mod.getModVariables().getSelectedColor(), string),
-                        mod.getModVariables().getBrightness(), t -> t == type);
+                float[] hsb = ColorUtil.getHSBFromRGB(type.parseAndUpdate(mod.getModVariables().getFinalColor(), string).getRGB());
+                this.changeColor(hsb[0], hsb[1], hsb[2], t -> t == type);
             });
             this.addRenderableWidget(field);
         });
 
-        colorWheel = createOrUpdateWidget(colorWheel, colorWheelX, colorWheelY, () -> {
-            ColorWheelWidget widget = new ColorWheelWidget(colorWheelX, colorWheelY, 100, mod.getModVariables().getSelectedColor());
-            widget.onChange(wheel -> {
-                    this.changeColor(wheel.getSelectedColor(), mod.getModVariables().getBrightness());
-                    brightnessSlider.setColor(wheel.getSelectedColor().getRGB());
+        colorPickerWidget = createOrUpdateWidget(colorPickerWidget, colorWheelX, colorWheelY,() -> {
+            ColorPickerWidget widget = new ColorPickerWidget(colorWheelX, colorWheelY, 100, 100,
+                    mod.getModVariables().getHue(), mod.getModVariables().getBrightness(), mod.getModVariables().getSaturation());
+            widget.onChange((picker) -> {
+                this.changeColor(mod.getModVariables().getHue(), picker.getSaturation(), picker.getBrightness());
             });
             return widget;
         });
-        brightnessSlider = createOrUpdateWidget(brightnessSlider, brightnessSliderX, brightnessSliderY, () -> {
-            BrightnessSliderWidget widget = new BrightnessSliderWidget(
-                    brightnessSliderX, brightnessSliderY, 30, 100,
-                    mod.getModVariables().getSelectedColor().getRGB(),
-                    mod.getModVariables().getBrightness());
-            widget.onChange(slider -> {
-                this.changeColor(mod.getModVariables().getSelectedColor(), slider.getSelectedBrightness());
+        colorSliderWidget = createOrUpdateWidget(colorSliderWidget, brightnessSliderX, brightnessSliderY,() -> {
+            ColorSliderWidget widget = new ColorSliderWidget(brightnessSliderX, brightnessSliderY, 30, 100,
+                    mod.getModVariables().getHue());
+            widget.onChange((slider) -> {
+                this.changeColor(slider.getHue(), mod.getModVariables().getSaturation(), mod.getModVariables().getBrightness());
             });
             return widget;
         });
 
-        this.addRenderableWidget(colorWheel);
-        this.addRenderableWidget(brightnessSlider);
-        this.changeColor(mod.getModVariables().getSelectedColor(), mod.getModVariables().getBrightness());
+        this.addRenderableWidget(colorPickerWidget);
+        this.addRenderableWidget(colorSliderWidget);
+        this.changeColor(mod.getModVariables().getHue(), mod.getModVariables().getSaturation(), mod.getModVariables().getBrightness());
     }
 
     @Override
@@ -144,13 +142,21 @@ public class ColorPickerScreen extends Screen {
         }
     }
 
-    private void changeColor(Color color, float brightness) {
-        changeColor(color, brightness, (type) -> false);
+    private void changeColor(float hue, float saturation, float brightness) {
+        changeColor(hue, saturation, brightness, (type) -> false);
     }
 
-    private void changeColor(Color color, float brightness, Predicate<ColorType> predicate) {
-        mod.getModVariables().setSelectedColor(color);
+    private void changeColor(float hue, float saturation, float brightness, Predicate<ColorType> predicate) {
+        mod.getModVariables().setHue(hue);
+        mod.getModVariables().setSaturation(saturation);
         mod.getModVariables().setBrightness(brightness);
+
+        this.colorPickerWidget.setHue(hue);
+        this.colorPickerWidget.setSaturation(saturation);
+        this.colorPickerWidget.setBrightness(brightness);
+
+        this.colorSliderWidget.setHue(hue);
+
         editBoxMap.forEach((type, box) -> {
             if(predicate.test(type)) return;
             box.setValue(type.get(mod.getModVariables().getFinalColor()));

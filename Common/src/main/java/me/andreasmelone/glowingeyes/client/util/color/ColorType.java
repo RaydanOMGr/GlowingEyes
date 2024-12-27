@@ -46,6 +46,39 @@ public enum ColorType {
                     throw new NumberFormatException("Invalid HEX format");
                 }
             }
+    ),
+    HUE(
+            color -> String.valueOf(Color.RGBtoHSB(color.getRed(), color.getGreen(), color.getBlue(), null)[0] * 360),
+            (color, value) -> {
+                float[] hsb = Color.RGBtoHSB(color.getRed(), color.getGreen(), color.getBlue(), null);
+                return Color.getHSBColor(value / 360f, hsb[1], hsb[2]);
+            },
+            string -> {
+                float val = Float.parseFloat(string);
+                return Math.round(Math.max(0, Math.min(360, val))); // Clamp between 0-360
+            }
+    ),
+    SATURATION(
+            color -> String.valueOf(Color.RGBtoHSB(color.getRed(), color.getGreen(), color.getBlue(), null)[1] * 100),
+            (color, value) -> {
+                float[] hsb = Color.RGBtoHSB(color.getRed(), color.getGreen(), color.getBlue(), null);
+                return Color.getHSBColor(hsb[0], value / 100f, hsb[2]);
+            },
+            string -> {
+                float val = Float.parseFloat(string);
+                return Math.round(Math.max(0, Math.min(100, val))); // Clamp between 0-100
+            }
+    ),
+    BRIGHTNESS(
+            color -> String.valueOf(Color.RGBtoHSB(color.getRed(), color.getGreen(), color.getBlue(), null)[2] * 100),
+            (color, value) -> {
+                float[] hsb = Color.RGBtoHSB(color.getRed(), color.getGreen(), color.getBlue(), null);
+                return Color.getHSBColor(hsb[0], hsb[1], value / 100f);
+            },
+            string -> {
+                float val = Float.parseFloat(string);
+                return Math.round(Math.max(0, Math.min(100, val))); // Clamp between 0-100
+            }
     );
 
     private final Function<Color, String> getter;

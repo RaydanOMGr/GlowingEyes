@@ -16,30 +16,30 @@ import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.ImageButton;
 import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
 import org.lwjgl.opengl.*;
 
 import java.awt.*;
-import java.util.Arrays;
+import java.util.Map;
 import java.util.EnumMap;
 import java.util.HashMap;
-import java.util.Map;
 
 public class EyesEditorScreen extends Screen {
-    private int guiLeft, guiTop,
-    headX, headY,
-    endHeadX, endHeadY;
+    private int guiLeft, guiTop;
+    private int headX, headY;
+    private int endHeadX, endHeadY;
     private boolean displaySecondLayer = false;
-    private int xSize = 256;
-    private int ySize = 222;
 
+    Mode mode = Mode.BRUSH;
     Map<Point, Color> pixels = new HashMap<>();
     Map<Mode, Button> modeButtons = new EnumMap<>(Mode.class);
     Color headBackgroundColor = new Color(160, 160, 160, 255);
-    Mode mode = Mode.BRUSH;
 
+    private final int xSize = 256;
+    private final int ySize = 222;
     private final ClientModContext mod;
     public EyesEditorScreen(ClientModContext mod) {
         super(Component.empty());
@@ -67,7 +67,15 @@ public class EyesEditorScreen extends Screen {
                 0, 0, 20,
                 TextureLocations.COLOR_PICKER_BUTTON,
                 64, 64,
-                button -> Minecraft.getInstance().setScreen(new ColorPickerScreen(mod, this))
+                button -> Minecraft.getInstance().setScreen(new ColorPickerScreen(mod, this)),
+                (button, poseStack, mouseX, mouseY) -> {
+                    this.renderTooltip(
+                            poseStack,
+                            Component.translatable("gui.editor.button.colorpicker.tooltip"),
+                            mouseX, mouseY
+                    );
+                },
+                CommonComponents.EMPTY
         ));
 
         // the preset menu button
@@ -77,14 +85,43 @@ public class EyesEditorScreen extends Screen {
                 0, 0, 20,
                 TextureLocations.PRESET_MENU_BUTTON,
                 64, 64,
-                button -> Minecraft.getInstance().setScreen(new PresetsScreen(this))
+                button -> Minecraft.getInstance().setScreen(new PresetsScreen(this)),
+                (button, poseStack, mouseX, mouseY) -> {
+                    this.renderTooltip(
+                            poseStack,
+                            Component.translatable("gui.editor.button.presetsmenu.tooltip"),
+                            mouseX, mouseY
+                    );
+                },
+                CommonComponents.EMPTY
+        ));
+
+        // the 2nd layer toggle button
+        this.addRenderableWidget(new ImageButton(
+                this.guiLeft + this.xSize - 30, this.guiTop + this.ySize - 80,
+                20, 20,
+                0, 0, 20,
+                TextureLocations.SECOND_LAYER_TOGGLE_BUTTON,
+                64, 64,
+                button -> {
+                    displaySecondLayer = !displaySecondLayer;
+                    button.active = displaySecondLayer;
+                },
+                (button, poseStack, mouseX, mouseY) -> {
+                    this.renderTooltip(
+                            poseStack,
+                            Component.translatable("gui.editor.button.layertoggle.tooltip"),
+                            mouseX, mouseY
+                    );
+                },
+                CommonComponents.EMPTY
         ));
 
         this.modeButtons.clear();
 
-        this.createModeButton(8, 70, TextureLocations.BRUSH_BUTTON, Mode.BRUSH);
-        this.createModeButton(8, 95, TextureLocations.ERASER_BUTTON, Mode.ERASER);
-        this.createModeButton(8, 120, TextureLocations.PIPETTE_BUTTON, Mode.PICKER);
+        this.createModeButton(8, 70, Mode.BRUSH.getTexture(), Mode.BRUSH);
+        this.createModeButton(8, 95, Mode.ERASER.getTexture(), Mode.ERASER);
+        this.createModeButton(8, 120, Mode.PICKER.getTexture(), Mode.PICKER);
 
         this.modeButtons.get(Mode.BRUSH).onPress();
         this.modeButtons.forEach((mode, button) -> this.addRenderableWidget(button));
@@ -223,8 +260,6 @@ public class EyesEditorScreen extends Screen {
                                                                          // while gl's 0-point is bottom-left
         GL11.glReadPixels(pixelX, pixelY, 1, 1, GL11.GL_RGB, GL11.GL_FLOAT, pixel);
 
-        System.out.println(Arrays.toString(pixel));
-
         return new Color(pixel[0], pixel[1], pixel[2]);
     }
 
@@ -248,14 +283,22 @@ public class EyesEditorScreen extends Screen {
                     mode = buttonMode;
                     modeButtons.forEach((m, b) -> b.active = true);
                     button.active = false;
-                }
+                },
+                (button, poseStack, mouseX, mouseY) -> {
+                    this.renderTooltip(
+                            poseStack,
+                            Component.translatable("gui.editor.mode." + buttonMode.name().toLowerCase() + ".tooltip"),
+                            mouseX, mouseY
+                    );
+                },
+                CommonComponents.EMPTY
         );
         modeButtons.put(buttonMode, imageButton);
         return imageButton;
     }
 
     public enum Mode {
-        BRUSH((screen, mouseX, mouseY, button) -> {
+        BRUSH(TextureLocations.BRUSH_BUTTON, (screen, mouseX, mouseY, button) -> {
             Point point = calculatePoint(screen, mouseX, mouseY);
 
             if (button == 0) {
@@ -264,21 +307,27 @@ public class EyesEditorScreen extends Screen {
                 screen.pixels.remove(new Point(point.x, point.y));
             }
         }),
-        ERASER((screen, mouseX, mouseY, button) -> {
+        ERASER(TextureLocations.ERASER_BUTTON, (screen, mouseX, mouseY, button) -> {
             Point point = calculatePoint(screen, mouseX, mouseY);
             screen.pixels.remove(new Point(point.x, point.y));
         }),
-        PICKER((screen, mouseX, mouseY, button) -> {
+        PICKER(TextureLocations.PIPETTE_BUTTON, (screen, mouseX, mouseY, button) -> {
             Color color = screen.getPixelColor(mouseX, mouseY);
-            screen.mod.getModVariables().setSelectedColor(color);
+            screen.mod.getModVariables().setFinalColor(color);
 
             screen.modeButtons.get(Mode.BRUSH).onPress();
         });
 
+        private final ResourceLocation texture;
         private final ButtonPressCallback onButtonPress;
 
-        Mode(final ButtonPressCallback onButtonPress) {
+        Mode(final ResourceLocation texture, final ButtonPressCallback onButtonPress) {
+            this.texture = texture;
             this.onButtonPress = onButtonPress;
+        }
+
+        public ResourceLocation getTexture() {
+            return texture;
         }
 
         public void onButtonPress(EyesEditorScreen screen, double mouseX, double mouseY, int button) {

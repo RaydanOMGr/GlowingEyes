@@ -24,5 +24,12 @@
   "gui.presets.lock": "Lock",
   "gui.presets.unlock": "Unlock",
 
-  "gui.editor.title": "Glowing Eyes Editor"
+  "gui.editor.title": "Glowing Eyes Editor",
+  "gui.editor.button.layertoggle.tooltip": "Toggle 2nd layer",
+  "gui.editor.button.presetsmenu.tooltip": "Open presets menu",
+  "gui.editor.button.colorpicker.tooltip": "Open color picker menu",
+
+  "gui.editor.mode.brush.tooltip": "Brush",
+  "gui.editor.mode.eraser.tooltip": "Eraser",
+  "gui.editor.mode.picker.tooltip": "Pipette"
 }

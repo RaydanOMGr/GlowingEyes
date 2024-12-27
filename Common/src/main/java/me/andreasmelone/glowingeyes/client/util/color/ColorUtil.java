@@ -121,6 +121,17 @@ public class ColorUtil {
         ).getRGB();
     }
 
+    public static int getHueFromRGB(int rgb) {
+        float[] hsb = new float[3];
+        Color.RGBtoHSB(
+                (rgb >> 16) & 0xFF,
+                (rgb >> 8) & 0xFF,
+                rgb & 0xFF,
+                hsb
+        );
+        return (int) (hsb[1] * 360);
+    }
+
     public static int getBrightnessFromRGB(int rgb) {
         float[] hsb = new float[3];
         Color.RGBtoHSB(
@@ -130,6 +141,17 @@ public class ColorUtil {
                 hsb
         );
         return (int) (hsb[2] * 100);
+    }
+
+    public static int getSaturationFromRGB(int rgb) {
+        float[] hsb = new float[3];
+        Color.RGBtoHSB(
+                (rgb >> 16) & 0xFF,
+                (rgb >> 8) & 0xFF,
+                rgb & 0xFF,
+                hsb
+        );
+        return (int) (hsb[1] * 100);
     }
 
     public static int getRGBFromBrightness(int rgb, int brightness) {
@@ -146,6 +168,35 @@ public class ColorUtil {
         ).getRGB();
     }
 
+    public static int getRGBFromSaturation(int rgb, int saturation) {
+        float[] hsb = new float[3];
+        Color.RGBtoHSB(
+                (rgb >> 16) & 0xFF,
+                (rgb >> 8) & 0xFF,
+                rgb & 0xFF,
+                hsb
+        );
+        hsb[1] = saturation / 100f;
+        return new Color(
+                Color.HSBtoRGB(hsb[0], hsb[1], hsb[2])
+        ).getRGB();
+    }
+
+    public static int getRGBFromSaturationAndBrightness(int rgb, int saturation, int brightness) {
+        float[] hsb = new float[3];
+        Color.RGBtoHSB(
+                (rgb >> 16) & 0xFF,
+                (rgb >> 8) & 0xFF,
+                rgb & 0xFF,
+                hsb
+        );
+        hsb[1] = saturation / 100.0f;
+        hsb[2] = brightness / 100.0f;
+        return new Color(
+                Color.HSBtoRGB(hsb[0], hsb[1], hsb[2])
+        ).getRGB();
+    }
+
     public static int getRGBFromBrightness(int rgb, float brightness) {
         float[] hsb = new float[3];
         Color.RGBtoHSB(
@@ -154,6 +205,35 @@ public class ColorUtil {
                 rgb & 0xFF,
                 hsb
         );
+        hsb[2] = brightness;
+        return new Color(
+                Color.HSBtoRGB(hsb[0], hsb[1], hsb[2])
+        ).getRGB();
+    }
+
+    public static int getRGBFromSaturation(int rgb, float saturation) {
+        float[] hsb = new float[3];
+        Color.RGBtoHSB(
+                (rgb >> 16) & 0xFF,
+                (rgb >> 8) & 0xFF,
+                rgb & 0xFF,
+                hsb
+        );
+        hsb[1] = saturation;
+        return new Color(
+                Color.HSBtoRGB(hsb[0], hsb[1], hsb[2])
+        ).getRGB();
+    }
+
+    public static int getRGBFromSaturationAndBrightness(int rgb, float saturation, float brightness) {
+        float[] hsb = new float[3];
+        Color.RGBtoHSB(
+                (rgb >> 16) & 0xFF,
+                (rgb >> 8) & 0xFF,
+                rgb & 0xFF,
+                hsb
+        );
+        hsb[1] = saturation;
         hsb[2] = brightness;
         return new Color(
                 Color.HSBtoRGB(hsb[0], hsb[1], hsb[2])

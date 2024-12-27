@@ -1,12 +1,15 @@
 package me.andreasmelone.glowingeyes.forge.client;
 
+import com.mojang.brigadier.builder.LiteralArgumentBuilder;
+import me.andreasmelone.glowingeyes.client.commands.EyesCommand;
+import me.andreasmelone.glowingeyes.client.commands.GlowingEyesInfoCommand;
 import me.andreasmelone.glowingeyes.client.mod.ClientModContext;
-import me.andreasmelone.glowingeyes.forge.client.commands.EyesCommand;
+import net.minecraft.commands.CommandSourceStack;
 import net.minecraftforge.client.event.RegisterClientCommandsEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 
 public class Commands {
-    private ClientModContext mod;
+    private final ClientModContext mod;
 
     public Commands(ClientModContext mod) {
         this.mod = mod;
@@ -14,6 +17,11 @@ public class Commands {
 
     @SubscribeEvent
     public void onRegisterCommands(RegisterClientCommandsEvent event) {
-        EyesCommand.register(mod, event.getDispatcher());
+        new EyesCommand<>(Commands::createArgumentBuilder).register(mod, event.getDispatcher());
+        new GlowingEyesInfoCommand<>(Commands::createArgumentBuilder).register(mod, event.getDispatcher());
+    }
+
+    private static LiteralArgumentBuilder<CommandSourceStack> createArgumentBuilder(String name) {
+        return net.minecraft.commands.Commands.literal(name);
     }
 }
