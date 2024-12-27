@@ -30,10 +30,10 @@ public class ColorPickerScreen extends Screen {
 
     private ColorPickerWidget colorPickerWidget;
     private ColorSliderWidget colorSliderWidget;
-    private Map<ColorType, EditBox> editBoxMap = new EnumMap<>(ColorType.class);
 
     private final Screen parent;
     private final ClientModContext mod;
+    private final Map<ColorType, EditBox> editBoxMap = new EnumMap<>(ColorType.class);
     public ColorPickerScreen(ClientModContext mod) {
         super(Component.empty());
         parent = null;

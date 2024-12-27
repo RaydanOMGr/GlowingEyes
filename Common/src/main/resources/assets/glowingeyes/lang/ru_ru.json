@@ -3,26 +3,33 @@
   "key.glowingeyes.editor.open": "Открыть редактор глаз",
   "key.glowingeyes.toggle": "Вкл./Выкл. светящиеся глаза",
 
-  "gui.confirm": "Подтвердить",
-  "gui.reset": "Сбросить",
-  "gui.cancel": "Отмена",
-  "gui.apply": "Применить",
-  "gui.create": "Создать",
+  "gui.glowingeyes.confirm": "Подтвердить",
+  "gui.glowingeyes.reset": "Сбросить",
+  "gui.glowingeyes.cancel": "Отмена",
+  "gui.glowingeyes.apply": "Применить",
+  "gui.glowingeyes.create": "Создать",
 
-  "gui.red": "Красный",
-  "gui.green": "Зеленый",
-  "gui.blue": "Синий",
+  "gui.glowingeyes.red": "Красный",
+  "gui.glowingeyes.green": "Зеленый",
+  "gui.glowingeyes.blue": "Синий",
 
-  "gui.create.title": "Создать пресет",
-  "gui.delete.confirm": "Вы уверены, что хотите удалить %s?",
-  "gui.edit.title": "Редактировать пресет",
+  "gui.glowingeyes.create.title": "Создать шаблон",
+  "gui.glowingeyes.delete.confirm": "Вы уверены, что хотите удалить %s?",
+  "gui.glowingeyes.edit.title": "Редактировать шаблон",
 
-  "gui.name": "Имя",
-  "gui.presets.edit": "Изменить",
-  "gui.presets.delete": "Удалить",
-  "gui.presets.create": "Создать",
-  "gui.presets.lock": "Заблокировать",
-  "gui.presets.unlock": "Разблокировать",
+  "gui.glowingeyes.name": "Имя",
+  "gui.glowingeyes.presets.edit": "Изменить",
+  "gui.glowingeyes.presets.delete": "Удалить",
+  "gui.glowingeyes.presets.create": "Создать",
+  "gui.glowingeyes.presets.lock": "Заблокировать",
+  "gui.glowingeyes.presets.unlock": "Разблокировать",
 
-  "gui.editor.title": "Редактор светящихся глаз"
+  "gui.glowingeyes.editor.title": "Редактор Glowing Eyes",
+  "gui.glowingeyes.editor.layertoggle.tooltip": "Переключить второй слой",
+  "gui.glowingeyes.editor.presetsmenu.tooltip": "Открыть меню с шаблонами",
+  "gui.glowingeyes.editor.colorpicker.tooltip": "Открыть меню выбора цвета",
+
+  "gui.glowingeyes.editor.brush.tooltip": "Кисточка",
+  "gui.glowingeyes.editor.eraser.tooltip": "Ластик",
+  "gui.glowingeyes.editor.picker.tooltip": "Пипетка"
 }

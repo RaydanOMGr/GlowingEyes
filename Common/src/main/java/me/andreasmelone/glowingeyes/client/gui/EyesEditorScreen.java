@@ -5,6 +5,7 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.logging.LogUtils;
 import me.andreasmelone.glowingeyes.client.component.eyes.ClientGlowingEyesComponent;
+import me.andreasmelone.glowingeyes.client.gui.button.ToggleableImageButton;
 import me.andreasmelone.glowingeyes.client.gui.preset.PresetsScreen;
 import me.andreasmelone.glowingeyes.client.mod.ClientModContext;
 import me.andreasmelone.glowingeyes.client.util.GuiUtil;
@@ -71,7 +72,7 @@ public class EyesEditorScreen extends Screen {
                 (button, poseStack, mouseX, mouseY) -> {
                     this.renderTooltip(
                             poseStack,
-                            Component.translatable("gui.editor.button.colorpicker.tooltip"),
+                            Component.translatable("gui.glowingeyes.editor.colorpicker.tooltip"),
                             mouseX, mouseY
                     );
                 },
@@ -89,7 +90,7 @@ public class EyesEditorScreen extends Screen {
                 (button, poseStack, mouseX, mouseY) -> {
                     this.renderTooltip(
                             poseStack,
-                            Component.translatable("gui.editor.button.presetsmenu.tooltip"),
+                            Component.translatable("gui.glowingeyes.editor.presetsmenu.tooltip"),
                             mouseX, mouseY
                     );
                 },
@@ -97,7 +98,8 @@ public class EyesEditorScreen extends Screen {
         ));
 
         // the 2nd layer toggle button
-        this.addRenderableWidget(new ImageButton(
+        ToggleableImageButton secondLayerToggle;
+        this.addRenderableWidget(secondLayerToggle = new ToggleableImageButton(
                 this.guiLeft + this.xSize - 30, this.guiTop + this.ySize - 80,
                 20, 20,
                 0, 0, 20,
@@ -105,17 +107,18 @@ public class EyesEditorScreen extends Screen {
                 64, 64,
                 button -> {
                     displaySecondLayer = !displaySecondLayer;
-                    button.active = displaySecondLayer;
+                    ((ToggleableImageButton) button).setToggledOn(displaySecondLayer);
                 },
                 (button, poseStack, mouseX, mouseY) -> {
                     this.renderTooltip(
                             poseStack,
-                            Component.translatable("gui.editor.button.layertoggle.tooltip"),
+                            Component.translatable("gui.glowingeyes.editor.layertoggle.tooltip"),
                             mouseX, mouseY
                     );
                 },
                 CommonComponents.EMPTY
         ));
+        secondLayerToggle.setToggledOn(displaySecondLayer);
 
         this.modeButtons.clear();
 
@@ -287,7 +290,7 @@ public class EyesEditorScreen extends Screen {
                 (button, poseStack, mouseX, mouseY) -> {
                     this.renderTooltip(
                             poseStack,
-                            Component.translatable("gui.editor.mode." + buttonMode.name().toLowerCase() + ".tooltip"),
+                            Component.translatable("gui.glowingeyes.editor." + buttonMode.name().toLowerCase() + ".tooltip"),
                             mouseX, mouseY
                     );
                 },

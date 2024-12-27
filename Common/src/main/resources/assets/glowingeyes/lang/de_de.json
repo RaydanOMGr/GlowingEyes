@@ -3,26 +3,33 @@
   "key.glowingeyes.editor.open": "Öffne den Augen Editor",
   "key.glowingeyes.toggle": "Leuchtende Augen an-/ausschalten",
 
-  "gui.confirm": "Bestätigen",
-  "gui.reset": "Zurücksetzen",
-  "gui.cancel": "Abbrechen",
-  "gui.apply": "Anwenden",
-  "gui.create": "Erstellen",
+  "gui.glowingeyes.confirm": "Bestätigen",
+  "gui.glowingeyes.reset": "Zurücksetzen",
+  "gui.glowingeyes.cancel": "Abbrechen",
+  "gui.glowingeyes.apply": "Anwenden",
+  "gui.glowingeyes.create": "Erstellen",
 
-  "gui.red": "Rot",
-  "gui.green": "Grün",
-  "gui.blue": "Blau",
+  "gui.glowingeyes.red": "Rot",
+  "gui.glowingeyes.green": "Grün",
+  "gui.glowingeyes.blue": "Blau",
 
-  "gui.create.title": "Neues Preset",
-  "gui.delete.confirm": "Bist du sicher, dass du %s löschen möchtest?",
-  "gui.edit.title": "Edit Preset",
-  "gui.name": "Name",
+  "gui.glowingeyes.create.title": "Neues Preset",
+  "gui.glowingeyes.delete.confirm": "Bist du sicher, dass du %s löschen möchtest?",
+  "gui.glowingeyes.edit.title": "Preset bearbeiten",
+  "gui.glowingeyes.name": "Name",
 
-  "gui.presets.edit": "Bearbeiten",
-  "gui.presets.delete": "Löschen",
-  "gui.presets.create": "Erstellen",
-  "gui.presets.lock": "Sperren",
-  "gui.presets.unlock": "Entsperren",
+  "gui.glowingeyes.presets.edit": "Bearbeiten",
+  "gui.glowingeyes.presets.delete": "Löschen",
+  "gui.glowingeyes.presets.create": "Erstellen",
+  "gui.glowingeyes.presets.lock": "Sperren",
+  "gui.glowingeyes.presets.unlock": "Entsperren",
 
-  "gui.editor.title": "Glowing Eyes Editor"
+  "gui.glowingeyes.editor.title": "Glowing Eyes Editor",
+  "gui.glowingeyes.editor.layertoggle.tooltip": "2. Schicht Umschalten",
+  "gui.glowingeyes.editor.presetsmenu.tooltip": "Presetmenü öffnen",
+  "gui.glowingeyes.editor.colorpicker.tooltip": "Farbauswahlmenü öffnen",
+
+  "gui.glowingeyes.editor.brush.tooltip": "Pinsel",
+  "gui.glowingeyes.editor.eraser.tooltip": "Radierer",
+  "gui.glowingeyes.editor.picker.tooltip": "Pipette"
 }

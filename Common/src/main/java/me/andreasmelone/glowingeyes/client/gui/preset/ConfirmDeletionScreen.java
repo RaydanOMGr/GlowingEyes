@@ -43,7 +43,7 @@ public class ConfirmDeletionScreen extends Screen {
         this.addRenderableWidget(new Button(
                 this.guiLeft + 20, this.guiTop + 100,
                 80 - 5, 20,
-                Component.translatable("gui.confirm"),
+                Component.translatable("gui.glowingeyes.confirm"),
                 button -> {
                     if(this.future != null) {
                         this.future.complete(true);
@@ -56,7 +56,7 @@ public class ConfirmDeletionScreen extends Screen {
         this.addRenderableWidget(new Button(
                 this.guiLeft + 100 + (5 * 2), this.guiTop + 100,
                 80 - 5, 20,
-                Component.translatable("gui.cancel"),
+                Component.translatable("gui.glowingeyes.cancel"),
                 button -> {
                     if(this.future != null) {
                         this.future.complete(false);
@@ -66,7 +66,7 @@ public class ConfirmDeletionScreen extends Screen {
                     }
                 }
         ));
-        labelComponent = Component.translatable("gui.delete.confirm", this.deletedElement);
+        labelComponent = Component.translatable("gui.glowingeyes.delete.confirm", this.deletedElement);
     }
 
     @Override

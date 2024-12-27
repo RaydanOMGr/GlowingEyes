@@ -8,8 +8,8 @@ import net.minecraft.resources.ResourceLocation;
 
 import java.io.*;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * The old format of presets had a numeric ID, now it uses a string (ResourceLocation)
@@ -17,7 +17,7 @@ import java.util.List;
  */
 public class OldToNewMigrator {
     static Gson gson = new GsonBuilder()
-            .registerTypeAdapter(HashMap.class, new PointColorMapSerializer())
+            .registerTypeAdapter(Map.class, new PointColorMapSerializer())
             .registerTypeAdapter(ResourceLocation.class, new ResourceLocationSerializer())
             .setPrettyPrinting()
             .create();
@@ -58,13 +58,5 @@ public class OldToNewMigrator {
                 new ResourceLocation(GlowingEyes.MOD_ID, oldPreset.getName().toLowerCase().replace(" ", "_")),
                 oldPreset.getContent()
         );
-    }
-
-    public static List<JsonElement> asList(JsonArray jsonArray) {
-        List<JsonElement> list = new ArrayList<>();
-        for (JsonElement element : jsonArray) {
-            list.add(element);
-        }
-        return ImmutableList.copyOf(list);
     }
 }

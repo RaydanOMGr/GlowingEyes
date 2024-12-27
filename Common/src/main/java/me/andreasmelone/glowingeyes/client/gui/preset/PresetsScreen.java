@@ -101,7 +101,7 @@ public class PresetsScreen extends Screen {
         this.addRenderableWidget(new Button(
                 this.guiLeft + this.xSize - 90, this.guiTop + 142,
                 80, 20,
-                Component.translatable("gui.cancel"),
+                Component.translatable("gui.glowingeyes.cancel"),
                 button -> {
                     if (parent != null) {
                         GlowingEyesComponent.setGlowingEyesMap(Minecraft.getInstance().player, savedPixelMap);
@@ -115,7 +115,7 @@ public class PresetsScreen extends Screen {
         this.addRenderableWidget(createEditButton = new Button(
                 this.guiLeft + 10, this.guiTop + 5 + ((pageSize + 1) * 30),
                 128 / 2 - 3, 20,
-                Component.translatable("gui.presets.create"),
+                Component.translatable("gui.glowingeyes.presets.create"),
                 button -> {
                     if (editing) {
                         EditPresetScreen.askForName(this, presetManager.getPreset(selectedPreset).getName()).thenAccept((result) -> {
@@ -135,7 +135,7 @@ public class PresetsScreen extends Screen {
         this.addRenderableWidget(new Button(
                 this.guiLeft + 10 + (128 / 2) + (3 * 2), this.guiTop + 5 + ((pageSize + 1) * 30),
                 128 / 2 - 3, 20,
-                Component.translatable("gui.presets.delete"),
+                Component.translatable("gui.glowingeyes.presets.delete"),
                 button -> {
                     if (selectedPreset != null) {
                         ConfirmDeletionScreen.askToDelete(this, presetManager.getPreset(selectedPreset).getName()).thenAccept((result) -> {
@@ -155,10 +155,10 @@ public class PresetsScreen extends Screen {
         this.addRenderableWidget(new Button(
                 this.guiLeft + this.xSize - 90, this.guiTop + 164,
                 80, 20,
-                Component.translatable("gui.presets.lock"),
+                Component.translatable("gui.glowingeyes.presets.lock"),
                 button -> {
                     isLocked = !isLocked;
-                    button.setMessage(isLocked ? Component.translatable("gui.presets.unlock") : Component.translatable("gui.presets.lock"));
+                    button.setMessage(isLocked ? Component.translatable("gui.glowingeyes.presets.unlock") : Component.translatable("gui.glowingeyes.presets.lock"));
                 }
         ));
 
@@ -272,9 +272,9 @@ public class PresetsScreen extends Screen {
     private void setEditing(boolean editing) {
         this.editing = editing;
         if (editing) {
-            createEditButton.setMessage(Component.translatable("gui.presets.edit"));
+            createEditButton.setMessage(Component.translatable("gui.glowingeyes.presets.edit"));
         } else {
-            createEditButton.setMessage(Component.translatable("gui.presets.create"));
+            createEditButton.setMessage(Component.translatable("gui.glowingeyes.presets.create"));
         }
     }
 

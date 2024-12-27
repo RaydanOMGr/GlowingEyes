@@ -12,12 +12,10 @@ import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 
 public class CreatePresetScreen extends Screen {
-    int xSize = 200;
-    int ySize = 143;
-
     Screen parent;
-    Minecraft mc;
 
+    private final int xSize = 200;
+    private final int ySize = 143;
     public CreatePresetScreen(Screen parent) {
         super(Component.empty());
         this.parent = parent;
@@ -43,7 +41,7 @@ public class CreatePresetScreen extends Screen {
         this.addRenderableWidget(new Button(
                 this.guiLeft + 20, this.guiTop + 100,
                 80 - 5, 20,
-                Component.translatable("gui.create"),
+                Component.translatable("gui.glowingeyes.create"),
                 button -> {
                     PresetManager.getInstance().createPreset(nameField.getValue(), GlowingEyesComponent.getGlowingEyesMap(Minecraft.getInstance().player));
                     Minecraft.getInstance().setScreen(parent);
@@ -52,7 +50,7 @@ public class CreatePresetScreen extends Screen {
         this.addRenderableWidget(new Button(
                 this.guiLeft + 100 + (5 * 2), this.guiTop + 100,
                 80 - 5, 20,
-                Component.translatable("gui.cancel"),
+                Component.translatable("gui.glowingeyes.cancel"),
                 button -> {
                     Minecraft.getInstance().setScreen(parent);
                 }
@@ -71,7 +69,7 @@ public class CreatePresetScreen extends Screen {
 
         drawCenteredString(
                 poseStack, this.font,
-                Component.translatable("gui.create.title"),
+                Component.translatable("gui.glowingeyes.create.title"),
                 this.width / 2, this.guiTop + 10,
                 0xFFFFFF
         );

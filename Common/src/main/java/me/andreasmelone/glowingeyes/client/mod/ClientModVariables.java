@@ -42,11 +42,10 @@ public class ClientModVariables {
     }
 
     public void setFinalColor(Color color) {
-        this.hue = (float) ColorUtil.getHueFromRGB(
-                color.getRGB()) / 360.0f;
-        this.saturation = (float) ColorUtil.getSaturationFromRGB(
-                color.getRGB()) / 100.0f;
-        this.brightness = (float) ColorUtil.getBrightnessFromRGB(
-                color.getRGB()) / 100.0f;
+        float[] hsb = new float[3];
+        Color.RGBtoHSB(color.getRed(), color.getGreen(), color.getBlue(), hsb);
+        this.hue = hsb[0];
+        this.saturation = hsb[1];
+        this.brightness = hsb[2];
     }
 }

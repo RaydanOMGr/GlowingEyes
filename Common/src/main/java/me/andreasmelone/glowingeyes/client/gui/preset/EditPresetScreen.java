@@ -12,9 +12,6 @@ import net.minecraft.network.chat.Component;
 import java.util.concurrent.CompletableFuture;
 
 public class EditPresetScreen extends Screen {
-    private int xSize = 200;
-    private int ySize = 143;
-
     private int guiTop, guiLeft;
 
     private String elementName;
@@ -23,6 +20,8 @@ public class EditPresetScreen extends Screen {
     EditBox nameField;
     Screen parent;
 
+    private final int xSize = 200;
+    private final int ySize = 143;
     protected EditPresetScreen() {
         super(Component.empty());
         this.parent = null;
@@ -50,7 +49,7 @@ public class EditPresetScreen extends Screen {
         this.addRenderableWidget(new Button(
                 this.guiLeft + 20, this.guiTop + 100,
                 80 - 5, 20,
-                Component.translatable("gui.apply"),
+                Component.translatable("gui.glowingeyes.apply"),
                 button -> {
                     if(parent != null) {
                         future.complete(nameField.getValue());
@@ -61,7 +60,7 @@ public class EditPresetScreen extends Screen {
         this.addRenderableWidget(new Button(
                 this.guiLeft + 100 + (5 * 2), this.guiTop + 100,
                 80 - 5, 20,
-                Component.translatable("gui.cancel"),
+                Component.translatable("gui.glowingeyes.cancel"),
                 button -> {
                     if(parent != null) {
                         Minecraft.getInstance().setScreen(parent);
@@ -82,7 +81,7 @@ public class EditPresetScreen extends Screen {
 
         drawCenteredString(
                 poseStack, this.font,
-                Component.translatable("gui.edit.title"),
+                Component.translatable("gui.glowingeyes.edit.title"),
                 this.width / 2, this.guiTop + 10,
                 0xFFFFFF
         );
