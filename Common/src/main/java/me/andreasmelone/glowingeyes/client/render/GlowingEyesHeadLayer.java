@@ -2,7 +2,7 @@ package me.andreasmelone.glowingeyes.client.render;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
-import me.andreasmelone.glowingeyes.client.util.EyesTextureCache;
+import me.andreasmelone.glowingeyes.client.util.DynamicTextureCache;
 import me.andreasmelone.glowingeyes.common.component.eyes.GlowingEyesComponent;
 import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.client.model.geom.ModelPart;
@@ -24,15 +24,17 @@ public class GlowingEyesHeadLayer<T extends Player, Q extends HumanoidModel<T>> 
                        int i, T player, float v, float v1, float v2,
                        float v3, float v4, float v5) {
         if(GlowingEyesComponent.isToggledOn(player) && !player.isInvisible()) {
-            ResourceLocation eyeOverlayResource = EyesTextureCache.getTexture(GlowingEyesComponent.getGlowingEyesMap(player));
+            ResourceLocation eyeOverlayResource = DynamicTextureCache.getTexture(GlowingEyesComponent.getGlowingEyesMap(player));
 
             RenderType eyeRenderType = RenderType.eyes(eyeOverlayResource);
             VertexConsumer vertexBuilderEye = multiBufferSource.getBuffer(eyeRenderType);
 
             int packerOverlay = LivingEntityRenderer.getOverlayCoords(player, 0);
 
-            ModelPart head = this.getParentModel().head;
-            head.render(poseStack, vertexBuilderEye, i, packerOverlay);
+            ModelPart[] affectedParts = new ModelPart[] { this.getParentModel().head, this.getParentModel().hat };
+            for(ModelPart part : affectedParts) {
+                part.render(poseStack, vertexBuilderEye, i, packerOverlay);
+            }
         }
     }
 }

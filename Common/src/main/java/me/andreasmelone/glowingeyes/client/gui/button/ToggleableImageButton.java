@@ -9,6 +9,8 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 
 public class ToggleableImageButton extends Button {
+    private long lastPressed = 0;
+
     private final ResourceLocation resourceLocation;
     private final int xTexStart;
     private final int yTexStart;
@@ -103,6 +105,14 @@ public class ToggleableImageButton extends Button {
         blit(poseStack, this.x, this.y, (float)this.xTexStart, (float)i, this.width, this.height, this.textureWidth, this.textureHeight);
         if (this.isHovered) {
             this.renderToolTip(poseStack, mouseX, mouseY);
+        }
+    }
+
+    @Override
+    public void onPress() {
+        if(System.currentTimeMillis() >= lastPressed + 120) {
+            super.onPress();
+            lastPressed = System.currentTimeMillis();
         }
     }
 

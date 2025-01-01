@@ -35,7 +35,7 @@ public class GlowingEyesClient implements ClientModInitializer, ClientModContext
         });
 
         GlowingEyesKeybindings.register(this);
-        GlowingEyesClientEvents.registerEvents(this);
+        GlowingEyesClientEvents.registerEvents();
         RenderManager.init();
 
         PresetManager.getInstance().loadPresets();

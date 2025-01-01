@@ -12,8 +12,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
-public class EyesTextureCache {
-    private EyesTextureCache() {
+public class DynamicTextureCache {
+    private DynamicTextureCache() {
     }
 
     private static final Map<Map<Point, Color>, ResourceLocation> cache = new HashMap<>();
@@ -41,7 +41,7 @@ public class EyesTextureCache {
         for (Map.Entry<Point, Color> entry : glowingEyesMap.entrySet()) {
             Point point = entry.getKey();
             Color color = entry.getValue();
-            image.setRGB(point.x + 8, point.y + 8, color.getRGB());
+            image.setRGB(point.x, point.y, color.getRGB());
         }
 
         NativeImage nativeImage = GuiUtil.toNativeImage(image);

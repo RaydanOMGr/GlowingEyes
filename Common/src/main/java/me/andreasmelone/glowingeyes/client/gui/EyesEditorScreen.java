@@ -161,7 +161,7 @@ public class EyesEditorScreen extends Screen {
 
         for (int y = 0; y < headSize; y++) {
             for (int x = 0; x < headSize; x++) {
-                Point point = new Point(x, y);
+                Point point = new Point(x + 8, y + 8);
                 Gui.blit(
                         poseStack,
                         headX + x * pixelSize + x * spaceBetweenPixels,
@@ -174,7 +174,6 @@ public class EyesEditorScreen extends Screen {
                 );
 
                 if(pixels.containsKey(point)) {
-                    pixels.get(point).getColorSpace();
                     Gui.fill(
                             poseStack,
                             headX + x * pixelSize + x * spaceBetweenPixels - 1,
@@ -195,6 +194,18 @@ public class EyesEditorScreen extends Screen {
                             1, 1,
                             64, 64
                     );
+
+                    Point secondLayerPoint = new Point(x + 40, y + 8);
+                    if(pixels.containsKey(secondLayerPoint)) {
+                        Gui.fill(
+                                poseStack,
+                                headX + x * pixelSize + x * spaceBetweenPixels - 1,
+                                headY + y * pixelSize + y * spaceBetweenPixels - 1,
+                                headX + x * pixelSize + x * spaceBetweenPixels + pixelSize + 1,
+                                headY + y * pixelSize + y * spaceBetweenPixels + pixelSize + 1,
+                                pixels.get(secondLayerPoint).getRGB()
+                        );
+                    }
                 }
             }
         }
@@ -305,7 +316,8 @@ public class EyesEditorScreen extends Screen {
             Point point = calculatePoint(screen, mouseX, mouseY);
 
             if (button == 0) {
-                screen.pixels.put(new Point(point.x, point.y), screen.mod.getModVariables().getFinalColor());
+                Color finalColor = screen.mod.getModVariables().getFinalColor();
+                screen.pixels.put(new Point(point.x, point.y), new Color(finalColor.getRed(), finalColor.getGreen(), finalColor.getBlue(), 200));
             } else if (button == 1) {
                 screen.pixels.remove(new Point(point.x, point.y));
             }
@@ -344,7 +356,7 @@ public class EyesEditorScreen extends Screen {
             int x = (int) ((mouseX - screen.headX) / (pixelSize + spaceBetweenPixels));
             int y = (int) ((mouseY - screen.headY) / (pixelSize + spaceBetweenPixels));
 
-            return new Point(x, y);
+            return new Point((screen.displaySecondLayer ? 40 : 8) + x, 8 + y);
         }
 
         @FunctionalInterface
