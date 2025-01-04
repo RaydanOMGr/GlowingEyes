@@ -64,58 +64,61 @@ public class PresetsScreen extends Screen {
         int leftButtonX = (int) (this.guiLeft + 128 * ((double) 1 / 4));
         int rightButtonX = (int) (this.guiLeft + 128 * ((double) 3 / 4));
 
-        this.addRenderableWidget(new Button(
-                leftButtonX, this.guiTop - 20 + ((pageSize + 1) * 30),
-                20, 20,
-                Component.literal("<"),
-                button -> {
-                    switchPage(page - 1);
-                }
-        ));
-        this.addRenderableWidget(new Button(
-                rightButtonX, this.guiTop - 20 + ((pageSize + 1) * 30),
-                20, 20,
-                Component.literal(">"),
-                button -> {
-                    switchPage(page + 1);
-                }
-        ));
-        this.addRenderableWidget(new Button(
-                this.guiLeft + this.xSize - 90, this.guiTop + 120,
-                80, 20,
-                Component.translatable("gui.done"),
-                button -> {
-                    if (parent != null) {
-                        GlowingEyesComponent.setToggledOn(Minecraft.getInstance().player, toggledState);
-                        if (selectedPreset != null) {
-                            presetManager.applyPreset(selectedPreset);
-                        }
-                        presetManager.savePresets();
-//                        if (parent instanceof EyesEditorScreen eyesEditorScreen)
-//                            eyesEditorScreen.openAsParent();
-//                        else
-                            Minecraft.getInstance().setScreen(parent);
-                    }
-                }
-        ));
-        this.addRenderableWidget(new Button(
-                this.guiLeft + this.xSize - 90, this.guiTop + 142,
-                80, 20,
-                Component.translatable("gui.glowingeyes.cancel"),
-                button -> {
-                    if (parent != null) {
-                        GlowingEyesComponent.setGlowingEyesMap(Minecraft.getInstance().player, savedPixelMap);
-                        GlowingEyesComponent.setToggledOn(Minecraft.getInstance().player, toggledState);
+        this.addRenderableWidget(
+            Button.builder(Component.literal("<"),
+                    button -> {
+                        switchPage(page - 1);
+                    })
+                .pos(leftButtonX, this.guiTop - 20 + ((pageSize + 1) * 30))
+                .size(20, 20)
+                .build()
+        );
 
-                        presetManager.savePresets();
-                        Minecraft.getInstance().setScreen(parent);
-                    }
-                }
-        ));
-        this.addRenderableWidget(createEditButton = new Button(
-                this.guiLeft + 10, this.guiTop + 5 + ((pageSize + 1) * 30),
-                128 / 2 - 3, 20,
-                Component.translatable("gui.glowingeyes.presets.create"),
+        this.addRenderableWidget(
+            Button.builder(Component.literal(">"),
+                    button -> {
+                        switchPage(page + 1);
+                    })
+                .pos(rightButtonX, this.guiTop - 20 + ((pageSize + 1) * 30))
+                .size(20, 20)
+                .build()
+        );
+
+        this.addRenderableWidget(
+            Button.builder(Component.translatable("gui.done"),
+                    button -> {
+                        if (parent != null) {
+                            GlowingEyesComponent.setToggledOn(Minecraft.getInstance().player, toggledState);
+                            if (selectedPreset != null) {
+                                presetManager.applyPreset(selectedPreset);
+                            }
+                            presetManager.savePresets();
+                            Minecraft.getInstance().setScreen(parent);
+                        }
+                    })
+                .pos(this.guiLeft + this.xSize - 90, this.guiTop + 120)
+                .size(80, 20)
+                .build()
+        );
+
+        this.addRenderableWidget(
+            Button.builder(Component.translatable("gui.glowingeyes.cancel"),
+                    button -> {
+                        if (parent != null) {
+                            GlowingEyesComponent.setGlowingEyesMap(Minecraft.getInstance().player, savedPixelMap);
+                            GlowingEyesComponent.setToggledOn(Minecraft.getInstance().player, toggledState);
+
+                            presetManager.savePresets();
+                            Minecraft.getInstance().setScreen(parent);
+                        }
+                    })
+                .pos(this.guiLeft + this.xSize - 90, this.guiTop + 142)
+                .size(80, 20)
+                .build()
+        );
+
+        this.addRenderableWidget(
+            createEditButton = Button.builder(Component.translatable("gui.glowingeyes.presets.create"),
                 button -> {
                     if (editing) {
                         EditPresetScreen.askForName(this, presetManager.getPreset(selectedPreset).getName()).thenAccept((result) -> {
@@ -130,12 +133,14 @@ public class PresetsScreen extends Screen {
                             }
                         });
                     } else Minecraft.getInstance().setScreen(new CreatePresetScreen(this));
-                }
-        ));
-        this.addRenderableWidget(new Button(
-                this.guiLeft + 10 + (128 / 2) + (3 * 2), this.guiTop + 5 + ((pageSize + 1) * 30),
-                128 / 2 - 3, 20,
-                Component.translatable("gui.glowingeyes.presets.delete"),
+                })
+            .pos(this.guiLeft + 10, this.guiTop + 5 + ((pageSize + 1) * 30))
+            .size(128 / 2 - 3, 20)
+            .build()
+        );
+
+        this.addRenderableWidget(
+            Button.builder(Component.translatable("gui.glowingeyes.presets.delete"),
                 button -> {
                     if (selectedPreset != null) {
                         ConfirmDeletionScreen.askToDelete(this, presetManager.getPreset(selectedPreset).getName()).thenAccept((result) -> {
@@ -150,17 +155,23 @@ public class PresetsScreen extends Screen {
                             this.unselectPreset();
                         });
                     }
-                }
-        ));
-        this.addRenderableWidget(new Button(
-                this.guiLeft + this.xSize - 90, this.guiTop + 164,
-                80, 20,
-                Component.translatable("gui.glowingeyes.presets.lock"),
+                })
+            .pos(this.guiLeft + 10 + (128 / 2) + (3 * 2), this.guiTop + 5 + ((pageSize + 1) * 30))
+            .size(128 / 2 - 3, 20)
+            .build()
+        );
+
+        this.addRenderableWidget(
+            Button.builder(Component.translatable("gui.glowingeyes.presets.lock"),
                 button -> {
                     isLocked = !isLocked;
                     button.setMessage(isLocked ? Component.translatable("gui.glowingeyes.presets.unlock") : Component.translatable("gui.glowingeyes.presets.lock"));
-                }
-        ));
+                })
+            .pos(this.guiLeft + this.xSize - 90, this.guiTop + 164)
+            .size(80, 20)
+            .build()
+        );
+
 
         if(savedPixelMap == null) {
             savedPixelMap = GlowingEyesComponent.getGlowingEyesMap(Minecraft.getInstance().player);
@@ -220,7 +231,8 @@ public class PresetsScreen extends Screen {
         GlStateManager._enableDepthTest();
         GlStateManager._depthFunc(GL11.GL_LEQUAL);
 
-        InventoryScreen.renderEntityInInventory(
+        InventoryScreen.renderEntityInInventoryFollowsMouse(
+                poseStack,
                 this.guiLeft + this.xSize - 90 + 40,
                 this.guiTop + 110,
                 scale,

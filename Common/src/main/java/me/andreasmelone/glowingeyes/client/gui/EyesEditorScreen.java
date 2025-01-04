@@ -16,8 +16,8 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.ImageButton;
+import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.client.gui.screens.Screen;
-import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
@@ -62,40 +62,28 @@ public class EyesEditorScreen extends Screen {
         }
 
         // the color picker button
-        this.addRenderableWidget(new ImageButton(
+        Button colorPickerButton;
+        this.addRenderableWidget(colorPickerButton = new ImageButton(
                 this.guiLeft + this.xSize - 30, this.guiTop + this.ySize - 30,
                 20, 20,
                 0, 0, 20,
                 TextureLocations.COLOR_PICKER_BUTTON,
                 64, 64,
-                button -> Minecraft.getInstance().setScreen(new ColorPickerScreen(mod, this)),
-                (button, poseStack, mouseX, mouseY) -> {
-                    this.renderTooltip(
-                            poseStack,
-                            Component.translatable("gui.glowingeyes.editor.colorpicker.tooltip"),
-                            mouseX, mouseY
-                    );
-                },
-                CommonComponents.EMPTY
+                button -> Minecraft.getInstance().setScreen(new ColorPickerScreen(mod, this))
         ));
+        colorPickerButton.setTooltip(Tooltip.create(Component.translatable("gui.glowingeyes.editor.colorpicker.tooltip")));
 
         // the preset menu button
-        this.addRenderableWidget(new ImageButton(
+        Button presetMenuButton;
+        this.addRenderableWidget(presetMenuButton = new ImageButton(
                 this.guiLeft + this.xSize - 30, this.guiTop + this.ySize - 55,
                 20, 20,
                 0, 0, 20,
                 TextureLocations.PRESET_MENU_BUTTON,
                 64, 64,
-                button -> Minecraft.getInstance().setScreen(new PresetsScreen(this)),
-                (button, poseStack, mouseX, mouseY) -> {
-                    this.renderTooltip(
-                            poseStack,
-                            Component.translatable("gui.glowingeyes.editor.presetsmenu.tooltip"),
-                            mouseX, mouseY
-                    );
-                },
-                CommonComponents.EMPTY
+                button -> Minecraft.getInstance().setScreen(new PresetsScreen(this))
         ));
+        presetMenuButton.setTooltip(Tooltip.create(Component.translatable("gui.glowingeyes.editor.presetsmenu.tooltip")));
 
         // the 2nd layer toggle button
         ToggleableImageButton secondLayerToggle;
@@ -108,23 +96,16 @@ public class EyesEditorScreen extends Screen {
                 button -> {
                     displaySecondLayer = !displaySecondLayer;
                     ((ToggleableImageButton) button).setToggledOn(displaySecondLayer);
-                },
-                (button, poseStack, mouseX, mouseY) -> {
-                    this.renderTooltip(
-                            poseStack,
-                            Component.translatable("gui.glowingeyes.editor.layertoggle.tooltip"),
-                            mouseX, mouseY
-                    );
-                },
-                CommonComponents.EMPTY
+                }
         ));
+        secondLayerToggle.setTooltip(Tooltip.create(Component.translatable("gui.glowingeyes.editor.layertoggle.tooltip")));
         secondLayerToggle.setToggledOn(displaySecondLayer);
 
         this.modeButtons.clear();
 
-        this.createModeButton(8, 70, Mode.BRUSH.getTexture(), Mode.BRUSH);
-        this.createModeButton(8, 95, Mode.ERASER.getTexture(), Mode.ERASER);
-        this.createModeButton(8, 120, Mode.PICKER.getTexture(), Mode.PICKER);
+        this.createModeButton(8, 70, Mode.BRUSH);
+        this.createModeButton(8, 95, Mode.ERASER);
+        this.createModeButton(8, 120, Mode.PICKER);
 
         this.modeButtons.get(Mode.BRUSH).onPress();
         this.modeButtons.forEach((mode, button) -> this.addRenderableWidget(button));
@@ -286,27 +267,21 @@ public class EyesEditorScreen extends Screen {
         endHeadY = headY + head;
     }
 
-    private ImageButton createModeButton(int x, int y, ResourceLocation texture, Mode buttonMode) {
-        ImageButton imageButton = new ImageButton(
+    private Button createModeButton(int x, int y, Mode buttonMode) {
+        Button imageButton = new ImageButton(
                 this.guiLeft + x, this.guiTop + y,
                 20, 20,
                 0, 0, 20,
-                texture,
+                buttonMode.getTexture(),
                 64, 64,
                 button -> {
                     mode = buttonMode;
                     modeButtons.forEach((m, b) -> b.active = true);
                     button.active = false;
-                },
-                (button, poseStack, mouseX, mouseY) -> {
-                    this.renderTooltip(
-                            poseStack,
-                            Component.translatable("gui.glowingeyes.editor." + buttonMode.name().toLowerCase() + ".tooltip"),
-                            mouseX, mouseY
-                    );
-                },
-                CommonComponents.EMPTY
+                }
         );
+        imageButton.setTooltip(Tooltip.create(Component.translatable("gui.glowingeyes.editor." + buttonMode.name().toLowerCase() + ".tooltip")));
+
         modeButtons.put(buttonMode, imageButton);
         return imageButton;
     }
@@ -331,6 +306,7 @@ public class EyesEditorScreen extends Screen {
             screen.mod.getModVariables().setFinalColor(color);
 
             screen.modeButtons.get(Mode.BRUSH).onPress();
+            screen.modeButtons.forEach((mode, b) -> b.setFocused(false));
         });
 
         private final ResourceLocation texture;

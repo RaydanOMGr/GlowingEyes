@@ -40,32 +40,38 @@ public class ConfirmDeletionScreen extends Screen {
 
         labelComponent = Component.empty();
 
-        this.addRenderableWidget(new Button(
-                this.guiLeft + 20, this.guiTop + 100,
-                80 - 5, 20,
-                Component.translatable("gui.glowingeyes.confirm"),
-                button -> {
-                    if(this.future != null) {
-                        this.future.complete(true);
-                    }
-                    if(this.parent != null) {
-                        Minecraft.getInstance().setScreen(this.parent);
-                    }
-                }
-        ));
-        this.addRenderableWidget(new Button(
-                this.guiLeft + 100 + (5 * 2), this.guiTop + 100,
-                80 - 5, 20,
-                Component.translatable("gui.glowingeyes.cancel"),
-                button -> {
-                    if(this.future != null) {
-                        this.future.complete(false);
-                    }
-                    if(this.parent != null) {
-                        Minecraft.getInstance().setScreen(this.parent);
-                    }
-                }
-        ));
+        // First Button: Confirm
+        this.addRenderableWidget(
+                Button.builder(Component.translatable("gui.glowingeyes.confirm"),
+                                button -> {
+                                    if (this.future != null) {
+                                        this.future.complete(true);
+                                    }
+                                    if (this.parent != null) {
+                                        Minecraft.getInstance().setScreen(this.parent);
+                                    }
+                                })
+                        .pos(this.guiLeft + 20, this.guiTop + 100)
+                        .size(80 - 5, 20)
+                        .build()
+        );
+
+        // Second Button: Cancel
+        this.addRenderableWidget(
+                Button.builder(Component.translatable("gui.glowingeyes.cancel"),
+                                button -> {
+                                    if (this.future != null) {
+                                        this.future.complete(false);
+                                    }
+                                    if (this.parent != null) {
+                                        Minecraft.getInstance().setScreen(this.parent);
+                                    }
+                                })
+                        .pos(this.guiLeft + 100 + (5 * 2), this.guiTop + 100)
+                        .size(80 - 5, 20)
+                        .build()
+        );
+
         labelComponent = Component.translatable("gui.glowingeyes.delete.confirm", this.deletedElement);
     }
 

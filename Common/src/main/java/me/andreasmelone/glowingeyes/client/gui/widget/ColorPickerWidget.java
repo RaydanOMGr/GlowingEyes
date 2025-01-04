@@ -8,7 +8,6 @@ import me.andreasmelone.glowingeyes.client.util.TextureLocations;
 import me.andreasmelone.glowingeyes.client.util.color.ColorUtil;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.components.AbstractWidget;
-import net.minecraft.client.gui.components.Widget;
 import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
 import net.minecraft.client.renderer.texture.DynamicTexture;
@@ -16,12 +15,11 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.NotNull;
 
-import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
 
-public class ColorPickerWidget extends AbstractWidget implements Widget, GuiEventListener {
+public class ColorPickerWidget extends AbstractWidget implements GuiEventListener {
     private float hue;
     private float brightness; // [0.0, 1.0]
     private float saturation; // [0.0, 1.0]
@@ -36,11 +34,11 @@ public class ColorPickerWidget extends AbstractWidget implements Widget, GuiEven
     }
 
     @Override
-    public void render(@NotNull PoseStack poseStack, int mouseX, int mouseY, float deltaTime) {
+    public void renderWidget(@NotNull PoseStack poseStack, int mouseX, int mouseY, float deltaTime) {
         RenderSystem.setShaderTexture(0, getColorSquareTexture());
         blit(
                 poseStack,
-                x, y,
+                getX(), getY(),
                 0, 0,
                 width, height,
                 width, height
@@ -74,8 +72,8 @@ public class ColorPickerWidget extends AbstractWidget implements Widget, GuiEven
 
             triggerChange();
         } else {
-            int newX = (int) Math.max(this.x, Math.min(mouseX, this.x + this.width));
-            int newY = (int) Math.max(this.y, Math.min(mouseY, this.y + this.height));
+            int newX = (int) Math.max(this.getX(), Math.min(mouseX, this.getX() + this.width));
+            int newY = (int) Math.max(this.getY(), Math.min(mouseY, this.getY() + this.height));
             this.setCursorX(newX);
             this.setCursorY(newY);
 
@@ -86,18 +84,18 @@ public class ColorPickerWidget extends AbstractWidget implements Widget, GuiEven
     }
 
     public int getCursorX() {
-        return (int) (this.x + (this.saturation * this.width));
+        return (int) (this.getX() + (this.saturation * this.width));
     }
 
     public void setCursorX(int cursorX) {
         // cursor = posX + (x * width)  | - posX
         // cursor - posX = x * width    | : width
         // (cursor - posX) / width = x
-        this.saturation = (float) (cursorX - x) / width;
+        this.saturation = (float) (cursorX - getX()) / width;
     }
 
     public int getCursorY() {
-        return (int) (this.y + ((1.0f - this.brightness) * this.height));
+        return (int) (this.getY() + ((1.0f - this.brightness) * this.height));
     }
 
     public void setCursorY(int cursorY) {
@@ -106,7 +104,7 @@ public class ColorPickerWidget extends AbstractWidget implements Widget, GuiEven
         // 1.0 - b = (c - y) / h     | - 1.0
         // - b = (c - y) / h - 1.0   | : -1
         // b = -((c - y) / h - 1.0)
-        this.brightness = (float) -((float) (cursorY - this.y) / this.height - 1.0f);
+        this.brightness = -((float) (cursorY - this.getY()) / this.height - 1.0f);
     }
 
     public float getHue() {
@@ -143,9 +141,9 @@ public class ColorPickerWidget extends AbstractWidget implements Widget, GuiEven
     }
 
     private boolean isInbounds(int x, int y) {
-        return x >= this.x && y >= this.y
-                && x <= this.x + this.width
-                && y <= this.y + this.height;
+        return x >= this.getX() && y >= this.getY()
+                && x <= this.getX() + this.width
+                && y <= this.getY() + this.height;
     }
 
     private NativeImage createColorGradientImage() {
@@ -179,6 +177,7 @@ public class ColorPickerWidget extends AbstractWidget implements Widget, GuiEven
     }
 
     @Override
-    public void updateNarration(@NotNull NarrationElementOutput narrationElementOutput) {
+    protected void updateWidgetNarration(NarrationElementOutput narrationElementOutput) {
+
     }
 }

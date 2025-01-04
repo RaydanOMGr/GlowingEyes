@@ -8,7 +8,6 @@ import me.andreasmelone.glowingeyes.client.util.TextureLocations;
 import me.andreasmelone.glowingeyes.client.util.color.ColorUtil;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.components.AbstractWidget;
-import net.minecraft.client.gui.components.Widget;
 import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
 import net.minecraft.client.renderer.texture.DynamicTexture;
@@ -16,12 +15,11 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.NotNull;
 
-import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
 
-public class ColorSliderWidget extends AbstractWidget implements Widget, GuiEventListener {
+public class ColorSliderWidget extends AbstractWidget implements GuiEventListener {
     private float hue;
     private ResourceLocation colorSliderTexture;
 
@@ -33,11 +31,11 @@ public class ColorSliderWidget extends AbstractWidget implements Widget, GuiEven
     }
 
     @Override
-    public void render(@NotNull PoseStack poseStack, int mouseX, int mouseY, float deltaTime) {
+    public void renderWidget(@NotNull PoseStack poseStack, int mouseX, int mouseY, float deltaTime) {
         RenderSystem.setShaderTexture(0, getColorSliderTexture());
         blit(
                 poseStack,
-                x, y,
+                getX(), getY(),
                 0, 0,
                 width, height,
                 width, height
@@ -46,7 +44,7 @@ public class ColorSliderWidget extends AbstractWidget implements Widget, GuiEven
         RenderSystem.setShaderTexture(0, TextureLocations.BRIGHTNESS_CURSOR);
         blit(
                 poseStack,
-                x - (2 * (width / 16)), (int) (getCursor() - ((2 + (1 - 2) * this.hue) * ((float) width / 16))),
+                getX() - (2 * (width / 16)), (int) (getCursor() - ((2 + (1 - 2) * this.hue) * ((float) width / 16))),
                 width + (4 * (width / 16)), height / 3,
                 0, 0,
                 16, 16,
@@ -63,7 +61,7 @@ public class ColorSliderWidget extends AbstractWidget implements Widget, GuiEven
 
     @Override
     public boolean mouseDragged(double mouseX, double mouseY, int button, double dragX, double dragY) {
-        if(mouseY >= y && mouseY <= y + height) {
+        if(mouseY >= getY() && mouseY <= getY() + height) {
             this.setCursor((int) mouseY);
             triggerChange();
         }
@@ -72,17 +70,17 @@ public class ColorSliderWidget extends AbstractWidget implements Widget, GuiEven
     }
 
     private boolean isInbounds(int x, int y) {
-        return x >= this.x && y >= this.y
-                && x <= this.x + this.width
-                && y <= this.y + this.height;
+        return x >= this.getX() && y >= this.getY()
+                && x <= this.getX() + this.width
+                && y <= this.getY() + this.height;
     }
 
     public int getCursor() {
-        return (int) (this.y + (1.0f - this.hue) * this.height);
+        return (int) (this.getY() + (1.0f - this.hue) * this.height);
     }
 
     public void setCursor(int cursorY) {
-        this.hue = 1.0f - (float) (cursorY - this.y) / this.height;
+        this.hue = 1.0f - (float) (cursorY - this.getY()) / this.height;
     }
 
     public float getHue() {
@@ -129,6 +127,7 @@ public class ColorSliderWidget extends AbstractWidget implements Widget, GuiEven
     }
 
     @Override
-    public void updateNarration(@NotNull NarrationElementOutput narrationElementOutput) {
+    protected void updateWidgetNarration(NarrationElementOutput narrationElementOutput) {
+
     }
 }

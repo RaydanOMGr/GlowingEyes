@@ -75,7 +75,7 @@ public class ColorPickerScreen extends Screen {
         this.editBoxMap.forEach((type, field) -> {
             field.setResponder((string) -> {
                 if (!field.isFocused() || string.isEmpty()) return;
-                this.editBoxMap.forEach((t, f) -> { if(t != type) f.setFocus(false); });
+                this.editBoxMap.forEach((t, f) -> { if(t != type) f.setFocused(false); });
                 float[] hsb = ColorUtil.getHSBFromRGB(type.parseAndUpdate(mod.getModVariables().getFinalColor(), string).getRGB());
                 this.changeColor(hsb[0], hsb[1], hsb[2], t -> t == type);
             });
@@ -176,8 +176,8 @@ public class ColorPickerScreen extends Screen {
         if (widget == null) {
             widget = widgetFactory.get();
         } else {
-            widget.x = x;
-            widget.y = y;
+            widget.setX(x);
+            widget.setY(y);
         }
         return widget;
     }
