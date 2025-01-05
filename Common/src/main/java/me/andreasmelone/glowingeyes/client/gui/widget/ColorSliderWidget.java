@@ -1,12 +1,11 @@
 package me.andreasmelone.glowingeyes.client.gui.widget;
 
 import com.mojang.blaze3d.platform.NativeImage;
-import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.PoseStack;
 import me.andreasmelone.glowingeyes.GlowingEyes;
 import me.andreasmelone.glowingeyes.client.util.TextureLocations;
 import me.andreasmelone.glowingeyes.client.util.color.ColorUtil;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
@@ -31,19 +30,17 @@ public class ColorSliderWidget extends AbstractWidget implements GuiEventListene
     }
 
     @Override
-    public void renderWidget(@NotNull PoseStack poseStack, int mouseX, int mouseY, float deltaTime) {
-        RenderSystem.setShaderTexture(0, getColorSliderTexture());
-        blit(
-                poseStack,
+    public void renderWidget(@NotNull GuiGraphics guiGraphics, int mouseX, int mouseY, float deltaTime) {
+        guiGraphics.blit(
+                getColorSliderTexture(),
                 getX(), getY(),
                 0, 0,
                 width, height,
                 width, height
         );
 
-        RenderSystem.setShaderTexture(0, TextureLocations.BRIGHTNESS_CURSOR);
-        blit(
-                poseStack,
+        guiGraphics.blit(
+                TextureLocations.BRIGHTNESS_CURSOR,
                 getX() - (2 * (width / 16)), (int) (getCursor() - ((2 + (1 - 2) * this.hue) * ((float) width / 16))),
                 width + (4 * (width / 16)), height / 3,
                 0, 0,

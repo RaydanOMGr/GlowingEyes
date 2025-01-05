@@ -1,7 +1,7 @@
 package me.andreasmelone.glowingeyes.client.gui.button;
 
 import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.PoseStack;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
@@ -40,13 +40,12 @@ public class ToggleableImageButton extends Button {
     }
 
     @Override
-    public void renderWidget(PoseStack poseStack, int mouseX, int mouseY, float partialTick) {
-        this.renderTexture(poseStack, this.resourceLocation, this.getX(), this.getY(), this.xTexStart, this.yTexStart, this.yDiffTex, this.width, this.height, this.textureWidth, this.textureHeight);
+    public void renderWidget(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
+        this.renderTexture(guiGraphics, this.resourceLocation, this.getX(), this.getY(), this.xTexStart, this.yTexStart, this.yDiffTex, this.width, this.height, this.textureWidth, this.textureHeight);
     }
 
     @Override
-    public void renderTexture(PoseStack poseStack, ResourceLocation texture, int x, int y, int uOffset, int vOffset, int i, int width, int height, int textureWidth, int textureHeight) {
-        RenderSystem.setShaderTexture(0, texture);
+    public void renderTexture(GuiGraphics guiGraphics, ResourceLocation texture, int x, int y, int uOffset, int vOffset, int i, int width, int height, int textureWidth, int textureHeight) {
         int j = vOffset;
         if (!this.isActive() || this.isToggledOn()) {
             j = vOffset + i * 2;
@@ -55,7 +54,7 @@ public class ToggleableImageButton extends Button {
         }
 
         RenderSystem.enableDepthTest();
-        blit(poseStack, x, y, (float) uOffset, (float) j, width, height, textureWidth, textureHeight);
+        guiGraphics.blit(texture, x, y, (float) uOffset, (float) j, width, height, textureWidth, textureHeight);
     }
 
     @Override

@@ -1,9 +1,9 @@
 package me.andreasmelone.glowingeyes.client.gui.preset;
 
-import com.mojang.blaze3d.vertex.PoseStack;
 import me.andreasmelone.glowingeyes.client.util.GuiUtil;
 import me.andreasmelone.glowingeyes.client.util.TextureLocations;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
@@ -76,25 +76,24 @@ public class ConfirmDeletionScreen extends Screen {
     }
 
     @Override
-    public void render(PoseStack poseStack, int mouseX, int mouseY, float partialTicks) {
-        parent.render(poseStack, mouseX, mouseY, partialTicks);
-        this.renderBackground(poseStack);
+    public void render(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTicks) {
+        parent.render(guiGraphics, mouseX, mouseY, partialTicks);
+        this.renderBackground(guiGraphics);
 
         GuiUtil.drawBackground(
-                poseStack, TextureLocations.UI_BACKGROUND_SLIM,
+                guiGraphics, TextureLocations.UI_BACKGROUND_SLIM,
                 this.guiLeft, this.guiTop,
                 this.xSize, this.ySize
         );
 
-        drawCenteredString(
-                poseStack,
+        guiGraphics.drawCenteredString(
                 this.font,
                 labelComponent,
                 this.middleX, this.middleY - 20,
                 0xFFFFFF
         );
 
-        super.render(poseStack, mouseX, mouseY, partialTicks);
+        super.render(guiGraphics, mouseX, mouseY, partialTicks);
     }
 
     public static CompletableFuture<Boolean> askToDelete(Screen parent, String element) {

@@ -1,9 +1,7 @@
 package me.andreasmelone.glowingeyes.client.util;
 
 import com.mojang.blaze3d.platform.NativeImage;
-import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.PoseStack;
-import net.minecraft.client.gui.Gui;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.resources.ResourceLocation;
 
 import java.awt.*;
@@ -17,11 +15,9 @@ public class GuiUtil {
      * @param width The width of the texture (usually named xSize)
      * @param height The height of the texture (usually named ySize)
      */
-    public static void drawBackground(PoseStack poseStack, ResourceLocation backgroundTexture, int x, int y, int width, int height) {
-        // Use the Minecraft class to get the texture manager
-        RenderSystem.setShaderTexture(0, backgroundTexture);
+    public static void drawBackground(GuiGraphics guiGraphics, ResourceLocation backgroundTexture, int x, int y, int width, int height) {
         // Draw the background texture
-        Gui.blit(poseStack, x, y, 0, 0, width, height, 256, 256);
+        guiGraphics.blit(backgroundTexture, x, y, 0, 0, width, height, 256, 256);
     }
 
     public static NativeImage toNativeImage(BufferedImage image) {

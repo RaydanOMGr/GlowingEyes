@@ -1,12 +1,11 @@
 package me.andreasmelone.glowingeyes.client.gui.widget;
 
 import com.mojang.blaze3d.platform.NativeImage;
-import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.PoseStack;
 import me.andreasmelone.glowingeyes.GlowingEyes;
 import me.andreasmelone.glowingeyes.client.util.TextureLocations;
 import me.andreasmelone.glowingeyes.client.util.color.ColorUtil;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
@@ -34,19 +33,17 @@ public class ColorPickerWidget extends AbstractWidget implements GuiEventListene
     }
 
     @Override
-    public void renderWidget(@NotNull PoseStack poseStack, int mouseX, int mouseY, float deltaTime) {
-        RenderSystem.setShaderTexture(0, getColorSquareTexture());
-        blit(
-                poseStack,
+    public void renderWidget(@NotNull GuiGraphics guiGraphics, int mouseX, int mouseY, float deltaTime) {
+        guiGraphics.blit(
+                getColorSquareTexture(),
                 getX(), getY(),
                 0, 0,
                 width, height,
                 width, height
         );
 
-        RenderSystem.setShaderTexture(0, TextureLocations.CURSOR);
-        blit(
-                poseStack,
+        guiGraphics.blit(
+                TextureLocations.CURSOR,
                 (int) (getCursorX() - 5 + (2 * (1.0f - this.saturation))),
                 (int) (getCursorY() - 5 + (2 * (this.brightness))),
                 0, 0,

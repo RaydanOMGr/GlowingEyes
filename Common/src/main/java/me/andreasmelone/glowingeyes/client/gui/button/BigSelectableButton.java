@@ -1,9 +1,8 @@
 package me.andreasmelone.glowingeyes.client.gui.button;
 
-import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.PoseStack;
 import me.andreasmelone.glowingeyes.client.util.TextureLocations;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.network.chat.Component;
 
@@ -19,9 +18,8 @@ public class BigSelectableButton extends Button {
     }
 
     @Override
-    public void renderWidget(PoseStack poseStack, int mouseX, int mouseY, float partialTicks) {
+    public void renderWidget(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTicks) {
         if(this.visible) {
-            RenderSystem.setShaderTexture(0, TextureLocations.BIG_BUTTON);
             boolean flag = mouseX >= this.getX() && mouseY >= this.getY() && mouseX < this.getX() + this.width && mouseY < this.getY() + this.height;
 
             int i = 0;
@@ -32,8 +30,8 @@ public class BigSelectableButton extends Button {
                 i += this.height * 2;
             }
 
-            blit(
-                    poseStack,
+            guiGraphics.blit(
+                    TextureLocations.BIG_BUTTON,
                     this.getX(), this.getY(),
                     0, i,
                     128, 29,
@@ -41,11 +39,11 @@ public class BigSelectableButton extends Button {
             );
 
             Minecraft mc = Minecraft.getInstance();
-            mc.font.draw(
-                    poseStack,
+            guiGraphics.drawString(
+                    mc.font,
                     this.getMessage(),
-                    this.getX() + (float) this.width / 2 - (float) mc.font.width(this.getMessage()) / 2,
-                    this.getY() + (float) (this.height - 8) / 2,
+                    (int)(this.getX() + (float) this.width / 2 - (float) mc.font.width(this.getMessage()) / 2),
+                    (int)(this.getY() + (float) (this.height - 8) / 2),
                     0xFFFFFF
             );
         }

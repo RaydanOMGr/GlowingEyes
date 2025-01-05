@@ -1,8 +1,6 @@
 package me.andreasmelone.glowingeyes.client.gui;
 
 import com.mojang.blaze3d.platform.Window;
-import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.logging.LogUtils;
 import me.andreasmelone.glowingeyes.client.component.eyes.ClientGlowingEyesComponent;
 import me.andreasmelone.glowingeyes.client.gui.button.ToggleableImageButton;
@@ -13,7 +11,7 @@ import me.andreasmelone.glowingeyes.client.util.TextureLocations;
 import me.andreasmelone.glowingeyes.common.component.eyes.GlowingEyesComponent;
 import me.andreasmelone.glowingeyes.client.util.color.ColorType;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.Gui;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.ImageButton;
 import net.minecraft.client.gui.components.Tooltip;
@@ -113,16 +111,16 @@ public class EyesEditorScreen extends Screen {
 
     /**
      * The method that renders the screen
-     * @param poseStack The PoseStack, a stack of transformations to apply to the rendering
+     * @param guiGraphics The GuiGraphics object which contains all rendering functions and the current context
      * @param mouseX The x position of the mouse
      * @param mouseY The y position of the mouse
      * @param deltaTime The time since the last frame
      */
     @Override
-    public void render(PoseStack poseStack, int mouseX, int mouseY, float deltaTime) {
-        this.renderBackground(poseStack);
+    public void render(GuiGraphics guiGraphics, int mouseX, int mouseY, float deltaTime) {
+        this.renderBackground(guiGraphics);
 
-        GuiUtil.drawBackground(poseStack,
+        GuiUtil.drawBackground(guiGraphics,
                 TextureLocations.UI_BACKGROUND_BROAD, this.guiLeft, this.guiTop, this.xSize, this.ySize);
 
         int spaceBetweenPixels = 2;
@@ -131,20 +129,17 @@ public class EyesEditorScreen extends Screen {
 
         this.calculateHeadSize(headSize, pixelSize, spaceBetweenPixels);
 
-        Gui.fill(
-                poseStack,
+        guiGraphics.fill(
                 headX - spaceBetweenPixels, headY - spaceBetweenPixels,
                 endHeadX + spaceBetweenPixels, endHeadY + spaceBetweenPixels,
                 headBackgroundColor.getRGB()
         );
 
-        RenderSystem.setShaderTexture(0, Minecraft.getInstance().player.getSkinTextureLocation());
-
         for (int y = 0; y < headSize; y++) {
             for (int x = 0; x < headSize; x++) {
                 Point point = new Point(x + 8, y + 8);
-                Gui.blit(
-                        poseStack,
+                guiGraphics.blit(
+                        Minecraft.getInstance().player.getSkinTextureLocation(),
                         headX + x * pixelSize + x * spaceBetweenPixels,
                         headY + y * pixelSize + y * spaceBetweenPixels,
                         pixelSize,
@@ -155,8 +150,7 @@ public class EyesEditorScreen extends Screen {
                 );
 
                 if(pixels.containsKey(point)) {
-                    Gui.fill(
-                            poseStack,
+                    guiGraphics.fill(
                             headX + x * pixelSize + x * spaceBetweenPixels - 1,
                             headY + y * pixelSize + y * spaceBetweenPixels - 1,
                             headX + x * pixelSize + x * spaceBetweenPixels + pixelSize + 1,
@@ -166,8 +160,8 @@ public class EyesEditorScreen extends Screen {
                 }
 
                 if(displaySecondLayer) {
-                    Gui.blit(
-                            poseStack,
+                    guiGraphics.blit(
+                            Minecraft.getInstance().player.getSkinTextureLocation(),
                             headX + x * pixelSize + x * spaceBetweenPixels,
                             headY + y * pixelSize + y * spaceBetweenPixels,
                             pixelSize, pixelSize,
@@ -178,8 +172,7 @@ public class EyesEditorScreen extends Screen {
 
                     Point secondLayerPoint = new Point(x + 40, y + 8);
                     if(pixels.containsKey(secondLayerPoint)) {
-                        Gui.fill(
-                                poseStack,
+                        guiGraphics.fill(
                                 headX + x * pixelSize + x * spaceBetweenPixels - 1,
                                 headY + y * pixelSize + y * spaceBetweenPixels - 1,
                                 headX + x * pixelSize + x * spaceBetweenPixels + pixelSize + 1,
@@ -194,12 +187,12 @@ public class EyesEditorScreen extends Screen {
         if(mode == Mode.PICKER && mouseX >= headX && mouseX <= endHeadX && mouseY >= headY && mouseY <= endHeadY) {
             Color color = this.getPixelColor(mouseX, mouseY);
 
-            Gui.fill(poseStack, mouseX - 10, mouseY - 10 - 25, mouseX + 10, mouseY + 10 - 25, color.getRGB());
-            Gui.drawCenteredString(poseStack, minecraft.font, ColorType.HEX.get(color),
+            guiGraphics.fill(mouseX - 10, mouseY - 10 - 25, mouseX + 10, mouseY + 10 - 25, color.getRGB());
+            guiGraphics.drawCenteredString(minecraft.font, ColorType.HEX.get(color),
                     mouseX, mouseY - 10, 0xFFFFFF);
         }
 
-        super.render(poseStack, mouseX, mouseY, deltaTime);
+        super.render(guiGraphics, mouseX, mouseY, deltaTime);
     }
 
     @Override

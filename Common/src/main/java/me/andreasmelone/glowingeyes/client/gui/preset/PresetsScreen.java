@@ -1,8 +1,6 @@
 package me.andreasmelone.glowingeyes.client.gui.preset;
 
 import com.mojang.blaze3d.platform.GlStateManager;
-import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.PoseStack;
 import me.andreasmelone.glowingeyes.client.gui.button.PresetButton;
 import me.andreasmelone.glowingeyes.client.presets.Preset;
 import me.andreasmelone.glowingeyes.client.presets.PresetManager;
@@ -10,6 +8,7 @@ import me.andreasmelone.glowingeyes.client.util.GuiUtil;
 import me.andreasmelone.glowingeyes.client.util.TextureLocations;
 import me.andreasmelone.glowingeyes.common.component.eyes.GlowingEyesComponent;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.inventory.InventoryScreen;
@@ -202,10 +201,10 @@ public class PresetsScreen extends Screen {
     }
 
     @Override
-    public void render(PoseStack poseStack, int mouseX, int mouseY, float partialTicks) {
-        this.renderBackground(poseStack);
+    public void render(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTicks) {
+        this.renderBackground(guiGraphics);
         GuiUtil.drawBackground(
-                poseStack, TextureLocations.UI_BACKGROUND_BROAD,
+                guiGraphics, TextureLocations.UI_BACKGROUND_BROAD,
                 this.guiLeft, this.guiTop,
                 this.xSize, this.ySize
         );
@@ -217,9 +216,8 @@ public class PresetsScreen extends Screen {
 
         final int scale = 30;
 
-        RenderSystem.setShaderTexture(0, TextureLocations.UI_PLAYERBOX);
-        blit(
-                poseStack,
+        guiGraphics.blit(
+                TextureLocations.UI_PLAYERBOX,
                 this.guiLeft + this.xSize - 90 + (scale / 2), this.guiTop + 110 - (scale * 2),
                 0, 0,
                 sourceWidth, sourceHeight,
@@ -232,7 +230,7 @@ public class PresetsScreen extends Screen {
         GlStateManager._depthFunc(GL11.GL_LEQUAL);
 
         InventoryScreen.renderEntityInInventoryFollowsMouse(
-                poseStack,
+                guiGraphics,
                 this.guiLeft + this.xSize - 90 + 40,
                 this.guiTop + 110,
                 scale,
@@ -243,7 +241,7 @@ public class PresetsScreen extends Screen {
 
         GlStateManager._disableDepthTest();
 
-        super.render(poseStack, mouseX, mouseY, partialTicks);
+        super.render(guiGraphics, mouseX, mouseY, partialTicks);
     }
 
     @Override

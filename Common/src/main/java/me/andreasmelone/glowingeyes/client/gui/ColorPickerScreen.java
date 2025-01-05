@@ -1,6 +1,5 @@
 package me.andreasmelone.glowingeyes.client.gui;
 
-import com.mojang.blaze3d.vertex.PoseStack;
 import me.andreasmelone.glowingeyes.client.gui.widget.ColorPickerWidget;
 import me.andreasmelone.glowingeyes.client.gui.widget.ColorSliderWidget;
 import me.andreasmelone.glowingeyes.client.mod.ClientModContext;
@@ -9,7 +8,7 @@ import me.andreasmelone.glowingeyes.client.util.TextureLocations;
 import me.andreasmelone.glowingeyes.client.util.color.ColorType;
 import me.andreasmelone.glowingeyes.client.util.color.ColorUtil;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.Gui;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.screens.Screen;
@@ -105,24 +104,23 @@ public class ColorPickerScreen extends Screen {
     }
 
     @Override
-    public void render(PoseStack poseStack, int mouseX, int mouseY, float delta) {
+    public void render(GuiGraphics guiGraphics, int mouseX, int mouseY, float delta) {
         if(parent != null) {
-            parent.render(poseStack, mouseX, mouseY, delta);
+            parent.render(guiGraphics, mouseX, mouseY, delta);
         }
 
-        this.renderBackground(poseStack);
-        GuiUtil.drawBackground(poseStack,
+        this.renderBackground(guiGraphics);
+        GuiUtil.drawBackground(guiGraphics,
                 TextureLocations.UI_BACKGROUND_BROAD, this.guiLeft, this.guiTop, this.xSize, this.ySize);
 
         // draw the selected color on the right bottom
-        Gui.fill(
-                poseStack,
+        guiGraphics.fill(
                 this.guiLeft + this.xSize - 40, this.guiTop + this.ySize - 40,
                 this.guiLeft + this.xSize - 15, this.guiTop + this.ySize - 15,
                 mod.getModVariables().getFinalColor().getRGB()
         );
 
-        super.render(poseStack, mouseX, mouseY, delta);
+        super.render(guiGraphics, mouseX, mouseY, delta);
     }
 
     @Override
