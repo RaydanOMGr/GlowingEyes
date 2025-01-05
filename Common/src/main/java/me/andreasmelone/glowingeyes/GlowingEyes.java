@@ -9,7 +9,7 @@ import java.awt.*;
 public class GlowingEyes {
 	public static final String MOD_ID = "glowingeyes";
 	public static final String MOD_NAME = "Glowing Eyes";
-	public static final Color DEFAULT_COLOR = new Color(255, 10, 10, 210);
+	public static final Color DEFAULT_COLOR = new Color(242, 0, 0, 210);
 	public static final Scheduler SCHEDULER_SERVER = new CodeScheduler();
 	public static final Scheduler SCHEDULER_CLIENT = new CodeScheduler();
 }
