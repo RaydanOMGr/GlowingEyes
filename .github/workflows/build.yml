@@ -5,13 +5,13 @@
 # This workflow will build a Java project with Gradle and cache/restore any dependencies to improve the workflow execution time
 # For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-java-with-gradle
 
-name: Build GlowingEyes for 1.19.4 (Multiloader)
+name: Build GlowingEyes for 1.20.1 (Multiloader)
 
 on:
   push:
-    branches: [ "1.19.4" ]
+    branches: [ "1.20.1" ]
   pull_request:
-    branches: [ "1.19.4" ]
+    branches: [ "1.20.1" ]
   workflow_dispatch:
 
 jobs:
