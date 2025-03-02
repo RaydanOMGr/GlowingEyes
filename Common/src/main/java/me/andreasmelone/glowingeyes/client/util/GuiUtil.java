@@ -1,11 +1,13 @@
 package me.andreasmelone.glowingeyes.client.util;
 
-import com.mojang.blaze3d.platform.NativeImage;
+import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.components.WidgetSprites;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.FormattedCharSequence;
 
-import java.awt.*;
-import java.awt.image.BufferedImage;
+import java.util.List;
 
 public class GuiUtil {
     /**
@@ -20,19 +22,24 @@ public class GuiUtil {
         guiGraphics.blit(backgroundTexture, x, y, 0, 0, width, height, 256, 256);
     }
 
-    public static NativeImage toNativeImage(BufferedImage image) {
-        NativeImage nativeImage = new NativeImage(image.getWidth(), image.getHeight(), true);
-        for (int y = 0; y < image.getHeight(); y++) {
-            for (int x = 0; x < image.getWidth(); x++) {
-                int argb = image.getRGB(x, y);
-                // native textures use BGR instead of RGB so we have to convert the color
-                Color bgr = new Color(argb);
-                bgr = new Color(bgr.getBlue(), bgr.getGreen(), bgr.getRed());
+    public static WidgetSprites createSprites(String namespace, String location1, String location2) {
+        return new WidgetSprites(new ResourceLocation(namespace, location1), new ResourceLocation(namespace, location2));
+    }
 
-                nativeImage.setPixelRGBA(x, y, bgr.getRGB());
-            }
+    public static WidgetSprites createSprites(String namespace, String location1, String location2, String location3) {
+        return new WidgetSprites(new ResourceLocation(namespace, location1), new ResourceLocation(namespace, location2), new ResourceLocation(namespace, location3));
+    }
+
+    public static WidgetSprites createSprites(String namespace, String enabled, String disabled, String enabledHighlighted, String disabledHighlighted) {
+        return new WidgetSprites(new ResourceLocation(namespace, enabled), new ResourceLocation(namespace, disabled), new ResourceLocation(namespace, enabledHighlighted), new ResourceLocation(namespace, disabledHighlighted));
+    }
+
+    public static void drawWrappedText(GuiGraphics guiGraphics, Font font, Component text, int x, int y, int maxWidth, int color) {
+        List<FormattedCharSequence> lines = font.split(text, maxWidth);
+        int lineHeight = font.lineHeight;
+
+        for (int i = 0; i < lines.size(); i++) {
+            guiGraphics.drawCenteredString(font, lines.get(i), x, y + (i * lineHeight), color);
         }
-
-        return nativeImage;
     }
 }

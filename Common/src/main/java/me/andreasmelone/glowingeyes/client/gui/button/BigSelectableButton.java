@@ -1,12 +1,24 @@
 package me.andreasmelone.glowingeyes.client.gui.button;
 
+import me.andreasmelone.glowingeyes.GlowingEyes;
+import me.andreasmelone.glowingeyes.client.util.GuiUtil;
 import me.andreasmelone.glowingeyes.client.util.TextureLocations;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
+import net.minecraft.client.gui.components.WidgetSprites;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
 
 public class BigSelectableButton extends Button {
+    protected final WidgetSprites sprites = GuiUtil.createSprites(
+            GlowingEyes.MOD_ID,
+            "big/big_button",
+            "big/big_button_disabled",
+            "big/big_button_highlighted",
+            "big/big_button_highlighted_disabled"
+    );
+
     private boolean isSelected = false;
 
     public BigSelectableButton(int x, int y, Component buttonText, OnPress pressedAction) {
@@ -20,22 +32,11 @@ public class BigSelectableButton extends Button {
     @Override
     public void renderWidget(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTicks) {
         if(this.visible) {
-            boolean flag = mouseX >= this.getX() && mouseY >= this.getY() && mouseX < this.getX() + this.width && mouseY < this.getY() + this.height;
-
-            int i = 0;
-            if(flag) {
-                i += this.height;
-            }
-            if(isSelected) {
-                i += this.height * 2;
-            }
-
-            guiGraphics.blit(
-                    TextureLocations.BIG_BUTTON,
+            ResourceLocation sprite = this.sprites.get(!this.isSelected() && this.isActive(), this.isHoveredOrFocused());
+            guiGraphics.blitSprite(
+                    sprite,
                     this.getX(), this.getY(),
-                    0, i,
-                    128, 29,
-                    128, 128
+                    128, 29
             );
 
             Minecraft mc = Minecraft.getInstance();

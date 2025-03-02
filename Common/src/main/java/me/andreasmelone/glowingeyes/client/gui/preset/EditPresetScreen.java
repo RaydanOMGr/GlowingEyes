@@ -74,18 +74,25 @@ public class EditPresetScreen extends Screen {
 
     @Override
     public void render(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTicks) {
-        parent.render(guiGraphics, mouseX, mouseY, partialTicks);
-        this.renderBackground(guiGraphics);
+        if(parent != null) {
+            guiGraphics.pose().pushPose();
+            guiGraphics.pose().translate(0, 0, -100);
+            parent.render(guiGraphics, 0, 0, partialTicks);
+            guiGraphics.pose().popPose();
+        }
+        super.renderBackground(guiGraphics, mouseX, mouseY, partialTicks);
         GuiUtil.drawBackground(
                 guiGraphics, TextureLocations.UI_BACKGROUND_SLIM,
                 this.guiLeft, this.guiTop,
                 this.xSize, this.ySize
         );
 
-        guiGraphics.drawCenteredString(
+        GuiUtil.drawWrappedText(
+                guiGraphics,
                 this.font,
                 Component.translatable("gui.glowingeyes.edit.title"),
                 this.width / 2, this.guiTop + 10,
+                this.xSize - 14,
                 0xFFFFFF
         );
 
@@ -97,6 +104,22 @@ public class EditPresetScreen extends Screen {
 //        );
 
         super.render(guiGraphics, mouseX, mouseY, partialTicks);
+    }
+
+    @Override
+    public void onClose() {
+        if(parent != null) {
+            Minecraft.getInstance().setScreen(parent);
+            parent.init(
+                    Minecraft.getInstance(),
+                    Minecraft.getInstance().getWindow().getGuiScaledWidth(),
+                    Minecraft.getInstance().getWindow().getGuiScaledHeight()
+            );
+        }
+    }
+
+    @Override
+    public void renderBackground(GuiGraphics $$0, int $$1, int $$2, float $$3) {
     }
 
     public static CompletableFuture<String> askForName(Screen parent, String elementName) {

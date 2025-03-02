@@ -20,16 +20,15 @@ import java.util.function.Predicate;
 import java.util.function.Supplier;
 
 public class ColorPickerScreen extends Screen {
-    private final int xSize = 256;
-    private final int ySize = 222;
     private int guiLeft, guiTop;
-    
     private int colorWheelX, colorWheelY;
     private int brightnessSliderX, brightnessSliderY;
 
     private ColorPickerWidget colorPickerWidget;
     private ColorSliderWidget colorSliderWidget;
 
+    private final int xSize = 256;
+    private final int ySize = 222;
     private final Screen parent;
     private final ClientModContext mod;
     private final Map<ColorType, EditBox> editBoxMap = new EnumMap<>(ColorType.class);
@@ -106,10 +105,13 @@ public class ColorPickerScreen extends Screen {
     @Override
     public void render(GuiGraphics guiGraphics, int mouseX, int mouseY, float delta) {
         if(parent != null) {
-            parent.render(guiGraphics, mouseX, mouseY, delta);
+            guiGraphics.pose().pushPose();
+            guiGraphics.pose().translate(0, 0, -10000);
+            parent.render(guiGraphics, 0, 0, delta);
+            guiGraphics.pose().popPose();
         }
 
-        this.renderBackground(guiGraphics);
+        super.renderBackground(guiGraphics, mouseX, mouseY, delta);
         GuiUtil.drawBackground(guiGraphics,
                 TextureLocations.UI_BACKGROUND_BROAD, this.guiLeft, this.guiTop, this.xSize, this.ySize);
 
@@ -138,6 +140,10 @@ public class ColorPickerScreen extends Screen {
                     Minecraft.getInstance().getWindow().getGuiScaledHeight()
             );
         }
+    }
+
+    @Override
+    public void renderBackground(GuiGraphics $$0, int $$1, int $$2, float $$3) {
     }
 
     private void changeColor(float hue, float saturation, float brightness) {

@@ -2,8 +2,7 @@ package me.andreasmelone.glowingeyes.client.mod;
 
 import me.andreasmelone.glowingeyes.GlowingEyes;
 import me.andreasmelone.glowingeyes.client.util.color.ColorUtil;
-
-import java.awt.*;
+import me.andreasmelone.glowingeyes.common.util.Color;
 
 public class ClientModVariables {
     private float hue = (float) ColorUtil.getHueFromRGB(

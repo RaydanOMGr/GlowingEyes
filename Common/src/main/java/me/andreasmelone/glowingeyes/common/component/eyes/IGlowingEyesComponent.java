@@ -1,9 +1,10 @@
 package me.andreasmelone.glowingeyes.common.component.eyes;
 
+import me.andreasmelone.glowingeyes.common.util.Color;
+import me.andreasmelone.glowingeyes.common.util.Point;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
 
-import java.awt.*;
 import java.util.Map;
 
 public interface IGlowingEyesComponent {
