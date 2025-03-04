@@ -1,5 +1,6 @@
 package me.andreasmelone.glowingeyes.client.util;
 
+import me.andreasmelone.glowingeyes.common.util.Util;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.WidgetSprites;
@@ -23,15 +24,15 @@ public class GuiUtil {
     }
 
     public static WidgetSprites createSprites(String namespace, String location1, String location2) {
-        return new WidgetSprites(new ResourceLocation(namespace, location1), new ResourceLocation(namespace, location2));
+        return new WidgetSprites(Util.id(namespace, location1), Util.id(namespace, location2));
     }
 
     public static WidgetSprites createSprites(String namespace, String location1, String location2, String location3) {
-        return new WidgetSprites(new ResourceLocation(namespace, location1), new ResourceLocation(namespace, location2), new ResourceLocation(namespace, location3));
+        return new WidgetSprites(Util.id(namespace, location1), Util.id(namespace, location2), Util.id(namespace, location3));
     }
 
     public static WidgetSprites createSprites(String namespace, String enabled, String disabled, String enabledHighlighted, String disabledHighlighted) {
-        return new WidgetSprites(new ResourceLocation(namespace, enabled), new ResourceLocation(namespace, disabled), new ResourceLocation(namespace, enabledHighlighted), new ResourceLocation(namespace, disabledHighlighted));
+        return new WidgetSprites(Util.id(namespace, enabled), Util.id(namespace, disabled), Util.id(namespace, enabledHighlighted), Util.id(namespace, disabledHighlighted));
     }
 
     public static void drawWrappedText(GuiGraphics guiGraphics, Font font, Component text, int x, int y, int maxWidth, int color) {

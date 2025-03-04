@@ -1,6 +1,5 @@
 package me.andreasmelone.glowingeyes.neoforge.common.component.eyes;
 
-import java.io.Serializable;
 import java.util.Map;
 
 import me.andreasmelone.glowingeyes.common.util.Point;

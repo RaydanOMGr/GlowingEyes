@@ -9,11 +9,14 @@ import com.mojang.serialization.JsonOps;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtOps;
 import net.minecraft.nbt.Tag;
+import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.resources.ResourceLocation;
 
 import java.io.*;
 import java.util.LinkedHashMap;
 import java.util.Locale;
 import java.util.Map;
+import java.util.function.Supplier;
 
 public class Util {
     private static final Gson GSON = new Gson();
@@ -90,5 +93,23 @@ public class Util {
 
     public static String sanitizeForId(String name) {
         return name.toLowerCase(Locale.ROOT).replaceAll("[^a-z0-9_]", "_");
+    }
+
+    public static ResourceLocation id(String namespace, String path) {
+        return ResourceLocation.fromNamespaceAndPath(namespace, path);
+    }
+
+    public static <T, U> StreamCodec<T, U> emptyStreamCodec(Supplier<U> constructor) {
+        return new StreamCodec<T, U>() {
+            @Override
+            public U decode(T t) {
+                return constructor.get();
+            }
+
+            @Override
+            public void encode(T o, U u) {
+
+            }
+        };
     }
 }

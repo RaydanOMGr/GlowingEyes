@@ -1,17 +1,17 @@
 package me.andreasmelone.glowingeyes.fabric.common.component;
 
 import com.mojang.logging.LogUtils;
-import dev.onyxstudios.cca.api.v3.component.ComponentKey;
-import dev.onyxstudios.cca.api.v3.component.ComponentRegistry;
-import dev.onyxstudios.cca.api.v3.entity.EntityComponentFactoryRegistry;
-import dev.onyxstudios.cca.api.v3.entity.EntityComponentInitializer;
-import dev.onyxstudios.cca.api.v3.entity.RespawnCopyStrategy;
 import me.andreasmelone.glowingeyes.common.component.data.PlayerDataComponent;
 import me.andreasmelone.glowingeyes.common.component.eyes.GlowingEyesComponent;
 import me.andreasmelone.glowingeyes.fabric.common.component.eyes.IGlowingEyes;
 import me.andreasmelone.glowingeyes.fabric.common.component.data.IPlayerData;
 import me.andreasmelone.glowingeyes.fabric.common.component.data.PlayerDataImpl;
 import me.andreasmelone.glowingeyes.fabric.common.component.eyes.GlowingEyesImpl;
+import org.ladysnake.cca.api.v3.component.ComponentKey;
+import org.ladysnake.cca.api.v3.component.ComponentRegistry;
+import org.ladysnake.cca.api.v3.entity.EntityComponentFactoryRegistry;
+import org.ladysnake.cca.api.v3.entity.EntityComponentInitializer;
+import org.ladysnake.cca.api.v3.entity.RespawnCopyStrategy;
 
 public class ComponentHandler implements EntityComponentInitializer {
     public static final ComponentKey<IGlowingEyes> GLOWING_EYES =

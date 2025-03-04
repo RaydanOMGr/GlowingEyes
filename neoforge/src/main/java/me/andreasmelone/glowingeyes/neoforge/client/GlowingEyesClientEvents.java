@@ -10,7 +10,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.world.entity.player.Player;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.neoforge.client.event.ClientPlayerNetworkEvent;
-import net.neoforged.neoforge.event.TickEvent;
+import net.neoforged.neoforge.client.event.ClientTickEvent;
 
 public class GlowingEyesClientEvents {
     private final ClientModContext mod;
@@ -20,20 +20,18 @@ public class GlowingEyesClientEvents {
     }
 
     @SubscribeEvent
-    public void onClientTick(TickEvent.ClientTickEvent event) {
-        if (event.phase == TickEvent.Phase.END) {
-            GlowingEyes.SCHEDULER_CLIENT.tick();
+    public void onClientTick(ClientTickEvent event) {
+        GlowingEyes.SCHEDULER_CLIENT.tick();
 
-            Player player = Minecraft.getInstance().player;
-            if (player == null) return;
+        Player player = Minecraft.getInstance().player;
+        if (player == null) return;
 
-            while (GlowingEyesKeybindings.TOGGLE_MAPPING.consumeClick()) {
-                GlowingEyesComponent.setToggledOn(player, !GlowingEyesComponent.isToggledOn(player));
-            }
-            while (GlowingEyesKeybindings.EYES_EDITOR_MAPPING.consumeClick()) {
-                if (Minecraft.getInstance().screen != null) return;
-                Minecraft.getInstance().setScreen(new EyesEditorScreen(mod));
-            }
+        while (GlowingEyesKeybindings.TOGGLE_MAPPING.consumeClick()) {
+            GlowingEyesComponent.setToggledOn(player, !GlowingEyesComponent.isToggledOn(player));
+        }
+        while (GlowingEyesKeybindings.EYES_EDITOR_MAPPING.consumeClick()) {
+            if (Minecraft.getInstance().screen != null) return;
+            Minecraft.getInstance().setScreen(new EyesEditorScreen(mod));
         }
     }
 

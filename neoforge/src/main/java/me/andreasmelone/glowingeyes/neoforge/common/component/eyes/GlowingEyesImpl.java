@@ -4,6 +4,7 @@ import com.mojang.logging.LogUtils;
 import me.andreasmelone.glowingeyes.common.util.Color;
 import me.andreasmelone.glowingeyes.common.util.Point;
 import me.andreasmelone.glowingeyes.common.util.Util;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.ByteArrayTag;
 import net.minecraft.nbt.CompoundTag;
 import org.slf4j.Logger;
@@ -40,7 +41,7 @@ public class GlowingEyesImpl implements IGlowingEyes {
     }
 
     @Override
-    public CompoundTag serializeNBT() {
+    public CompoundTag serializeNBT(HolderLookup.Provider provider) {
         CompoundTag tag = new CompoundTag();
         tag.putBoolean("toggledOn", isToggledOn());
         tag.put("glowingEyesMap", Util.toCompoundTag(Point.CODEC_STRING, Color.CODEC, getGlowingEyesMap()));
@@ -48,7 +49,7 @@ public class GlowingEyesImpl implements IGlowingEyes {
     }
 
     @Override
-    public void deserializeNBT(CompoundTag compoundTag) {
+    public void deserializeNBT(HolderLookup.Provider provider, CompoundTag compoundTag) {
         setToggledOn(compoundTag.getBoolean("toggledOn"));
         if (compoundTag.get("glowingEyesMap") instanceof ByteArrayTag) {
             setGlowingEyesMap(new HashMap<>());

@@ -1,8 +1,8 @@
 package me.andreasmelone.glowingeyes.fabric.common.component.eyes;
 
-import dev.onyxstudios.cca.api.v3.component.Component;
 import me.andreasmelone.glowingeyes.common.util.Color;
 import me.andreasmelone.glowingeyes.common.util.Point;
+import org.ladysnake.cca.api.v3.component.Component;
 
 import java.util.Map;
 

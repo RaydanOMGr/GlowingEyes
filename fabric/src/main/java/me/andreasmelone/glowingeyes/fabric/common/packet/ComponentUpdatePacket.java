@@ -19,7 +19,7 @@ import net.minecraft.world.entity.player.Player;
 import java.util.UUID;
 
 public class ComponentUpdatePacket {
-    public static final ResourceLocation ID = new ResourceLocation(GlowingEyes.MOD_ID, "capability_update");
+    public static final ResourceLocation ID = Util.id(GlowingEyes.MOD_ID, "capability_update");
 
     UUID playerUUID;
     Player player;

@@ -1,46 +1,53 @@
 package me.andreasmelone.glowingeyes.neoforge.common.packets;
 
+import io.netty.buffer.ByteBuf;
 import me.andreasmelone.glowingeyes.common.component.eyes.GlowingEyesComponent;
 import me.andreasmelone.glowingeyes.neoforge.common.component.eyes.GlowingEyesImpl;
 import me.andreasmelone.glowingeyes.neoforge.common.component.eyes.IGlowingEyes;
 import me.andreasmelone.glowingeyes.common.util.Util;
 import net.minecraft.client.Minecraft;
-import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
-import net.neoforged.neoforge.network.handling.PlayPayloadContext;
-import org.jetbrains.annotations.NotNull;
+import net.neoforged.neoforge.network.handling.IPayloadContext;
 
 import java.util.List;
 import java.util.UUID;
 
 public record ComponentUpdatePacket(UUID playerUUID, IGlowingEyes capability) implements CustomPacketPayload {
-    public static final ResourceLocation ID = new ResourceLocation("glowingeyes", "component_update");
+    public static final Type<ComponentUpdatePacket> TYPE = new Type<>(Util.id("glowingeyes", "component_update"));
+    public static final StreamCodec<ByteBuf, ComponentUpdatePacket> STREAM_CODEC = new StreamCodec<>() {
+        @Override
+        public ComponentUpdatePacket decode(ByteBuf buffer) {
+            long msb = buffer.readLong();
+            long lsb = buffer.readLong();
+            UUID uuid = new UUID(msb, lsb);
+            IGlowingEyes capability = new GlowingEyesImpl();
+            capability.setToggledOn(buffer.readBoolean());
+            int length = buffer.readInt();
+            capability.setGlowingEyesMap(Util.deserializeMap(buffer.readBytes(length).array()));
+            return new ComponentUpdatePacket(uuid, capability);
+        }
 
-    public static ComponentUpdatePacket read(FriendlyByteBuf buffer) {
-        UUID uuid = buffer.readUUID();
-        IGlowingEyes capability = new GlowingEyesImpl();
-        capability.setToggledOn(buffer.readBoolean());
-        capability.setGlowingEyesMap(Util.deserializeMap(buffer.readByteArray()));
-        return new ComponentUpdatePacket(uuid, capability);
-    }
+        @Override
+        public void encode(ByteBuf buffer, ComponentUpdatePacket componentUpdatePacket) {
+            buffer.writeLong(componentUpdatePacket.playerUUID.getMostSignificantBits());
+            buffer.writeLong(componentUpdatePacket.playerUUID.getLeastSignificantBits());
+            buffer.writeBoolean(componentUpdatePacket.capability.isToggledOn());
+            byte[] array = Util.serializeMap(componentUpdatePacket.capability.getGlowingEyesMap());
+            buffer.writeInt(array.length);
+            buffer.writeBytes(array);
+        }
+    };
 
     @Override
-    public void write(FriendlyByteBuf buffer) {
-        buffer.writeUUID(playerUUID);
-        buffer.writeBoolean(capability.isToggledOn());
-        buffer.writeByteArray(Util.serializeMap(capability.getGlowingEyesMap()));
+    public Type<? extends CustomPacketPayload> type() {
+        return TYPE;
     }
 
-    @Override
-    public @NotNull ResourceLocation id() {
-        return ID;
-    }
-
-    public void handle(PlayPayloadContext context) {
-        context.workHandler().execute(() -> {
+    public void handle(IPayloadContext context) {
+        context.enqueueWork(() -> {
             if (context.flow().isClientbound()) {
                 Player player = Minecraft.getInstance().level.getPlayerByUUID(playerUUID);
                 if (player != null) {
@@ -48,7 +55,7 @@ public record ComponentUpdatePacket(UUID playerUUID, IGlowingEyes capability) im
                     GlowingEyesComponent.setToggledOn(player, capability.isToggledOn());
                 }
             } else {
-                Player sender = context.player().get();
+                Player sender = context.player();
                 if (!sender.getUUID().equals(playerUUID)) return;
 
                 GlowingEyesComponent.setGlowingEyesMap(sender, capability.getGlowingEyesMap());

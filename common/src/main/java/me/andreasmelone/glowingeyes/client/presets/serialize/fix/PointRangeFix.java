@@ -10,7 +10,6 @@ import com.mojang.datafixers.util.Pair;
 import com.mojang.logging.LogUtils;
 import com.mojang.serialization.Dynamic;
 import com.mojang.serialization.JsonOps;
-import me.andreasmelone.glowingeyes.client.presets.serialize.GlowingEyesCodecs;
 import me.andreasmelone.glowingeyes.client.presets.serialize.GlowingEyesReferences;
 import me.andreasmelone.glowingeyes.common.util.Point;
 import org.slf4j.Logger;

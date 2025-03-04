@@ -6,6 +6,7 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 import me.andreasmelone.glowingeyes.GlowingEyes;
 import me.andreasmelone.glowingeyes.common.util.Color;
 import me.andreasmelone.glowingeyes.common.util.Point;
+import me.andreasmelone.glowingeyes.common.util.Util;
 import net.minecraft.resources.ResourceLocation;
 
 import java.util.HashMap;
@@ -69,7 +70,7 @@ public class Preset {
 
     private static ResourceLocation convertId(String name, Either<Integer, ResourceLocation> idEither) {
         return idEither.map(
-                id -> new ResourceLocation(GlowingEyes.MOD_ID, name.toLowerCase().replace(" ", "_")),
+                id -> Util.id(GlowingEyes.MOD_ID, name.toLowerCase().replace(" ", "_")),
                 resourceLocation -> resourceLocation
         );
     }

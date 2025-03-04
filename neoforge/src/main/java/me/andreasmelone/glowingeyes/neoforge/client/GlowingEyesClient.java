@@ -11,13 +11,13 @@ import me.andreasmelone.glowingeyes.neoforge.client.component.data.ClientPlayerD
 import me.andreasmelone.glowingeyes.neoforge.client.component.eyes.ClientGlowingEyesComponentImpl;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
-import net.neoforged.fml.common.Mod;
+import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
 import net.neoforged.neoforge.client.event.RegisterKeyMappingsEvent;
 import net.neoforged.neoforge.common.NeoForge;
 import org.slf4j.Logger;
 
-@Mod.EventBusSubscriber(modid = GlowingEyes.MOD_ID, bus = Mod.EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
+@EventBusSubscriber(modid = GlowingEyes.MOD_ID, bus = EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
 public class GlowingEyesClient implements ClientModContext {
     private static final Logger LOGGER = LogUtils.getLogger();
     private final ClientModVariables variables = new ClientModVariables();

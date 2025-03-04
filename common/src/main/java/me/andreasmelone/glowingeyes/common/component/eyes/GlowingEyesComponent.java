@@ -3,6 +3,7 @@ package me.andreasmelone.glowingeyes.common.component.eyes;
 import me.andreasmelone.glowingeyes.GlowingEyes;
 import me.andreasmelone.glowingeyes.common.util.Color;
 import me.andreasmelone.glowingeyes.common.util.Point;
+import me.andreasmelone.glowingeyes.common.util.Util;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
@@ -10,7 +11,7 @@ import net.minecraft.world.entity.player.Player;
 import java.util.Map;
 
 public class GlowingEyesComponent {
-    public static final ResourceLocation IDENTIFIER = new ResourceLocation(GlowingEyes.MOD_ID, "glowingeyes");
+    public static final ResourceLocation IDENTIFIER = Util.id(GlowingEyes.MOD_ID, "glowingeyes");
     private static IGlowingEyesComponent instance;
 
     /**

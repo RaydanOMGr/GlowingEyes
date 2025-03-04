@@ -14,6 +14,7 @@ java {
 }
 
 repositories {
+    mavenLocal()
     mavenCentral()
     // https://docs.gradle.org/current/userguide/declaring_repositories.html#declaring_content_exclusively_found_in_one_repository
     exclusiveContent {
@@ -23,23 +24,7 @@ repositories {
                 url = 'https://repo.spongepowered.org/repository/maven-public'
             }
         }
-        filter { includeGroupAndSubgroups("org.spongepowered") }
-    }
-    maven {
-        name = 'BlameJared'
-        url = 'https://maven.blamejared.com'
-    }
-    maven {
-        name = "Ladysnake Mods"
-        url = 'https://maven.ladysnake.org/releases'
-    }
-    maven {
-        name = 'ParchmentMC'
-        url = 'https://maven.parchmentmc.org'
-    }
-    maven {
-        name "radRepo"
-        url "https://maven.radsteve.net/public"
+        filter {includeGroupAndSubgroups("org.spongepowered") }
     }
     exclusiveContent {
         forRepository {
@@ -51,16 +36,29 @@ repositories {
             includeGroup "curse.maven"
         }
     }
-}
-
-dependencies {
-    implementation 'org.jetbrains:annotations:24.1.0'
+    maven {
+        name "radRepo"
+        url "https://maven.radsteve.net/public"
+    }
+    maven {
+        name = 'BlameJared'
+        url = 'https://maven.blamejared.com'
+    }
+    maven {
+        name = 'ParchmentMC'
+        url = 'https://maven.parchmentmc.org'
+    }
+    maven {
+        name = "Ladysnake Mods"
+        url = 'https://maven.ladysnake.org/releases'
+    }
 }
 
 // Declare capabilities on the outgoing configurations.
 // Read more about capabilities here: https://docs.gradle.org/current/userguide/component_capabilities.html#sec:declaring-additional-capabilities-for-a-local-component
 ['apiElements', 'runtimeElements', 'sourcesElements', 'javadocElements'].each { variant ->
     configurations."$variant".outgoing {
+        capability("$group:${base.archivesName.get()}:$version")
         capability("$group:$mod_id-${project.name}-${minecraft_version}:$version")
         capability("$group:$mod_id:$version")
     }
@@ -70,13 +68,13 @@ dependencies {
 }
 
 sourcesJar {
-    from(rootProject.file("LICENSE")) {
+    from(rootProject.file('LICENSE')) {
         rename { "${it}_${mod_name}" }
     }
 }
 
 jar {
-    from(rootProject.file("LICENSE")) {
+    from(rootProject.file('LICENSE')) {
         rename { "${it}_${mod_name}" }
     }
 
@@ -94,30 +92,25 @@ jar {
 }
 
 processResources {
-    def expandProps = [
-            "version": version,
-            "group": project.group, //Else we target the task's group.
-            "minecraft_version": minecraft_version,
-            "minecraft_version_range": minecraft_version_range,
-            "fabric_version": fabric_version,
-            "fabric_loader_version": fabric_loader_version,
-            "mod_name": mod_name,
-            "mod_author": mod_author,
-            "mod_id": mod_id,
-            "license": license,
-            "description": project.description,
-            "neoforge_version": neoforge_version,
-            "neoforge_loader_version_range": neoforge_loader_version_range,
-            "credits": credits,
-            "java_version": java_version
+    var expandProps = [
+            'version'                      : version,
+            'group'                        : project.group, //Else we target the task's group.
+            'minecraft_version'            : minecraft_version,
+            'minecraft_version_range'      : minecraft_version_range,
+            'fabric_version'               : fabric_version,
+            'fabric_loader_version'        : fabric_loader_version,
+            'mod_name'                     : mod_name,
+            'mod_author'                   : mod_author,
+            'mod_id'                       : mod_id,
+            'license'                      : license,
+            'description'                  : project.description,
+            'neoforge_version'             : neoforge_version,
+            'neoforge_loader_version_range': neoforge_loader_version_range,
+            "forge_version": forge_version,
+            "forge_loader_version_range": forge_loader_version_range,
+            'credits'                      : credits,
+            'java_version'                 : java_version
     ]
-
-    expandProps.each { key, value ->
-        println "${key}: ${value} (${value.getClass().getSimpleName()})"
-        if (value == null) {
-            throw new GradleException("Missing property for Groovy template expansion: ${key}")
-        }
-    }
 
     filesMatching(['pack.mcmeta', 'fabric.mod.json', 'META-INF/mods.toml', 'META-INF/neoforge.mods.toml', '*.mixins.json']) {
         expand expandProps
@@ -134,7 +127,7 @@ publishing {
     }
     repositories {
         maven {
-            url System.getenv("local_maven_url")
+            url System.getenv('local_maven_url')
         }
     }
 }

@@ -192,7 +192,7 @@ public class PresetManager {
     private int addPreset(Preset preset, int number) {
         ResourceLocation id = preset.getId();
         if (number > 0) {
-            id = new ResourceLocation(preset.getId().getNamespace(), preset.getId().getPath() + "_" + number);
+            id = Util.id(preset.getId().getNamespace(), preset.getId().getPath() + "_" + number);
         }
         if (presets.get(id) != null) {
             return addPreset(preset, number + 1);
@@ -203,7 +203,7 @@ public class PresetManager {
     }
 
     public int createPreset(String name, Map<Point, Color> content) {
-        return this.createPreset(name, content, new ResourceLocation(GlowingEyes.MOD_ID, "preset_" + Util.sanitizeForId(name)));
+        return this.createPreset(name, content, Util.id(GlowingEyes.MOD_ID, "preset_" + Util.sanitizeForId(name)));
     }
 
     public int createPreset(String name, Map<Point, Color> content, ResourceLocation id) {
@@ -246,6 +246,6 @@ public class PresetManager {
         builder.addFixer(new PointRangeFix(schemaV2, true));
         Schema schemaV3 = builder.addSchema(3, same);
 
-        return builder.buildUnoptimized();
+        return builder.build().fixer();
     }
 }

@@ -1,6 +1,5 @@
 package me.andreasmelone.glowingeyes.client.gui.preset;
 
-import com.mojang.blaze3d.platform.GlStateManager;
 import me.andreasmelone.glowingeyes.client.gui.button.PresetButton;
 import me.andreasmelone.glowingeyes.client.presets.Preset;
 import me.andreasmelone.glowingeyes.client.presets.PresetManager;
@@ -17,7 +16,6 @@ import net.minecraft.client.gui.screens.inventory.InventoryScreen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import org.lwjgl.glfw.GLFW;
-import org.lwjgl.opengl.GL11;
 
 import java.util.ArrayList;
 import java.util.List;
