@@ -20,7 +20,7 @@ public class GlowingEyesClientEvents {
     }
 
     @SubscribeEvent
-    public void onClientTick(ClientTickEvent event) {
+    public void onClientTick(ClientTickEvent.Pre event) {
         GlowingEyes.SCHEDULER_CLIENT.tick();
 
         Player player = Minecraft.getInstance().player;

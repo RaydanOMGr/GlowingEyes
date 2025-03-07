@@ -26,7 +26,7 @@ public record ComponentUpdatePacket(UUID playerUUID, IGlowingEyes capability) im
             IGlowingEyes capability = new GlowingEyesImpl();
             capability.setToggledOn(buffer.readBoolean());
             int length = buffer.readInt();
-            capability.setGlowingEyesMap(Util.deserializeMap(buffer.readBytes(length).array()));
+            capability.setGlowingEyesMap(Util.deserializeMap(Util.toByteArray(buffer.readBytes(length))));
             return new ComponentUpdatePacket(uuid, capability);
         }
 

@@ -4,6 +4,7 @@ import me.andreasmelone.glowingeyes.common.util.Util;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.WidgetSprites;
+import net.minecraft.client.renderer.RenderType;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.FormattedCharSequence;
@@ -20,7 +21,7 @@ public class GuiUtil {
      */
     public static void drawBackground(GuiGraphics guiGraphics, ResourceLocation backgroundTexture, int x, int y, int width, int height) {
         // Draw the background texture
-        guiGraphics.blit(backgroundTexture, x, y, 0, 0, width, height, 256, 256);
+        guiGraphics.blit(RenderType::guiTextured, backgroundTexture, x, y, 0, 0, width, height, 256, 256);
     }
 
     public static WidgetSprites createSprites(String namespace, String location1, String location2) {

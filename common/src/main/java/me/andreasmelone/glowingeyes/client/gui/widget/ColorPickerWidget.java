@@ -4,11 +4,14 @@ import com.mojang.blaze3d.platform.NativeImage;
 import me.andreasmelone.glowingeyes.GlowingEyes;
 import me.andreasmelone.glowingeyes.client.util.TextureLocations;
 import me.andreasmelone.glowingeyes.client.util.color.ColorUtil;
+import me.andreasmelone.glowingeyes.common.util.Color;
+import me.andreasmelone.glowingeyes.common.util.Util;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
+import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.texture.DynamicTexture;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
@@ -30,11 +33,14 @@ public class ColorPickerWidget extends AbstractWidget implements GuiEventListene
                              float brightness, float saturation) {
         super(x, y, width, height, Component.empty());
         this.hue = hue;
+        this.brightness = brightness;
+        this.saturation = saturation;
     }
 
     @Override
     public void renderWidget(@NotNull GuiGraphics guiGraphics, int mouseX, int mouseY, float deltaTime) {
         guiGraphics.blit(
+                RenderType::guiTextured,
                 getColorSquareTexture(),
                 getX(), getY(),
                 0, 0,
@@ -43,6 +49,7 @@ public class ColorPickerWidget extends AbstractWidget implements GuiEventListene
         );
 
         guiGraphics.blit(
+                RenderType::guiTextured,
                 TextureLocations.CURSOR,
                 (int) (getCursorX() - 5 + (2 * (1.0f - this.saturation))),
                 (int) (getCursorY() - 5 + (2 * (this.brightness))),
@@ -150,7 +157,8 @@ public class ColorPickerWidget extends AbstractWidget implements GuiEventListene
                 float saturation = (float) x / this.width;
                 float brightness = 1.0f - (float) y / this.height;
 
-                image.setPixelRGBA(x, y, ColorUtil.HSBtoBGR(hue, saturation, brightness));
+                Color color = new Color(ColorUtil.HSBtoBGR(hue, saturation, brightness));
+                image.setPixel(x, y, new Color(color.getBlue(), color.getGreen(), color.getRed()).getRGB());
             }
         }
 
@@ -160,8 +168,9 @@ public class ColorPickerWidget extends AbstractWidget implements GuiEventListene
     private ResourceLocation getColorSquareTexture() {
         if(colorSquareTexture == null) {
             NativeImage image = createColorGradientImage();
-            colorSquareTexture = Minecraft.getInstance().getTextureManager().register(
-                    GlowingEyes.MOD_ID + "_color_square",
+            colorSquareTexture = Util.id(GlowingEyes.MOD_ID,  "color_square");
+            Minecraft.getInstance().getTextureManager().register(
+                    colorSquareTexture,
                     new DynamicTexture(image)
             );
         }

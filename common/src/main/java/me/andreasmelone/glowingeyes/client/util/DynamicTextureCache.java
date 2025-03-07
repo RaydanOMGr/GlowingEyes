@@ -4,6 +4,7 @@ import com.mojang.blaze3d.platform.NativeImage;
 import me.andreasmelone.glowingeyes.GlowingEyes;
 import me.andreasmelone.glowingeyes.common.util.Color;
 import me.andreasmelone.glowingeyes.common.util.Point;
+import me.andreasmelone.glowingeyes.common.util.Util;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.texture.DynamicTexture;
 import net.minecraft.resources.ResourceLocation;
@@ -41,12 +42,14 @@ public class DynamicTextureCache {
         for (Map.Entry<Point, Color> entry : glowingEyesMap.entrySet()) {
             Point point = entry.getKey();
             Color color = entry.getValue();
-            image.setPixelRGBA(point.getX(), point.getY(), new Color(color.getBlue(), color.getGreen(), color.getRed(), color.getAlpha()).getRGB());
+            image.setPixel(point.getX(), point.getY(), color.getRGB());
         }
 
-        return Minecraft.getInstance().getTextureManager().register(
-                GlowingEyes.MOD_ID + "_dyntex_" + UUID.randomUUID(),
+        ResourceLocation id = Util.id(GlowingEyes.MOD_ID, "dyntex_" + UUID.randomUUID());
+        Minecraft.getInstance().getTextureManager().register(
+                id,
                 new DynamicTexture(image)
         );
+        return id;
     }
 }

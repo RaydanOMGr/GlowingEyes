@@ -4,11 +4,14 @@ import com.mojang.blaze3d.platform.NativeImage;
 import me.andreasmelone.glowingeyes.GlowingEyes;
 import me.andreasmelone.glowingeyes.client.util.TextureLocations;
 import me.andreasmelone.glowingeyes.client.util.color.ColorUtil;
+import me.andreasmelone.glowingeyes.common.util.Color;
+import me.andreasmelone.glowingeyes.common.util.Util;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
+import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.texture.DynamicTexture;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
@@ -32,6 +35,7 @@ public class ColorSliderWidget extends AbstractWidget implements GuiEventListene
     @Override
     public void renderWidget(@NotNull GuiGraphics guiGraphics, int mouseX, int mouseY, float deltaTime) {
         guiGraphics.blit(
+                RenderType::guiTextured,
                 getColorSliderTexture(),
                 getX(), getY(),
                 0, 0,
@@ -40,10 +44,11 @@ public class ColorSliderWidget extends AbstractWidget implements GuiEventListene
         );
 
         guiGraphics.blit(
+                RenderType::guiTextured,
                 TextureLocations.BRIGHTNESS_CURSOR,
                 getX() - (2 * (width / 16)), (int) (getCursor() - ((2 + (1 - 2) * this.hue) * ((float) width / 16))),
-                width + (4 * (width / 16)), height / 3,
                 0, 0,
+                width + (4 * (width / 16)), height / 3,
                 16, 16,
                 16, 16
         );
@@ -58,10 +63,8 @@ public class ColorSliderWidget extends AbstractWidget implements GuiEventListene
 
     @Override
     public boolean mouseDragged(double mouseX, double mouseY, int button, double dragX, double dragY) {
-        if(mouseY >= getY() && mouseY <= getY() + height) {
-            this.setCursor((int) mouseY);
-            triggerChange();
-        }
+        this.setCursor(Math.clamp((int) mouseY, this.getY(), this.getY() + this.height));
+        triggerChange();
 
         return super.mouseDragged(mouseX, mouseY, button, dragX, dragY);
     }
@@ -101,7 +104,9 @@ public class ColorSliderWidget extends AbstractWidget implements GuiEventListene
         for(int y = 0; y < height; y++) {
             for(int x = 0; x < width; x++) {
                 float ratioY = 1.0f - ((float) y / height);
-                image.setPixelRGBA(x, y, ColorUtil.HSBtoBGR(ratioY, 1.0f, 1.0f));
+
+                Color color = new Color(ColorUtil.HSBtoBGR(ratioY, 1.0f, 1.0f));
+                image.setPixel(x, y, new Color(color.getBlue(), color.getGreen(), color.getRed()).getRGB());
             }
         }
         return image;
@@ -110,8 +115,9 @@ public class ColorSliderWidget extends AbstractWidget implements GuiEventListene
     private ResourceLocation getColorSliderTexture() {
         if(colorSliderTexture == null) {
             NativeImage image = createColorSliderTexture();
-            colorSliderTexture = Minecraft.getInstance().getTextureManager().register(
-                    GlowingEyes.MOD_ID + "_color_slider",
+            colorSliderTexture = Util.id(GlowingEyes.MOD_ID, "color_slider");
+            Minecraft.getInstance().getTextureManager().register(
+                    colorSliderTexture,
                     new DynamicTexture(image)
             );
         }

@@ -13,6 +13,7 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.inventory.InventoryScreen;
+import net.minecraft.client.renderer.RenderType;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import org.lwjgl.glfw.GLFW;
@@ -224,15 +225,15 @@ public class PresetsScreen extends Screen {
         final int middleY = y + (finalHeight / 2);
 
         guiGraphics.blit(
+                RenderType::guiTextured,
                 TextureLocations.UI_PLAYERBOX,
                 x, y,
-                finalWidth, finalHeight,
                 0, 0,
+                finalWidth, finalHeight,
                 sourceWidth, sourceHeight,
                 64, 64
         );
 
-        // account for the preset menu and draw it below an already rendered texture
         InventoryScreen.renderEntityInInventoryFollowsMouse(
                 guiGraphics,
                 x, // x1

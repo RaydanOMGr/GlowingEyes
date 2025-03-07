@@ -6,6 +6,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.WidgetSprites;
+import net.minecraft.client.renderer.RenderType;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 
@@ -33,6 +34,7 @@ public class BigSelectableButton extends Button {
         if(this.visible) {
             ResourceLocation sprite = this.sprites.get(!this.isSelected() && this.isActive(), this.isHoveredOrFocused());
             guiGraphics.blitSprite(
+                    RenderType::guiTextured,
                     sprite,
                     this.getX(), this.getY(),
                     128, 29

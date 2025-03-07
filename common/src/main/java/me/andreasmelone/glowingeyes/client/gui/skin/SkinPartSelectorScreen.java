@@ -7,6 +7,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.renderer.RenderType;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 
@@ -106,10 +107,11 @@ public class SkinPartSelectorScreen extends Screen {
         );
 
         guiGraphics.blit(
+                RenderType::guiTextured,
                 skinTexture,
                 xCenter, yCenter,
-                maxTextureWidth, maxTextureHeight,
                 0, 0,
+                maxTextureWidth, maxTextureHeight,
                 64, SkinPart.getRowY(rows),
                 64, 64
         );

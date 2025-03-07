@@ -20,6 +20,7 @@ import net.minecraft.client.gui.components.ImageButton;
 import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.client.gui.components.WidgetSprites;
 import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.renderer.RenderType;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Player;
 import org.lwjgl.opengl.GL;
@@ -152,11 +153,12 @@ public class EyesEditorScreen extends Screen {
             for (int x = 0; x < headSize; x++) {
                 Point point = new Point(x + selected.getX(), y + selected.getY());
                 guiGraphics.blit(
+                        RenderType::guiTextured,
                         Minecraft.getInstance().player.getSkin().texture(),
                         headX + x * pixelSize + x * spaceBetweenPixels,
                         headY + y * pixelSize + y * spaceBetweenPixels,
-                        pixelSize, pixelSize,
                         selected.getX() + x, selected.getY() + y,
+                        pixelSize, pixelSize,
                         1, 1,
                         64, 64
                 );

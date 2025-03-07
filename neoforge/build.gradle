@@ -21,9 +21,11 @@ neoForge {
         }
         client {
             client()
+            programArgument "--username AndreasMelone"
+            programArgument "--uuid 7f6708c5-5820-4550-a24a-2c123566d052"
         }
         data {
-            data()
+            clientData()
         }
         server {
             server()

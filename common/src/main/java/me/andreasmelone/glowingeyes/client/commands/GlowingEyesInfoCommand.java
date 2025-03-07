@@ -29,16 +29,16 @@ public class GlowingEyesInfoCommand<T extends SharedSuggestionProvider> extends 
             Color finalColor = mod.getModVariables().getFinalColor();
             boolean toggledOn = GlowingEyesComponent.isToggledOn(player);
 
-            player.sendSystemMessage(Component.literal("Selected color: ")
+            player.displayClientMessage(Component.literal("Selected color: ")
                     .append(Component.literal(ColorType.HEX.get(selectedColor)))
-                    .withStyle(Style.EMPTY.withColor(selectedColor.getRGB())));
-            player.sendSystemMessage(Component.literal("Brightness: ")
-                    .append(String.format("%.2f", brightness)));
-            player.sendSystemMessage(Component.literal("Final color: ")
+                    .withStyle(Style.EMPTY.withColor(selectedColor.getRGB())), false);
+            player.displayClientMessage(Component.literal("Brightness: ")
+                    .append(String.format("%.2f", brightness)), false);
+            player.displayClientMessage(Component.literal("Final color: ")
                     .append(Component.literal(ColorType.HEX.get(finalColor)))
-                    .withStyle(Style.EMPTY.withColor(finalColor.getRGB())));
-            player.sendSystemMessage(Component.literal("Toggled ")
-                    .append(toggledOn ? "ON" : "OFF"));
+                    .withStyle(Style.EMPTY.withColor(finalColor.getRGB())), false);
+            player.displayClientMessage(Component.literal("Toggled ")
+                    .append(toggledOn ? "ON" : "OFF"), false);
 
             return 1;
         });

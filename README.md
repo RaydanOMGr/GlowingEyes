@@ -17,7 +17,7 @@ Alternatively, you can build the mod from source by following the steps outlined
 ## Requirements
 
 - **Java 21** or higher
-- **Minecraft 1.21.1**
+- **Minecraft 1.21.4**
 - **Fabric** or **NeoForge** mod loader (both are supported)
 
 ---
