@@ -30,11 +30,19 @@ loom {
         defaultRefmapName.set("${mod_id}.refmap.json")
     }
     runs {
-        client {
+        client1 {
             client()
-            setConfigName("Fabric Client")
+            setConfigName("Fabric Client 1")
             ideConfigGenerated(true)
-            runDir("runs/client")
+            runDir("runs/client1")
+            programArgs("--username", "AndreasMelone", "--uuid", "7f6708c5-5820-4550-a24a-2c123566d052")
+        }
+        client2 {
+            client()
+            setConfigName("Fabric Client 2")
+            ideConfigGenerated(true)
+            runDir("runs/client2")
+            programArgs("--username", "www", "--uuid", "dc57519c-532d-4be2-a91b-fd113d0b698e")
         }
         server {
             server()

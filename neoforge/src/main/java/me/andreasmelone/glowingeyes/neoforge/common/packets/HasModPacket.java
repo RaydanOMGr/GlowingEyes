@@ -7,6 +7,7 @@ import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.player.Player;
 import net.neoforged.neoforge.network.handling.PlayPayloadContext;
 
 public record HasModPacket() implements CustomPacketPayload {
@@ -28,8 +29,17 @@ public record HasModPacket() implements CustomPacketPayload {
     public void handle(PlayPayloadContext ctx) {
         ctx.workHandler().execute(() -> {
             if (!ctx.flow().isClientbound()) {
-                PlayerDataComponent.setHasMod(ctx.player().get(), true);
-                GlowingEyesComponent.sendUpdate((ServerPlayer) ctx.player().get());
+                ServerPlayer player = (ServerPlayer) ctx.player().get();
+                PlayerDataComponent.setHasMod(player, true);
+                GlowingEyesComponent.sendUpdate(player);
+
+                for (Player trackedByPlayer : PlayerDataComponent.getTrackedBy(player)) {
+                    ServerPlayer trackedBy = (ServerPlayer) trackedByPlayer;
+                    if(PlayerDataComponent.hasMod(trackedBy)) {
+                        GlowingEyesComponent.sendUpdate(trackedBy, player);
+                    }
+                    GlowingEyesComponent.sendUpdate(player, trackedBy);
+                }
             }
         });
     }
