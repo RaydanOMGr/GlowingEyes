@@ -9,3 +9,5 @@ on:
 jobs:
   trigger:
     uses: RaydanOMGr/GlowingEyes/.github/workflows/build-j17.yml@workflows
+    permissions:
+      contents: write
