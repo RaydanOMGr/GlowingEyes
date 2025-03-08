@@ -1,0 +1,11 @@
+name: Trigger Build with Java 21
+
+on:
+  push:
+    branches: [ "1.21.1", "1.21.4" ]
+  pull_request:
+    branches: [ "1.21.1", "1.21.4" ]
+
+jobs:
+  trigger:
+    uses: RaydanOMGr/GlowingEyes/.github/workflows/build-j21.yml@workflows
