@@ -1,0 +1,11 @@
+name: Trigger Build with Java 17
+
+on:
+  push:
+    branches: [ "1.19.2", "1.19.4", "1.20.1", "1.20.4" ]
+  pull_request:
+    branches: [ "1.19.2", "1.19.4", "1.20.1", "1.20.4" ]
+
+jobs:
+  trigger:
+    uses: RaydanOMGr/GlowingEyes/.github/workflows/build-j17.yml@workflows
