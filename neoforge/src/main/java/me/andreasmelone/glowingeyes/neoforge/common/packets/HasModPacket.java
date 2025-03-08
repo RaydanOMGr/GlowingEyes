@@ -8,6 +8,7 @@ import me.andreasmelone.glowingeyes.common.util.Util;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.player.Player;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
 
 public record HasModPacket() implements CustomPacketPayload {
@@ -22,8 +23,17 @@ public record HasModPacket() implements CustomPacketPayload {
     public void handle(IPayloadContext ctx) {
         ctx.enqueueWork(() -> {
             if (!ctx.flow().isClientbound()) {
-                PlayerDataComponent.setHasMod(ctx.player(), true);
-                GlowingEyesComponent.sendUpdate((ServerPlayer) ctx.player());
+                ServerPlayer player = (ServerPlayer) ctx.player();
+                PlayerDataComponent.setHasMod(player, true);
+                GlowingEyesComponent.sendUpdate(player);
+
+                for (Player trackedByPlayer : PlayerDataComponent.getTrackedBy(player)) {
+                    ServerPlayer trackedBy = (ServerPlayer) trackedByPlayer;
+                    if(PlayerDataComponent.hasMod(trackedBy)) {
+                        GlowingEyesComponent.sendUpdate(trackedBy, player);
+                    }
+                    GlowingEyesComponent.sendUpdate(player, trackedBy);
+                }
             }
         });
     }

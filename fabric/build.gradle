@@ -9,11 +9,10 @@ dependencies {
         parchment("org.parchmentmc.data:parchment-${parchment_minecraft}:${parchment_version}@zip")
     }
 
-    modImplementation "dev.onyxstudios.cardinal-components-api:cardinal-components-entity:${cca_version}"
-    include "dev.onyxstudios.cardinal-components-api:cardinal-components-base:${cca_version}"
-    include "dev.onyxstudios.cardinal-components-api:cardinal-components-entity:${cca_version}"
+    include modApi("org.ladysnake.cardinal-components-api:cardinal-components-base:${cca_version}")
+    include modImplementation("org.ladysnake.cardinal-components-api:cardinal-components-entity:${cca_version}")
 
-    modImplementation include("me.andreasmelone:ForgeLikePackets:1.0.4")
+    include modImplementation("me.andreasmelone:ForgeLikePackets:1.0.5")
 
     modImplementation "net.fabricmc:fabric-loader:${fabric_loader_version}"
     modImplementation "net.fabricmc.fabric-api:fabric-api:${fabric_version}"

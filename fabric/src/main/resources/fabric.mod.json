@@ -27,9 +27,9 @@
   "depends": {
     "fabricloader": ">=0.14",
     "fabric": "*",
-    "minecraft": "~1.21.1",
-    "java": ">=17",
-    "forgelikepackets": "1.0.4"
+    "minecraft": ">=1.21 <1.21.2",
+    "java": ">=${java_version}",
+    "forgelikepackets": "1.0.5"
   },
   "custom": {
     "cardinal-components": [
