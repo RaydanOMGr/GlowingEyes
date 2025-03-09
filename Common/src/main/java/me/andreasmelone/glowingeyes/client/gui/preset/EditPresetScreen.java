@@ -74,7 +74,12 @@ public class EditPresetScreen extends Screen {
 
     @Override
     public void render(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTicks) {
-        parent.render(guiGraphics, mouseX, mouseY, partialTicks);
+        if(parent != null) {
+            guiGraphics.pose().pushPose();
+            guiGraphics.pose().translate(0, 0, -100);
+            parent.render(guiGraphics, 0, 0, partialTicks);
+            guiGraphics.pose().popPose();
+        }
         this.renderBackground(guiGraphics);
         GuiUtil.drawBackground(
                 guiGraphics, TextureLocations.UI_BACKGROUND_SLIM,
@@ -82,10 +87,12 @@ public class EditPresetScreen extends Screen {
                 this.xSize, this.ySize
         );
 
-        guiGraphics.drawCenteredString(
+        GuiUtil.drawWrappedText(
+                guiGraphics,
                 this.font,
                 Component.translatable("gui.glowingeyes.edit.title"),
                 this.width / 2, this.guiTop + 10,
+                this.xSize - 14,
                 0xFFFFFF
         );
 

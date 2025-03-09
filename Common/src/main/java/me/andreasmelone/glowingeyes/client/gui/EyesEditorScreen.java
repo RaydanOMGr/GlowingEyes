@@ -3,13 +3,16 @@ package me.andreasmelone.glowingeyes.client.gui;
 import com.mojang.blaze3d.platform.Window;
 import com.mojang.logging.LogUtils;
 import me.andreasmelone.glowingeyes.client.component.eyes.ClientGlowingEyesComponent;
-import me.andreasmelone.glowingeyes.client.gui.button.ToggleableImageButton;
 import me.andreasmelone.glowingeyes.client.gui.preset.PresetsScreen;
+import me.andreasmelone.glowingeyes.client.gui.skin.SkinPart;
+import me.andreasmelone.glowingeyes.client.gui.skin.SkinPartSelectorScreen;
 import me.andreasmelone.glowingeyes.client.mod.ClientModContext;
 import me.andreasmelone.glowingeyes.client.util.GuiUtil;
 import me.andreasmelone.glowingeyes.client.util.TextureLocations;
 import me.andreasmelone.glowingeyes.common.component.eyes.GlowingEyesComponent;
 import me.andreasmelone.glowingeyes.client.util.color.ColorType;
+import me.andreasmelone.glowingeyes.common.util.Color;
+import me.andreasmelone.glowingeyes.common.util.Point;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
@@ -21,7 +24,6 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
 import org.lwjgl.opengl.*;
 
-import java.awt.*;
 import java.util.Map;
 import java.util.EnumMap;
 import java.util.HashMap;
@@ -30,9 +32,11 @@ public class EyesEditorScreen extends Screen {
     private int guiLeft, guiTop;
     private int headX, headY;
     private int endHeadX, endHeadY;
+    private long openedAt;
     private boolean displaySecondLayer = false;
 
     Mode mode = Mode.BRUSH;
+    SkinPart selected = SkinPart.HEAD_FRONT;
     Map<Point, Color> pixels = new HashMap<>();
     Map<Mode, Button> modeButtons = new EnumMap<>(Mode.class);
     Color headBackgroundColor = new Color(160, 160, 160, 255);
@@ -40,6 +44,7 @@ public class EyesEditorScreen extends Screen {
     private final int xSize = 256;
     private final int ySize = 222;
     private final ClientModContext mod;
+
     public EyesEditorScreen(ClientModContext mod) {
         super(Component.empty());
         this.mod = mod;
@@ -51,9 +56,10 @@ public class EyesEditorScreen extends Screen {
         GL.createCapabilities();
         this.guiLeft = (this.width - this.xSize) / 2;
         this.guiTop = (this.height - this.ySize) / 2;
+        this.openedAt = System.currentTimeMillis();
 
         Player player = Minecraft.getInstance().player;
-        if(player != null) {
+        if (player != null) {
             pixels = GlowingEyesComponent.getGlowingEyesMap(player);
         } else {
             LogUtils.getLogger().error("Could not load glowing eyes map from player capability");
@@ -69,35 +75,49 @@ public class EyesEditorScreen extends Screen {
                 64, 64,
                 button -> Minecraft.getInstance().setScreen(new ColorPickerScreen(mod, this))
         ));
-        colorPickerButton.setTooltip(Tooltip.create(Component.translatable("gui.glowingeyes.editor.colorpicker.tooltip")));
+        colorPickerButton.setTooltip(Tooltip.create(Component.translatable("tooltip.glowingeyes.editor.colorpicker")));
 
         // the preset menu button
         Button presetMenuButton;
         this.addRenderableWidget(presetMenuButton = new ImageButton(
-                this.guiLeft + this.xSize - 30, this.guiTop + this.ySize - 55,
+                this.guiLeft + this.xSize - 30, this.guiTop + this.ySize - 30 - 25,
                 20, 20,
                 0, 0, 20,
                 TextureLocations.PRESET_MENU_BUTTON,
                 64, 64,
                 button -> Minecraft.getInstance().setScreen(new PresetsScreen(this))
         ));
-        presetMenuButton.setTooltip(Tooltip.create(Component.translatable("gui.glowingeyes.editor.presetsmenu.tooltip")));
+        presetMenuButton.setTooltip(Tooltip.create(Component.translatable("tooltip.glowingeyes.editor.presetsmenu")));
 
+        // the preset menu button
         // the 2nd layer toggle button
-        ToggleableImageButton secondLayerToggle;
-        this.addRenderableWidget(secondLayerToggle = new ToggleableImageButton(
-                this.guiLeft + this.xSize - 30, this.guiTop + this.ySize - 80,
+        Button skinPartPicker;
+        this.addRenderableWidget(skinPartPicker = new ImageButton(
+                this.guiLeft + this.xSize - 30, this.guiTop + this.ySize - 30 - 25 * 2,
                 20, 20,
                 0, 0, 20,
-                TextureLocations.SECOND_LAYER_TOGGLE_BUTTON,
+                TextureLocations.SKIN_PART_PICKER_BUTTON,
                 64, 64,
                 button -> {
-                    displaySecondLayer = !displaySecondLayer;
-                    ((ToggleableImageButton) button).setToggledOn(displaySecondLayer);
+                    SkinPartSelectorScreen.create(this, minecraft.player.getSkinTextureLocation(), selected).thenAccept((part) -> {
+                        if(part != null) selected = part;
+                    });
                 }
         ));
-        secondLayerToggle.setTooltip(Tooltip.create(Component.translatable("gui.glowingeyes.editor.layertoggle.tooltip")));
-        secondLayerToggle.setToggledOn(displaySecondLayer);
+        skinPartPicker.setTooltip(Tooltip.create(Component.translatable("tooltip.glowingeyes.editor.partpicker")));
+
+        Button resetButton;
+        this.addRenderableWidget(resetButton = new ImageButton(
+                this.guiLeft + this.xSize - 30, this.guiTop + this.ySize - 30 - 25 * 3,
+                20, 20,
+                0, 0, 20,
+                TextureLocations.RESET_BUTTON,
+                64, 64,
+                button -> {
+                    this.minecraft.setScreen(new ConfirmResetScreen(this));
+                }
+        ));
+        resetButton.setTooltip(Tooltip.create(Component.translatable("tooltip.glowingeyes.editor.reset")));
 
         this.modeButtons.clear();
 
@@ -137,19 +157,18 @@ public class EyesEditorScreen extends Screen {
 
         for (int y = 0; y < headSize; y++) {
             for (int x = 0; x < headSize; x++) {
-                Point point = new Point(x + 8, y + 8);
+                Point point = new Point(x + selected.getX(), y + selected.getY());
                 guiGraphics.blit(
                         Minecraft.getInstance().player.getSkinTextureLocation(),
                         headX + x * pixelSize + x * spaceBetweenPixels,
                         headY + y * pixelSize + y * spaceBetweenPixels,
-                        pixelSize,
-                        pixelSize,
-                        8f + x, 8f + y,
+                        pixelSize, pixelSize,
+                        selected.getX() + x, selected.getY() + y,
                         1, 1,
                         64, 64
                 );
 
-                if(pixels.containsKey(point)) {
+                if (pixels.containsKey(point)) {
                     guiGraphics.fill(
                             headX + x * pixelSize + x * spaceBetweenPixels - 1,
                             headY + y * pixelSize + y * spaceBetweenPixels - 1,
@@ -157,29 +176,6 @@ public class EyesEditorScreen extends Screen {
                             headY + y * pixelSize + y * spaceBetweenPixels + pixelSize + 1,
                             pixels.get(point).getRGB()
                     );
-                }
-
-                if(displaySecondLayer) {
-                    guiGraphics.blit(
-                            Minecraft.getInstance().player.getSkinTextureLocation(),
-                            headX + x * pixelSize + x * spaceBetweenPixels,
-                            headY + y * pixelSize + y * spaceBetweenPixels,
-                            pixelSize, pixelSize,
-                            40f + x, 8f + y,
-                            1, 1,
-                            64, 64
-                    );
-
-                    Point secondLayerPoint = new Point(x + 40, y + 8);
-                    if(pixels.containsKey(secondLayerPoint)) {
-                        guiGraphics.fill(
-                                headX + x * pixelSize + x * spaceBetweenPixels - 1,
-                                headY + y * pixelSize + y * spaceBetweenPixels - 1,
-                                headX + x * pixelSize + x * spaceBetweenPixels + pixelSize + 1,
-                                headY + y * pixelSize + y * spaceBetweenPixels + pixelSize + 1,
-                                pixels.get(secondLayerPoint).getRGB()
-                        );
-                    }
                 }
             }
         }
@@ -197,7 +193,8 @@ public class EyesEditorScreen extends Screen {
 
     @Override
     public boolean mouseClicked(double mouseX, double mouseY, int button) {
-        if(mouseX >= headX && mouseX <= endHeadX && mouseY >= headY && mouseY <= endHeadY) {
+        if(System.currentTimeMillis() < openedAt + 200) return false;
+        if (mouseX >= headX && mouseX <= endHeadX && mouseY >= headY && mouseY <= endHeadY) {
             mode.onButtonPress(this, mouseX, mouseY, button);
         }
 
@@ -228,18 +225,18 @@ public class EyesEditorScreen extends Screen {
 
     private Color getPixelColor(double x, double y) {
         Window window = minecraft.getWindow();
-        if (x < 0 || x > window.getWidth()) {
+        if (x < 0 || x >= window.getWidth()) {
             throw new IllegalArgumentException("x must be within the screen width: 0 to " + window.getWidth() + ". Provided: " + x);
         }
-        if (y < 0 || y > window.getHeight()) {
+        if (y < 0 || y >= window.getHeight()) {
             throw new IllegalArgumentException("y must be within the screen height: 0 to " + window.getHeight() + ". Provided: " + y);
         }
 
         float[] pixel = new float[3];
 
         // Divides the actual width/height by the scaled width/height to find out by what factor it was scaled
-        double scaleX = (double) window.getWidth() / window.getGuiScaledWidth();
-        double scaleY = (double) window.getHeight() / window.getGuiScaledHeight();
+        float scaleX = (float) window.getWidth() / window.getGuiScaledWidth();
+        float scaleY = (float) window.getHeight() / window.getGuiScaledHeight();
         // Calculates the actual position of the pixel
         int pixelX = (int) (x * scaleX);
         int pixelY = (int) ((window.getGuiScaledHeight() - y) * scaleY); // The y value needs
@@ -273,7 +270,7 @@ public class EyesEditorScreen extends Screen {
                     button.active = false;
                 }
         );
-        imageButton.setTooltip(Tooltip.create(Component.translatable("gui.glowingeyes.editor." + buttonMode.name().toLowerCase() + ".tooltip")));
+        imageButton.setTooltip(Tooltip.create(Component.translatable("tooltip.glowingeyes.editor." + buttonMode.name().toLowerCase())));
 
         modeButtons.put(buttonMode, imageButton);
         return imageButton;
@@ -285,14 +282,14 @@ public class EyesEditorScreen extends Screen {
 
             if (button == 0) {
                 Color finalColor = screen.mod.getModVariables().getFinalColor();
-                screen.pixels.put(new Point(point.x, point.y), new Color(finalColor.getRed(), finalColor.getGreen(), finalColor.getBlue(), 200));
+                screen.pixels.put(new Point(point.getX(), point.getY()), new Color(finalColor.getRed(), finalColor.getGreen(), finalColor.getBlue(), 200));
             } else if (button == 1) {
-                screen.pixels.remove(new Point(point.x, point.y));
+                screen.pixels.remove(new Point(point.getX(), point.getY()));
             }
         }),
         ERASER(TextureLocations.ERASER_BUTTON, (screen, mouseX, mouseY, button) -> {
             Point point = calculatePoint(screen, mouseX, mouseY);
-            screen.pixels.remove(new Point(point.x, point.y));
+            screen.pixels.remove(new Point(point.getX(), point.getY()));
         }),
         PICKER(TextureLocations.PIPETTE_BUTTON, (screen, mouseX, mouseY, button) -> {
             Color color = screen.getPixelColor(mouseX, mouseY);
@@ -325,7 +322,7 @@ public class EyesEditorScreen extends Screen {
             int x = (int) ((mouseX - screen.headX) / (pixelSize + spaceBetweenPixels));
             int y = (int) ((mouseY - screen.headY) / (pixelSize + spaceBetweenPixels));
 
-            return new Point((screen.displaySecondLayer ? 40 : 8) + x, 8 + y);
+            return new Point(screen.selected.getX() + x, screen.selected.getY() + y);
         }
 
         @FunctionalInterface

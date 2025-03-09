@@ -1,6 +1,8 @@
 package me.andreasmelone.glowingeyes.forge.common.component.eyes;
 
-import java.awt.*;
+import me.andreasmelone.glowingeyes.common.util.Color;
+import me.andreasmelone.glowingeyes.common.util.Point;
+
 import java.io.Serializable;
 import java.util.Map;
 

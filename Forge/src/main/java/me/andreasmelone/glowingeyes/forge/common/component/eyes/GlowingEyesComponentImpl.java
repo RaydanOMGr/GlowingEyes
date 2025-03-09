@@ -1,6 +1,8 @@
 package me.andreasmelone.glowingeyes.forge.common.component.eyes;
 
 import me.andreasmelone.glowingeyes.common.component.eyes.IGlowingEyesComponent;
+import me.andreasmelone.glowingeyes.common.util.Color;
+import me.andreasmelone.glowingeyes.common.util.Point;
 import me.andreasmelone.glowingeyes.forge.common.packets.ComponentUpdatePacket;
 import me.andreasmelone.glowingeyes.forge.common.packets.PacketManager;
 import net.minecraft.server.level.ServerPlayer;
@@ -11,7 +13,6 @@ import net.minecraftforge.common.capabilities.CapabilityToken;
 import net.minecraftforge.common.capabilities.RegisterCapabilitiesEvent;
 import net.minecraftforge.network.PacketDistributor;
 
-import java.awt.*;
 import java.util.Map;
 
 public class GlowingEyesComponentImpl implements IGlowingEyesComponent {

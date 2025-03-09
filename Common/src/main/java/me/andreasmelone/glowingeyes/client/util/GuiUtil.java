@@ -1,11 +1,15 @@
 package me.andreasmelone.glowingeyes.client.util;
 
 import com.mojang.blaze3d.platform.NativeImage;
+import me.andreasmelone.glowingeyes.common.util.Color;
+import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.FormattedCharSequence;
 
-import java.awt.*;
 import java.awt.image.BufferedImage;
+import java.util.List;
 
 public class GuiUtil {
     /**
@@ -34,5 +38,14 @@ public class GuiUtil {
         }
 
         return nativeImage;
+    }
+
+    public static void drawWrappedText(GuiGraphics guiGraphics, Font font, Component text, int x, int y, int maxWidth, int color) {
+        List<FormattedCharSequence> lines = font.split(text, maxWidth);
+        int lineHeight = font.lineHeight;
+
+        for (int i = 0; i < lines.size(); i++) {
+            guiGraphics.drawCenteredString(font, lines.get(i), x, y + (i * lineHeight), color);
+        }
     }
 }

@@ -1,16 +1,7 @@
 plugins {
-    id 'fabric-loom' version '1.8-SNAPSHOT'
-    id 'maven-publish'
-    id 'idea'
+    id 'multiloader-loader'
+    id 'fabric-loom' version '1.6-SNAPSHOT'
 }
-
-version = version
-group = group
-
-base {
-    archivesName = "${mod_name}-fabric-${minecraft_version}"
-}
-
 dependencies {
     minecraft "com.mojang:minecraft:${minecraft_version}"
     mappings loom.layered() {
@@ -28,54 +19,36 @@ dependencies {
     modImplementation "net.fabricmc.fabric-api:fabric-api:${fabric_version}"
 
     modRuntimeOnly "curse.maven:lazydfu-433518:3821870"
-
-    implementation group: 'com.google.code.findbugs', name: 'jsr305', version: '3.0.1'
-    implementation project(":Common")
 }
 
 loom {
+    def aw = project(":common").file("src/main/resources/${mod_id}.accesswidener")
+    if (aw.exists()) {
+        accessWidenerPath.set(aw)
+    }
+    mixin {
+        defaultRefmapName.set("${mod_id}.refmap.json")
+    }
     runs {
-        client {
+        client1 {
             client()
             setConfigName("Fabric Client 1")
             ideConfigGenerated(true)
-            runDir("run")
-            programArgs("--username Dev1")
-        }
-        server {
-            server()
-            setConfigName("Fabric Server")
-            ideConfigGenerated(true)
-            runDir("run")
+            runDir("runs/client1")
+            programArgs("--username", "AndreasMelone", "--uuid", "7f6708c5-5820-4550-a24a-2c123566d052")
         }
         client2 {
             client()
             setConfigName("Fabric Client 2")
             ideConfigGenerated(true)
-            runDir("run")
-            programArgs("--username Dev2")
+            runDir("runs/client2")
+            programArgs("--username", "www", "--uuid", "dc57519c-532d-4be2-a91b-fd113d0b698e")
         }
-    }
-}
-
-
-processResources {
-    from project(":Common").sourceSets.main.resources
-    inputs.property "version", project.version
-
-    filesMatching("fabric.mod.json") {
-        expand "version": project.version
-    }
-}
-
-tasks.withType(JavaCompile) {
-    source(project(":Common").sourceSets.main.allSource)
-}
-
-publishing {
-    publications {
-        mavenJava(MavenPublication) {
-            from components.java
+        server {
+            server()
+            setConfigName("Fabric Server")
+            ideConfigGenerated(true)
+            runDir("runs/server")
         }
     }
 }

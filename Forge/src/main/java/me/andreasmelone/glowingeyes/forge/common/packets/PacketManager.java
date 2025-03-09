@@ -17,8 +17,8 @@ public class PacketManager {
     public static final SimpleChannel INSTANCE = NetworkRegistry.newSimpleChannel(
             IDENTIFIER,
             () -> PROTOCOL_VERSION,
-            PROTOCOL_VERSION::equals,
-            PROTOCOL_VERSION::equals
+            NetworkRegistry.acceptMissingOr(PROTOCOL_VERSION),
+            NetworkRegistry.acceptMissingOr(PROTOCOL_VERSION)
     );
 
     private static int i = 0;
@@ -26,6 +26,5 @@ public class PacketManager {
                                       Function<FriendlyByteBuf, MSG> decoder,
                                       BiConsumer<MSG, Supplier<NetworkEvent.Context>> consumer) {
         INSTANCE.registerMessage(i++, clazz, encoder, decoder, consumer);
-
     }
 }
