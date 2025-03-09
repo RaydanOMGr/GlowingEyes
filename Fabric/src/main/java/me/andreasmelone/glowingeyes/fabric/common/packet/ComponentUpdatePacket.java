@@ -17,7 +17,6 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
 
 import java.util.UUID;
-import java.util.function.Supplier;
 
 public class ComponentUpdatePacket {
     public static final ResourceLocation ID = new ResourceLocation(GlowingEyes.MOD_ID, "capability_update");
