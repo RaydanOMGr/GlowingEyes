@@ -1,6 +1,5 @@
 package me.andreasmelone.glowingeyes.client.gui.preset;
 
-import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import me.andreasmelone.glowingeyes.client.gui.button.PresetButton;
@@ -9,6 +8,8 @@ import me.andreasmelone.glowingeyes.client.presets.PresetManager;
 import me.andreasmelone.glowingeyes.client.util.GuiUtil;
 import me.andreasmelone.glowingeyes.client.util.TextureLocations;
 import me.andreasmelone.glowingeyes.common.component.eyes.GlowingEyesComponent;
+import me.andreasmelone.glowingeyes.common.util.Color;
+import me.andreasmelone.glowingeyes.common.util.Point;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.screens.Screen;
@@ -16,9 +17,7 @@ import net.minecraft.client.gui.screens.inventory.InventoryScreen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import org.lwjgl.glfw.GLFW;
-import org.lwjgl.opengl.GL11;
 
-import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -190,6 +189,7 @@ public class PresetsScreen extends Screen {
                 this.setEditing(selectedPreset != null);
 
                 for (PresetButton b : this.presetButtons) {
+                    if(b.getPreset() == null) continue;
                     b.setSelected(b.getPreset().getId() == selectedPreset);
                     if (b.getPreset().getId() == selectedPreset) {
                         GlowingEyesComponent.setGlowingEyesMap(Minecraft.getInstance().player, b.getPreset().getContent());
@@ -203,6 +203,9 @@ public class PresetsScreen extends Screen {
 
     @Override
     public void render(PoseStack poseStack, int mouseX, int mouseY, float partialTicks) {
+        if(this.parent != null) {
+            parent.render(poseStack, 0, 0, partialTicks);
+        }
         this.renderBackground(poseStack);
         GuiUtil.drawBackground(
                 poseStack, TextureLocations.UI_BACKGROUND_BROAD,
@@ -217,31 +220,41 @@ public class PresetsScreen extends Screen {
 
         final int scale = 30;
 
+        final int x = this.guiLeft + this.xSize - 90 + (scale / 2);
+        final int y = this.guiTop + 110 - (scale * 2);
+
+        final int middleX = x + (finalWidth / 2);
+
+        //     public void blit(
+        //     ResourceLocation atlasLocation,
+        //     int x,
+        //     int y,
+        //     int width,
+        //     int height,
+        //     float uOffset,
+        //     float vOffset,
+        //     int uWidth,
+        //     int vHeight,
+        //     int textureWidth,
+        //     int textureHeight)
         RenderSystem.setShaderTexture(0, TextureLocations.UI_PLAYERBOX);
         blit(
                 poseStack,
                 this.guiLeft + this.xSize - 90 + (scale / 2), this.guiTop + 110 - (scale * 2),
+                finalWidth, finalHeight,
                 0, 0,
                 sourceWidth, sourceHeight,
-                finalWidth, finalHeight,
                 64, 64
         );
 
-        // account for the preset menu and draw it below an already rendered texture
-        GlStateManager._enableDepthTest();
-        GlStateManager._depthFunc(GL11.GL_LEQUAL);
-
         InventoryScreen.renderEntityInInventoryFollowsMouse(
                 poseStack,
-                this.guiLeft + this.xSize - 90 + 40,
-                this.guiTop + 110,
+                middleX, y + finalHeight - 5,
                 scale,
                 (float) (isLocked ? 0 : (double) (this.guiLeft + this.xSize - 90 + 40) - mouseX),
                 (float) (isLocked ? 0 : (double) (this.guiTop + 110 - 20) - mouseY),
                 Minecraft.getInstance().player
         );
-
-        GlStateManager._disableDepthTest();
 
         super.render(poseStack, mouseX, mouseY, partialTicks);
     }

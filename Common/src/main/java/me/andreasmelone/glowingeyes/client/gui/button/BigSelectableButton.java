@@ -21,7 +21,6 @@ public class BigSelectableButton extends Button {
     @Override
     public void renderWidget(PoseStack poseStack, int mouseX, int mouseY, float partialTicks) {
         if(this.visible) {
-            RenderSystem.setShaderTexture(0, TextureLocations.BIG_BUTTON);
             boolean flag = mouseX >= this.getX() && mouseY >= this.getY() && mouseX < this.getX() + this.width && mouseY < this.getY() + this.height;
 
             int i = 0;
@@ -32,6 +31,7 @@ public class BigSelectableButton extends Button {
                 i += this.height * 2;
             }
 
+            RenderSystem.setShaderTexture(0, TextureLocations.BIG_BUTTON);
             blit(
                     poseStack,
                     this.getX(), this.getY(),
@@ -41,11 +41,12 @@ public class BigSelectableButton extends Button {
             );
 
             Minecraft mc = Minecraft.getInstance();
-            mc.font.draw(
+            drawString(
                     poseStack,
+                    mc.font,
                     this.getMessage(),
-                    this.getX() + (float) this.width / 2 - (float) mc.font.width(this.getMessage()) / 2,
-                    this.getY() + (float) (this.height - 8) / 2,
+                    (int)(this.getX() + (float) this.width / 2 - (float) mc.font.width(this.getMessage()) / 2),
+                    (int)(this.getY() + (float) (this.height - 8) / 2),
                     0xFFFFFF
             );
         }

@@ -1,11 +1,14 @@
 package me.andreasmelone.glowingeyes.forge.client;
 
 import me.andreasmelone.glowingeyes.GlowingEyes;
+import me.andreasmelone.glowingeyes.client.component.data.ClientPlayerDataComponent;
 import me.andreasmelone.glowingeyes.client.mod.ClientModContext;
+import me.andreasmelone.glowingeyes.client.util.DynamicTextureCache;
 import me.andreasmelone.glowingeyes.common.component.eyes.GlowingEyesComponent;
 import me.andreasmelone.glowingeyes.client.gui.EyesEditorScreen;
 import net.minecraft.client.Minecraft;
 import net.minecraft.world.entity.player.Player;
+import net.minecraftforge.client.event.ClientPlayerNetworkEvent;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 
@@ -32,5 +35,15 @@ public class GlowingEyesClientEvents {
                 Minecraft.getInstance().setScreen(new EyesEditorScreen(mod));
             }
         }
+    }
+
+    @SubscribeEvent
+    public void onPlayerLoggedIn(ClientPlayerNetworkEvent.LoggingIn event) {
+        ClientPlayerDataComponent.sendRequest();
+    }
+
+    @SubscribeEvent
+    public void onPlayerLoggedOut(ClientPlayerNetworkEvent.LoggingOut event) {
+        DynamicTextureCache.clear();
     }
 }

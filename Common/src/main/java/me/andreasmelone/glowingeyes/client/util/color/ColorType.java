@@ -1,6 +1,7 @@
 package me.andreasmelone.glowingeyes.client.util.color;
 
-import java.awt.*;
+import me.andreasmelone.glowingeyes.common.util.Color;
+
 import java.util.function.BiFunction;
 import java.util.function.Function;
 

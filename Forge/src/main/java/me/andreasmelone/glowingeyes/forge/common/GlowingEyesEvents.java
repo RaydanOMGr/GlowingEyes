@@ -1,10 +1,11 @@
 package me.andreasmelone.glowingeyes.forge.common;
 
+import me.andreasmelone.glowingeyes.GlowingEyes;
 import me.andreasmelone.glowingeyes.common.component.data.PlayerDataComponent;
 import me.andreasmelone.glowingeyes.common.component.eyes.GlowingEyesComponent;
-import me.andreasmelone.glowingeyes.forge.common.packets.PacketManager;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
+import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 
@@ -27,9 +28,16 @@ public class GlowingEyesEvents {
     public void onPlayerStopTracking(PlayerEvent.StopTracking event) {
         if(!(event.getTarget() instanceof Player target)) return;
 
-        if(!PlayerDataComponent.hasMod((ServerPlayer) event.getEntity())) return;
-        if(!PlayerDataComponent.hasMod((ServerPlayer) target)) return;
+        if(!PlayerDataComponent.hasMod(event.getEntity())) return;
+        if(!PlayerDataComponent.hasMod(target)) return;
 
         PlayerDataComponent.removeTrackedBy(event.getEntity(), target);
+    }
+
+    @SubscribeEvent
+    public void onServerTick(TickEvent.ServerTickEvent event) {
+        if(event.phase == TickEvent.Phase.END) {
+            GlowingEyes.SCHEDULER_SERVER.tick();
+        }
     }
 }

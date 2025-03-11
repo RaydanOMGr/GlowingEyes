@@ -77,7 +77,12 @@ public class ConfirmDeletionScreen extends Screen {
 
     @Override
     public void render(PoseStack poseStack, int mouseX, int mouseY, float partialTicks) {
-        parent.render(poseStack, mouseX, mouseY, partialTicks);
+        if(parent != null) {
+            poseStack.pushPose();
+            poseStack.translate(0, 0, -100);
+            parent.render(poseStack, 0, 0, partialTicks);
+            poseStack.popPose();
+        }
         this.renderBackground(poseStack);
 
         GuiUtil.drawBackground(
@@ -86,11 +91,12 @@ public class ConfirmDeletionScreen extends Screen {
                 this.xSize, this.ySize
         );
 
-        drawCenteredString(
+        GuiUtil.drawWrappedText(
                 poseStack,
                 this.font,
                 labelComponent,
                 this.middleX, this.middleY - 20,
+                this.xSize - 14,
                 0xFFFFFF
         );
 

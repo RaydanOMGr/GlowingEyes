@@ -2,8 +2,7 @@ package me.andreasmelone.glowingeyes;
 
 import me.andreasmelone.glowingeyes.common.scheduler.CodeScheduler;
 import me.andreasmelone.glowingeyes.common.scheduler.Scheduler;
-
-import java.awt.*;
+import me.andreasmelone.glowingeyes.common.util.Color;
 
 // this is basically the Constants class
 public class GlowingEyes {

@@ -31,7 +31,11 @@ public class GlowingEyesHeadLayer<T extends Player, Q extends HumanoidModel<T>> 
 
             int packerOverlay = LivingEntityRenderer.getOverlayCoords(player, 0);
 
-            ModelPart[] affectedParts = new ModelPart[] { this.getParentModel().head, this.getParentModel().hat };
+            ModelPart[] affectedParts = new ModelPart[] {
+                    this.getParentModel().head, this.getParentModel().hat, this.getParentModel().body,
+                    this.getParentModel().leftArm, this.getParentModel().leftLeg, this.getParentModel().rightArm,
+                    this.getParentModel().rightLeg
+            };
             for(ModelPart part : affectedParts) {
                 part.render(poseStack, vertexBuilderEye, i, packerOverlay);
             }

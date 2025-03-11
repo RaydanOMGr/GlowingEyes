@@ -5,17 +5,14 @@ import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import me.andreasmelone.glowingeyes.client.mod.ClientModContext;
 import me.andreasmelone.glowingeyes.client.util.color.ColorType;
 import me.andreasmelone.glowingeyes.common.component.eyes.GlowingEyesComponent;
+import me.andreasmelone.glowingeyes.common.util.Color;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
-import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.SharedSuggestionProvider;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.Style;
 
-import java.awt.*;
 import java.util.function.Function;
-
-import static net.minecraft.commands.Commands.literal;
 
 public class GlowingEyesInfoCommand<T extends SharedSuggestionProvider> extends AbstractClientCommand<T> {
     public GlowingEyesInfoCommand(Function<String, LiteralArgumentBuilder<T>> stringLiteralArgumentBuilderFunction) {

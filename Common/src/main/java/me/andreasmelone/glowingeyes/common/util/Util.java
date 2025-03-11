@@ -1,9 +1,23 @@
 package me.andreasmelone.glowingeyes.common.util;
 
+import com.google.gson.Gson;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonParser;
+import com.mojang.datafixers.util.Pair;
+import com.mojang.serialization.Codec;
+import com.mojang.serialization.JsonOps;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.NbtOps;
+import net.minecraft.nbt.Tag;
+
 import java.io.*;
+import java.util.LinkedHashMap;
+import java.util.Locale;
 import java.util.Map;
 
 public class Util {
+    private static final Gson GSON = new Gson();
+
     /**
      * Serialize a map to a byte array
      * @param map the map to serialize
@@ -42,6 +56,26 @@ public class Util {
         }
     }
 
+    public static <K, V> CompoundTag toCompoundTag(Codec<K> codecK, Codec<V> codecV, Map<K, V> map) {
+        CompoundTag tag = new CompoundTag();
+        map.forEach((key, value) -> {
+            JsonElement encodedKey = codecK.encodeStart(JsonOps.INSTANCE, key).result().orElseThrow();
+            Tag encodedValue = codecV.encodeStart(NbtOps.INSTANCE, value).result().orElseThrow();
+            tag.put(GSON.toJson(encodedKey), encodedValue);
+        });
+        return tag;
+    }
+
+    public static <K, V> Map<K, V> toMap(Codec<K> codecK, Codec<V> codecV, CompoundTag tag) {
+        Map<K, V> map = new LinkedHashMap<>();
+        tag.getAllKeys().forEach((key) -> {
+            K decodedKey = codecK.decode(JsonOps.INSTANCE, JsonParser.parseString(key)).map(Pair::getFirst).result().orElseThrow();
+            V decodedValue = codecV.decode(NbtOps.INSTANCE, tag.get(key)).map(Pair::getFirst).result().orElseThrow();
+            map.put(decodedKey, decodedValue);
+        });
+        return map;
+    }
+
     public static float round(float value, int places) {
         if (places < 0) throw new IllegalArgumentException();
         long factor = (long) Math.pow(10, places);
@@ -52,5 +86,9 @@ public class Util {
 
     public static float round(float value) {
         return round(value, 2);
+    }
+
+    public static String sanitizeForId(String name) {
+        return name.toLowerCase(Locale.ROOT).replaceAll("[^a-z0-9_]", "_");
     }
 }

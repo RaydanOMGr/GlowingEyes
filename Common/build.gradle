@@ -1,10 +1,7 @@
 plugins {
-    id 'java'
+    id 'multiloader-common'
     id 'org.spongepowered.gradle.vanilla' version '0.2.1-SNAPSHOT'
-    id 'maven-publish'
 }
-
-archivesBaseName = "${mod_name}-common-${minecraft_version}"
 
 minecraft {
     version(minecraft_version)
@@ -18,34 +15,29 @@ minecraft {
             }
         }
     }
+    def aw = file("src/main/resources/${mod_id}.accesswidener")
+    if(aw.exists()){
+        accessWideners(aw)
+    }
 }
 
 dependencies {
      compileOnly group:'org.spongepowered', name:'mixin', version:'0.8.5'
-     implementation group: 'com.google.code.findbugs', name: 'jsr305', version: '3.0.1'
 }
 
-processResources {
-    def buildProps = project.properties.clone()
-
-    filesMatching(['pack.mcmeta']) {
-        expand buildProps
+configurations {
+    commonJava {
+        canBeResolved = false
+        canBeConsumed = true
+    }
+    commonResources {
+        canBeResolved = false
+        canBeConsumed = true
     }
 }
 
-publishing {
-    publications {
-        mavenJava(MavenPublication) {
-            groupId project.group
-            artifactId project.archivesBaseName
-            version project.version
-            from components.java
-        }
-    }
-
-    repositories {
-        maven {
-            url "file://" + System.getenv("local_maven")
-        }
-    }
+artifacts {
+    commonJava sourceSets.main.java.sourceDirectories.singleFile
+    commonResources sourceSets.main.resources.sourceDirectories.singleFile
 }
+
