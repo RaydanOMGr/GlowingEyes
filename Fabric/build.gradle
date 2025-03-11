@@ -9,9 +9,8 @@ dependencies {
         parchment("org.parchmentmc.data:parchment-${minecraft_version}:${parchment_version}@zip")
     }
 
-    modImplementation "dev.onyxstudios.cardinal-components-api:cardinal-components-entity:${cca_version}"
-    include "dev.onyxstudios.cardinal-components-api:cardinal-components-base:${cca_version}"
-    include "dev.onyxstudios.cardinal-components-api:cardinal-components-entity:${cca_version}"
+    include modApi("dev.onyxstudios.cardinal-components-api:cardinal-components-base:${cca_version}")
+    include modImplementation("dev.onyxstudios.cardinal-components-api:cardinal-components-entity:${cca_version}")
 
     modImplementation include("me.andreasmelone:ForgeLikePackets:1.0.3")
 

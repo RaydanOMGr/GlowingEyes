@@ -42,6 +42,9 @@ public class GlowingEyesComponentImpl implements IGlowingEyesComponent {
 
     @Override
     public void setGlowingEyesMap(Player player, Map<Point, Color> glowingEyesMap) {
+        glowingEyesMap.replaceAll((point, color) ->
+                new Color(color.getRed(), color.getGreen(), color.getBlue(), 200)
+        );
         getComponent(player).setGlowingEyesMap(glowingEyesMap);
     }
 

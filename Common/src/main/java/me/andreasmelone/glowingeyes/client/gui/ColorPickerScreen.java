@@ -106,7 +106,7 @@ public class ColorPickerScreen extends Screen {
     @Override
     public void render(GuiGraphics guiGraphics, int mouseX, int mouseY, float delta) {
         if(parent != null) {
-            parent.render(guiGraphics, mouseX, mouseY, delta);
+            parent.render(guiGraphics, 0, 0, delta);
         }
 
         this.renderBackground(guiGraphics);

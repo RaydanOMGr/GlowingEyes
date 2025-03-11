@@ -203,7 +203,7 @@ public class PresetsScreen extends Screen {
     @Override
     public void render(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTicks) {
         if(this.parent != null) {
-            parent.render(guiGraphics, mouseX, mouseY, partialTicks);
+            parent.render(guiGraphics, 0, 0, partialTicks);
         }
         this.renderBackground(guiGraphics);
         GuiUtil.drawBackground(
