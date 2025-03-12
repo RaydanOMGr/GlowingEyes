@@ -29,7 +29,7 @@
     "fabric": "*",
     "minecraft": ">1.21.1 <1.22",
     "java": ">=17",
-    "forgelikepackets": "1.0.4"
+    "forgelikepackets": "1.0.5"
   },
   "custom": {
     "cardinal-components": [
