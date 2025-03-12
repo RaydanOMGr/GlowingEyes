@@ -17,15 +17,6 @@ jobs:
       contents: read
 
     steps:
-      - name: Detect Forge Directory
-        id: detect_forge
-        run: |
-          if [ -d "forge" ]; then
-            echo "FORGE_DIR=forge" >> $GITHUB_ENV
-          elif [ -d "Forge" ]; then
-            echo "FORGE_DIR=Forge" >> $GITHUB_ENV
-          fi
-
       - uses: actions/checkout@v4
       - name: Set up JDK 17
         uses: actions/setup-java@v4
@@ -58,10 +49,10 @@ jobs:
 
       - name: Upload Forge Artifacts
         uses: actions/upload-artifact@v4.3.1
-        if: ${{ env.FORGE_DIR != '' }}
+        if: ${{ hashFiles('forge/**') != '' }}
         with:
           name: GlowingEyes-Forge
-          path: ${{ env.FORGE_DIR }}/build/libs/*.jar
+          path: forge/build/libs/*.jar
 
     # NOTE: The Gradle Wrapper is the default and recommended way to run Gradle (https://docs.gradle.org/current/userguide/gradle_wrapper.html).
     # If your project does not have the Gradle Wrapper configured, you can use the following configuration to run Gradle with a specified version.
