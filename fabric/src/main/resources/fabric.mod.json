@@ -1,0 +1,41 @@
+{
+  "schemaVersion": 1,
+  "id": "${mod_id}",
+  "version": "${version}",
+  "name": "${mod_name}",
+  "description": "${description}",
+  "authors": [
+    "AndreasMelone"
+  ],
+  "contact": {
+    "repo": "https://github.com/RaydanOMGr/glowingeyes"
+  },
+  "license": "${license}",
+  "icon": "assets/glowingeyes/logo.png",
+  "environment": "*",
+  "entrypoints": {
+    "main": [
+      "me.andreasmelone.glowingeyes.fabric.GlowingEyesFabric"
+    ],
+    "client": [
+      "me.andreasmelone.glowingeyes.fabric.client.GlowingEyesClient"
+    ],
+    "cardinal-components": [
+      "me.andreasmelone.glowingeyes.fabric.common.component.ComponentHandler"
+    ]
+  },
+  "depends": {
+    "fabricloader": ">=0.14",
+    "fabric": "*",
+    "minecraft": ">=1.19 <1.19.4",
+    "java": ">=${java_version}",
+    "forgelikepackets": "1.0.3"
+  },
+  "custom": {
+    "cardinal-components": [
+      "glowingeyes:glowingeyes",
+      "glowingeyes:playerdata"
+    ]
+  }
+}
+  

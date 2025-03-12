@@ -1,0 +1,60 @@
+plugins {
+    id 'multiloader-loader'
+    id 'fabric-loom' version '1.6-SNAPSHOT'
+}
+dependencies {
+    minecraft "com.mojang:minecraft:${minecraft_version}"
+    mappings loom.layered() {
+        officialMojangMappings()
+        parchment("org.parchmentmc.data:parchment-${minecraft_version}:${parchment_version}@zip")
+    }
+
+    include modApi("dev.onyxstudios.cardinal-components-api:cardinal-components-base:${cca_version}")
+    include modImplementation("dev.onyxstudios.cardinal-components-api:cardinal-components-entity:${cca_version}")
+
+    modImplementation include("me.andreasmelone:ForgeLikePackets:1.0.3")
+
+    modImplementation "net.fabricmc:fabric-loader:${fabric_loader_version}"
+    modImplementation "net.fabricmc.fabric-api:fabric-api:${fabric_version}"
+
+    modRuntimeOnly "curse.maven:lazydfu-433518:3821870"
+}
+
+loom {
+    def aw = project(":common").file("src/main/resources/${mod_id}.accesswidener")
+    if (aw.exists()) {
+        accessWidenerPath.set(aw)
+    }
+    mixin {
+        defaultRefmapName.set("${mod_id}.refmap.json")
+    }
+    runs {
+        client1 {
+            client()
+            setConfigName("Fabric Client 1")
+            ideConfigGenerated(true)
+            runDir("runs/client1")
+            programArgs("--username", "AndreasMelone", "--uuid", "7f6708c5-5820-4550-a24a-2c123566d052")
+        }
+        client2 {
+            client()
+            setConfigName("Fabric Client 2")
+            ideConfigGenerated(true)
+            runDir("runs/client2")
+            programArgs("--username", "www", "--uuid", "dc57519c-532d-4be2-a91b-fd113d0b698e")
+        }
+        server {
+            server()
+            setConfigName("Fabric Server")
+            ideConfigGenerated(true)
+            runDir("runs/server")
+        }
+    }
+}
+
+configurations.configureEach {
+    resolutionStrategy {
+        force "net.fabricmc:fabric-loader:${fabric_loader_version}"
+        force "net.fabricmc.fabric-api:fabric-api:${fabric_version}"
+    }
+}
