@@ -236,7 +236,8 @@ public class EyesEditorScreen extends Screen {
         float scaleY = (float) window.getHeight() / window.getGuiScaledHeight();
         // Calculates the actual position of the pixel
         int pixelX = (int) (x * scaleX);
-        int pixelY = (int) ((window.getGuiScaledHeight() - y) * scaleY); // The y value needs
+        int pixelY = (int) ((window.getGuiScaledHeight() - y) * scaleY);
+        // The y value needs
         // to be inverted relative to the height
         // since minecraft's 0-point is top-left
         // while gl's 0-point is bottom-left
@@ -280,6 +281,8 @@ public class EyesEditorScreen extends Screen {
                 screen.pixels.put(new Point(point.getX(), point.getY()), new Color(finalColor.getRed(), finalColor.getGreen(), finalColor.getBlue(), 200));
             } else if (button == 1) {
                 screen.pixels.remove(new Point(point.getX(), point.getY()));
+            } else if(button == 2) {
+                screen.mod.getModVariables().setFinalColor(screen.getPixelColor(mouseX, mouseY));
             }
         }),
         ERASER(TextureLocations.ERASER_BUTTON, (screen, mouseX, mouseY, button) -> {

@@ -38,8 +38,8 @@ repositories {
         url = 'https://maven.parchmentmc.org'
     }
     maven {
-        name "radRepo"
-        url "https://maven.radsteve.net/public"
+        name = "radRepo"
+        url = "https://maven.radsteve.net/public"
     }
     exclusiveContent {
         forRepository {
@@ -73,6 +73,10 @@ sourcesJar {
     from(rootProject.file("LICENSE")) {
         rename { "${it}_${mod_name}" }
     }
+}
+
+javadoc {
+    options.addStringOption('Xdoclint:none', '-quiet')
 }
 
 jar {

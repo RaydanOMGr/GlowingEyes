@@ -1,6 +1,5 @@
 package me.andreasmelone.glowingeyes.client.gui.preset;
 
-import com.mojang.blaze3d.platform.GlStateManager;
 import me.andreasmelone.glowingeyes.client.gui.button.PresetButton;
 import me.andreasmelone.glowingeyes.client.presets.Preset;
 import me.andreasmelone.glowingeyes.client.presets.PresetManager;
@@ -17,7 +16,6 @@ import net.minecraft.client.gui.screens.inventory.InventoryScreen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import org.lwjgl.glfw.GLFW;
-import org.lwjgl.opengl.GL11;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -55,6 +53,9 @@ public class PresetsScreen extends Screen {
 
     @Override
     public void init() {
+        super.init();
+        if(parent != null) parent.init(minecraft, minecraft.getWindow().getGuiScaledWidth(), minecraft.getWindow().getGuiScaledHeight());
+
         this.guiLeft = (this.width - this.xSize) / 2;
         this.guiTop = (this.height - this.ySize) / 2;
 
@@ -204,7 +205,12 @@ public class PresetsScreen extends Screen {
 
     @Override
     public void render(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTicks) {
-        if(parent != null) parent.render(guiGraphics, 0, 0, partialTicks);
+        if(parent != null) {
+            guiGraphics.pose().pushPose();
+            guiGraphics.pose().translate(0, 0, -100);
+            parent.render(guiGraphics, 0, 0, partialTicks);
+            guiGraphics.pose().popPose();
+        }
         super.renderBackground(guiGraphics, mouseX, mouseY, partialTicks);
         GuiUtil.drawBackground(
                 guiGraphics, TextureLocations.UI_BACKGROUND_BROAD,
