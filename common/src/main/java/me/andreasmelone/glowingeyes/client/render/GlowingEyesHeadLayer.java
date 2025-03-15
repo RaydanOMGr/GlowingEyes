@@ -5,7 +5,6 @@ import com.mojang.blaze3d.vertex.VertexConsumer;
 import me.andreasmelone.glowingeyes.client.util.DynamicTextureCache;
 import me.andreasmelone.glowingeyes.common.component.eyes.GlowingEyesComponent;
 import net.minecraft.client.model.HumanoidModel;
-import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.entity.LivingEntityRenderer;
@@ -30,15 +29,7 @@ public class GlowingEyesHeadLayer<T extends Player, Q extends HumanoidModel<T>> 
             VertexConsumer vertexBuilderEye = multiBufferSource.getBuffer(eyeRenderType);
 
             int packerOverlay = LivingEntityRenderer.getOverlayCoords(player, 0);
-
-            ModelPart[] affectedParts = new ModelPart[] {
-                    this.getParentModel().head, this.getParentModel().hat, this.getParentModel().body,
-                    this.getParentModel().leftArm, this.getParentModel().leftLeg, this.getParentModel().rightArm,
-                    this.getParentModel().rightLeg
-            };
-            for(ModelPart part : affectedParts) {
-                part.render(poseStack, vertexBuilderEye, i, packerOverlay);
-            }
+            this.getParentModel().renderToBuffer(poseStack, vertexBuilderEye, i, packerOverlay);
         }
     }
 }
