@@ -6,6 +6,7 @@ import com.google.gson.JsonParser;
 import com.mojang.datafixers.util.Pair;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.JsonOps;
+import io.netty.buffer.ByteBuf;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtOps;
 import net.minecraft.nbt.Tag;
@@ -111,5 +112,14 @@ public class Util {
 
             }
         };
+    }
+
+    public static byte[] toByteArray(ByteBuf buf) {
+        int length = buf.readableBytes();
+        byte[] bytes = new byte[length];
+
+        buf.getBytes(buf.readerIndex(), bytes);
+
+        return bytes;
     }
 }

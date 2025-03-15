@@ -35,7 +35,7 @@ public class GlowingEyesEvents {
     }
 
     @SubscribeEvent
-    public void onServerTick(ServerTickEvent event) {
+    public void onServerTick(ServerTickEvent.Post event) {
         GlowingEyes.SCHEDULER_SERVER.tick();
     }
 }
