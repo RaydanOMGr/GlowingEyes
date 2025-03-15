@@ -298,6 +298,8 @@ public class EyesEditorScreen extends Screen {
                 screen.pixels.put(new Point(point.getX(), point.getY()), new Color(finalColor.getRed(), finalColor.getGreen(), finalColor.getBlue(), 200));
             } else if (button == 1) {
                 screen.pixels.remove(new Point(point.getX(), point.getY()));
+            }  else if(button == 2) {
+                screen.mod.getModVariables().setFinalColor(screen.getPixelColor(mouseX, mouseY));
             }
         }),
         ERASER(TextureLocations.ERASER_BUTTON, (screen, mouseX, mouseY, button) -> {
