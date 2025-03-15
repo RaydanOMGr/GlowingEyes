@@ -231,7 +231,7 @@ public class EyesEditorScreen extends Screen {
             throw new IllegalArgumentException("y must be within the screen height: 0 to " + (window.getHeight() - 1) + ". Provided: " + y);
         }
 
-        float[] pixel = new float[3];
+        byte[] pixel = new byte[3];
 
         // Divides the actual width/height by the scaled width/height to find out by what factor it was scaled
         float scaleX = (float) window.getWidth() / window.getGuiScaledWidth();
@@ -242,7 +242,7 @@ public class EyesEditorScreen extends Screen {
         // to be inverted relative to the height
         // since minecraft's 0-point is top-left
         // while gl's 0-point is bottom-left
-        GL11.glReadPixels(pixelX, pixelY, 1, 1, GL11.GL_RGB, GL11.GL_FLOAT, pixel);
+        GL11.glReadPixels(pixelX, pixelY, 1, 1, GL11.GL_RGB, GL11.GL_UNSIGNED_BYTE, pixel);
 
         return new Color(pixel[0], pixel[1], pixel[2]);
     }
