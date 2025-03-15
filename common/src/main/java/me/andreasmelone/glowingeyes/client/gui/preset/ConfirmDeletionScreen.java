@@ -32,6 +32,8 @@ public class ConfirmDeletionScreen extends Screen {
 
     @Override
     public void init() {
+        super.init();
+        if(parent != null) parent.init(minecraft, minecraft.getWindow().getGuiScaledWidth(), minecraft.getWindow().getGuiScaledHeight());
         this.guiLeft = (this.width - this.xSize) / 2;
         this.guiTop = (this.height - this.ySize) / 2;
 

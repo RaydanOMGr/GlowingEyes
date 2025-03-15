@@ -53,6 +53,8 @@ public class PresetsScreen extends Screen {
 
     @Override
     public void init() {
+        super.init();
+        if(parent != null) parent.init(minecraft, minecraft.getWindow().getGuiScaledWidth(), minecraft.getWindow().getGuiScaledHeight());
         this.guiLeft = (this.width - this.xSize) / 2;
         this.guiTop = (this.height - this.ySize) / 2;
 
@@ -202,8 +204,11 @@ public class PresetsScreen extends Screen {
 
     @Override
     public void render(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTicks) {
-        if(this.parent != null) {
+        if(parent != null) {
+            guiGraphics.pose().pushPose();
+            guiGraphics.pose().translate(0, 0, -100);
             parent.render(guiGraphics, 0, 0, partialTicks);
+            guiGraphics.pose().popPose();
         }
         this.renderBackground(guiGraphics);
         GuiUtil.drawBackground(
