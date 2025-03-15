@@ -11,8 +11,8 @@ import me.andreasmelone.glowingeyes.client.gui.skin.SkinPartSelectorScreen;
 import me.andreasmelone.glowingeyes.client.mod.ClientModContext;
 import me.andreasmelone.glowingeyes.client.util.GuiUtil;
 import me.andreasmelone.glowingeyes.client.util.TextureLocations;
-import me.andreasmelone.glowingeyes.common.component.eyes.GlowingEyesComponent;
 import me.andreasmelone.glowingeyes.client.util.color.ColorType;
+import me.andreasmelone.glowingeyes.common.component.eyes.GlowingEyesComponent;
 import me.andreasmelone.glowingeyes.common.util.Color;
 import me.andreasmelone.glowingeyes.common.util.Point;
 import net.minecraft.client.Minecraft;
@@ -23,11 +23,12 @@ import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
-import org.lwjgl.opengl.*;
+import org.lwjgl.opengl.GL;
+import org.lwjgl.opengl.GL11;
 
-import java.util.Map;
 import java.util.EnumMap;
 import java.util.HashMap;
+import java.util.Map;
 
 public class EyesEditorScreen extends Screen {
     private int guiLeft, guiTop;
@@ -289,6 +290,8 @@ public class EyesEditorScreen extends Screen {
                 screen.pixels.put(new Point(point.getX(), point.getY()), new Color(finalColor.getRed(), finalColor.getGreen(), finalColor.getBlue(), 200));
             } else if (button == 1) {
                 screen.pixels.remove(new Point(point.getX(), point.getY()));
+            } else if(button == 2) {
+                screen.mod.getModVariables().setFinalColor(screen.getPixelColor(mouseX, mouseY));
             }
         }),
         ERASER(TextureLocations.ERASER_BUTTON, (screen, mouseX, mouseY, button) -> {

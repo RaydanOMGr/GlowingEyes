@@ -106,7 +106,10 @@ public class ColorPickerScreen extends Screen {
     @Override
     public void render(PoseStack poseStack, int mouseX, int mouseY, float delta) {
         if(parent != null) {
+            poseStack.pushPose();
+            poseStack.translate(0, 0, -100);
             parent.render(poseStack, 0, 0, delta);
+            poseStack.popPose();
         }
 
         this.renderBackground(poseStack);

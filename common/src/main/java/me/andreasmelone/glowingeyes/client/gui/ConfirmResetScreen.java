@@ -71,7 +71,10 @@ public class ConfirmResetScreen extends Screen {
     @Override
     public void render(PoseStack poseStack, int mouseX, int mouseY, float partialTicks) {
         if(parent != null) {
+            poseStack.pushPose();
+            poseStack.translate(0, 0, -100);
             parent.render(poseStack, 0, 0, partialTicks);
+            poseStack.popPose();
         }
         this.renderBackground(poseStack);
         GuiUtil.drawBackground(
