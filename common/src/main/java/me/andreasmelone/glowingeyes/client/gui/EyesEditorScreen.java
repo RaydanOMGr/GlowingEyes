@@ -1,5 +1,7 @@
 package me.andreasmelone.glowingeyes.client.gui;
 
+import com.mojang.blaze3d.platform.GlConst;
+import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.platform.Window;
 import com.mojang.logging.LogUtils;
 import me.andreasmelone.glowingeyes.client.component.eyes.ClientGlowingEyesComponent;
@@ -22,9 +24,11 @@ import net.minecraft.client.gui.components.WidgetSprites;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
 import org.lwjgl.opengl.GL;
 import org.lwjgl.opengl.GL11;
+import org.lwjgl.system.MemoryUtil;
 
 import java.util.EnumMap;
 import java.util.HashMap;
@@ -41,6 +45,7 @@ public class EyesEditorScreen extends Screen {
     SkinPart selected = SkinPart.HEAD_FRONT;
     Map<Point, Color> pixels = new HashMap<>();
     Map<Mode, Button> modeButtons = new EnumMap<>(Mode.class);
+    Map<ResourceLocation, Long> allocatedTextures = new HashMap<>();
     Color headBackgroundColor = new Color(160, 160, 160, 255);
 
     private final int xSize = 256;
@@ -149,12 +154,13 @@ public class EyesEditorScreen extends Screen {
                 headBackgroundColor.getRGB()
         );
 
+        ResourceLocation playerSkin = Minecraft.getInstance().player.getSkin().texture();
         for (int y = 0; y < headSize; y++) {
             for (int x = 0; x < headSize; x++) {
                 Point point = new Point(x + selected.getX(), y + selected.getY());
                 guiGraphics.blit(
                         RenderType::guiTextured,
-                        Minecraft.getInstance().player.getSkin().texture(),
+                        playerSkin,
                         headX + x * pixelSize + x * spaceBetweenPixels,
                         headY + y * pixelSize + y * spaceBetweenPixels,
                         selected.getX() + x, selected.getY() + y,
@@ -176,7 +182,8 @@ public class EyesEditorScreen extends Screen {
         }
 
         if (mode == Mode.PICKER && mouseX >= headX && mouseX <= endHeadX && mouseY >= headY && mouseY <= endHeadY) {
-            Color color = this.getPixelColor(mouseX, mouseY);
+            Point convertedMouse = calculatePoint(this, mouseX, mouseY);
+            Color color = this.getTexturePixelColor(playerSkin, 64, 64, convertedMouse.getX(), convertedMouse.getY());
 
             guiGraphics.fill(mouseX - 10, mouseY - 10 - 25, mouseX + 10, mouseY + 10 - 25, color.getRGB());
             guiGraphics.drawCenteredString(minecraft.font, ColorType.HEX.get(color),
@@ -210,6 +217,8 @@ public class EyesEditorScreen extends Screen {
         } else {
             LogUtils.getLogger().error("Could not save glowing eyes map to player capability");
         }
+        allocatedTextures.forEach((rl, ptr) -> MemoryUtil.nmemFree(ptr));
+        allocatedTextures.clear();
         super.onClose();
     }
 
@@ -222,6 +231,15 @@ public class EyesEditorScreen extends Screen {
     public void renderBackground(GuiGraphics $$0, int $$1, int $$2, float $$3) {
     }
 
+    /**
+     * @deprecated Has been replaced by {@link EyesEditorScreen#getTexturePixelColor(ResourceLocation, int, int, int, int)}
+     *
+     * Gets the color of the pixel at a certain screen coordinate
+     * @param x The x coordinate from which to read
+     * @param y The y coordinate from which to read
+     * @return The color of the pixel at x,y
+     */
+    @Deprecated
     private Color getPixelColor(double x, double y) {
         Window window = minecraft.getWindow();
         if (x < 0 || x >= window.getWidth()) {
@@ -231,7 +249,7 @@ public class EyesEditorScreen extends Screen {
             throw new IllegalArgumentException("y must be within the screen height: 0 to " + (window.getHeight() - 1) + ". Provided: " + y);
         }
 
-        int[] pixel = new int[3];
+        float[] pixel = new float[3];
 
         // Divides the actual width/height by the scaled width/height to find out by what factor it was scaled
         float scaleX = (float) window.getWidth() / window.getGuiScaledWidth();
@@ -242,11 +260,47 @@ public class EyesEditorScreen extends Screen {
         // to be inverted relative to the height
         // since minecraft's 0-point is top-left
         // while gl's 0-point is bottom-left
-        GL11.glReadPixels(pixelX, pixelY, 1, 1, GL11.GL_RGB, GL11.GL_UNSIGNED_BYTE, pixel);
+        GL11.glReadPixels(pixelX, pixelY, 1, 1, GL11.GL_RGB, GL11.GL_FLOAT, pixel);
 
         return new Color(pixel[0], pixel[1], pixel[2]);
     }
 
+    private Color getTexturePixelColor(ResourceLocation texture, int texSizeX, int texSizeY, int x, int y) {
+        if (x < 0 || x >= texSizeX) {
+            throw new IllegalArgumentException("x must be within the screen width: 0 to " + (texSizeX - 1) + ". Provided: " + x);
+        }
+        if (y < 0 || y >= texSizeY) {
+            throw new IllegalArgumentException("y must be within the screen height: 0 to " + (texSizeY - 1) + ". Provided: " + y);
+        }
+
+        Point point = new Point(x, y);
+        if(pixels.containsKey(point)) {
+            Color color = pixels.get(point);
+            // "why?" You may ask; you see, opacity. It ruins everything.
+            return new Color(color.getRed(), color.getGreen(), color.getBlue());
+        }
+
+        if(!allocatedTextures.containsKey(texture)) {
+            int pixelSize = 3; // 3 channels: red, green, blue; just make sure the format is set to GL_RGB
+            long adr = MemoryUtil.nmemCalloc((long) texSizeX * texSizeY * pixelSize, 1);
+            long startTime = System.currentTimeMillis();
+
+            minecraft.getTextureManager().getTexture(texture).bind();
+            GlStateManager._getTexImage(3553, 0, GlConst.GL_RGB, GlConst.GL_UNSIGNED_BYTE, adr);
+            LogUtils.getLogger().debug("Reading texture {} took {}ms", texture, System.currentTimeMillis() - startTime);
+
+            allocatedTextures.put(texture, adr);
+            return getTexturePixelColor(texture, texSizeX, texSizeY, x, y);
+        } else {
+            long adr = allocatedTextures.get(texture);
+            int index = (y * texSizeX + x) * 3;
+            return new Color(
+                    MemoryUtil.memGetByte(adr + index) & 0xFF,
+                    MemoryUtil.memGetByte(adr + index + 1) & 0xFF,
+                    MemoryUtil.memGetByte(adr + index + 2) & 0xFF
+            );
+        }
+    }
 
     private void calculateHeadSize(int headSize, int pixelSize, int spaceBetweenPixels) {
         int head = headSize * pixelSize + (headSize - 1) * spaceBetweenPixels;
@@ -254,6 +308,16 @@ public class EyesEditorScreen extends Screen {
         headY = this.guiTop + (this.ySize - head) / 2;
         endHeadX = headX + head;
         endHeadY = headY + head;
+    }
+
+    private static Point calculatePoint(EyesEditorScreen screen, double mouseX, double mouseY) {
+        int spaceBetweenPixels = 2;
+        int pixelSize = 16;
+
+        int x = (int) ((mouseX - screen.headX) / (pixelSize + spaceBetweenPixels));
+        int y = (int) ((mouseY - screen.headY) / (pixelSize + spaceBetweenPixels));
+
+        return new Point(screen.selected.getX() + x, screen.selected.getY() + y);
     }
 
     private Button createModeButton(int x, int y, Mode buttonMode) {
@@ -283,7 +347,9 @@ public class EyesEditorScreen extends Screen {
             } else if (button == 1) {
                 screen.pixels.remove(new Point(point.getX(), point.getY()));
             } else if(button == 2) {
-                screen.mod.getModVariables().setFinalColor(screen.getPixelColor(mouseX, mouseY));
+                screen.mod.getModVariables().setFinalColor(
+                        screen.getTexturePixelColor(screen.minecraft.player.getSkin().texture(), 64, 64, point.getX(), point.getY())
+                );
             }
         }),
         ERASER(TextureLocations.ERASER_BUTTON, (screen, mouseX, mouseY, button) -> {
@@ -291,7 +357,9 @@ public class EyesEditorScreen extends Screen {
             screen.pixels.remove(new Point(point.getX(), point.getY()));
         }),
         PICKER(TextureLocations.PIPETTE_BUTTON, (screen, mouseX, mouseY, button) -> {
-            Color color = screen.getPixelColor(mouseX, mouseY);
+            Point point = calculatePoint(screen, mouseX, mouseY);
+
+            Color color = screen.getTexturePixelColor(screen.minecraft.player.getSkin().texture(), 64, 64, point.getX(), point.getY());
             screen.mod.getModVariables().setFinalColor(color);
 
             screen.modeButtons.get(Mode.BRUSH).onPress();
@@ -312,16 +380,6 @@ public class EyesEditorScreen extends Screen {
 
         public void onButtonPress(EyesEditorScreen screen, double mouseX, double mouseY, int button) {
             onButtonPress.onButtonPress(screen, mouseX, mouseY, button);
-        }
-
-        private static Point calculatePoint(EyesEditorScreen screen, double mouseX, double mouseY) {
-            int spaceBetweenPixels = 2;
-            int pixelSize = 16;
-
-            int x = (int) ((mouseX - screen.headX) / (pixelSize + spaceBetweenPixels));
-            int y = (int) ((mouseY - screen.headY) / (pixelSize + spaceBetweenPixels));
-
-            return new Point(screen.selected.getX() + x, screen.selected.getY() + y);
         }
 
         @FunctionalInterface

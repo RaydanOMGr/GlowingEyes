@@ -6,7 +6,6 @@ import me.andreasmelone.glowingeyes.client.util.DynamicTextureCache;
 import me.andreasmelone.glowingeyes.common.component.eyes.GlowingEyesComponent;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.EntityModel;
-import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.entity.LivingEntityRenderer;
@@ -30,10 +29,7 @@ public class GlowingEyesHeadLayer<T extends Player, S extends PlayerRenderState,
             VertexConsumer vertexBuilderEye = multiBufferSource.getBuffer(eyeRenderType);
 
             int packerOverlay = LivingEntityRenderer.getOverlayCoords(renderState, 0);
-
-            for(ModelPart part : this.getParentModel().allParts()) {
-                part.render(poseStack, vertexBuilderEye, i, packerOverlay);
-            }
+            this.getParentModel().renderToBuffer(poseStack, vertexBuilderEye, i, packerOverlay);
         }
     }
 }
