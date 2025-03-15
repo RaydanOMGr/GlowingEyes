@@ -215,6 +215,8 @@ public class EyesEditorScreen extends Screen {
         } else {
             LogUtils.getLogger().error("Could not save glowing eyes map to player capability");
         }
+        allocatedTextures.forEach((texture, ptr) -> MemoryUtil.nmemFree(ptr));
+        allocatedTextures.clear();
         super.onClose();
     }
 
