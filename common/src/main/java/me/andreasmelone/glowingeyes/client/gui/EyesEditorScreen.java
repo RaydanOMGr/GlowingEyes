@@ -182,7 +182,7 @@ public class EyesEditorScreen extends Screen {
         }
 
         if (mode == Mode.PICKER && mouseX >= headX && mouseX <= endHeadX && mouseY >= headY && mouseY <= endHeadY) {
-            Point convertedMouse = calculatePoint(this, mouseX, mouseY);
+            Point convertedMouse = calculatePoint(mouseX, mouseY);
             Color color = this.getTexturePixelColor(playerSkin, 64, 64, convertedMouse.getX(), convertedMouse.getY());
 
             guiGraphics.fill(mouseX - 10, mouseY - 10 - 25, mouseX + 10, mouseY + 10 - 25, color.getRGB());
@@ -310,14 +310,14 @@ public class EyesEditorScreen extends Screen {
         endHeadY = headY + head;
     }
 
-    private static Point calculatePoint(EyesEditorScreen screen, double mouseX, double mouseY) {
+    private Point calculatePoint(double mouseX, double mouseY) {
         int spaceBetweenPixels = 2;
         int pixelSize = 16;
 
-        int x = (int) ((mouseX - screen.headX) / (pixelSize + spaceBetweenPixels));
-        int y = (int) ((mouseY - screen.headY) / (pixelSize + spaceBetweenPixels));
+        int x = (int) ((mouseX - headX) / (pixelSize + spaceBetweenPixels));
+        int y = (int) ((mouseY - headY) / (pixelSize + spaceBetweenPixels));
 
-        return new Point(screen.selected.getX() + x, screen.selected.getY() + y);
+        return new Point(selected.getX() + x, selected.getY() + y);
     }
 
     private Button createModeButton(int x, int y, Mode buttonMode) {
@@ -339,7 +339,7 @@ public class EyesEditorScreen extends Screen {
 
     public enum Mode {
         BRUSH(TextureLocations.BRUSH_BUTTON, (screen, mouseX, mouseY, button) -> {
-            Point point = calculatePoint(screen, mouseX, mouseY);
+            Point point = screen.calculatePoint(mouseX, mouseY);
 
             if (button == 0) {
                 Color finalColor = screen.mod.getModVariables().getFinalColor();
@@ -353,11 +353,11 @@ public class EyesEditorScreen extends Screen {
             }
         }),
         ERASER(TextureLocations.ERASER_BUTTON, (screen, mouseX, mouseY, button) -> {
-            Point point = calculatePoint(screen, mouseX, mouseY);
+            Point point = screen.calculatePoint(mouseX, mouseY);
             screen.pixels.remove(new Point(point.getX(), point.getY()));
         }),
         PICKER(TextureLocations.PIPETTE_BUTTON, (screen, mouseX, mouseY, button) -> {
-            Point point = calculatePoint(screen, mouseX, mouseY);
+            Point point = screen.calculatePoint(mouseX, mouseY);
 
             Color color = screen.getTexturePixelColor(screen.minecraft.player.getSkin().texture(), 64, 64, point.getX(), point.getY());
             screen.mod.getModVariables().setFinalColor(color);
