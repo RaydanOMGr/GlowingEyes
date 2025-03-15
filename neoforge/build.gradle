@@ -16,7 +16,7 @@ runs {
     }
     client {
         systemProperty 'neoforge.enabledGameTestNamespaces', mod_id
-        programArguments.addAll("--username", "AndreasMelone", "--uuid", "7f6708c5-5820-4550-a24a-2c123566d052")
+        arguments.addAll("--username", "AndreasMelone", "--uuid", "7f6708c5-5820-4550-a24a-2c123566d052")
     }
     server {
         systemProperty 'neoforge.enabledGameTestNamespaces', mod_id
@@ -24,10 +24,10 @@ runs {
     }
 
     data {
-        programArguments.addAll '--mod', project.mod_id,
+        arguments.addAll('--mod', project.mod_id,
                 '--all',
                 '--output', file('src/generated/resources/').getAbsolutePath(),
-                '--existing', file('src/main/resources/').getAbsolutePath()
+                '--existing', file('src/main/resources/').getAbsolutePath())
     }
 }
 
