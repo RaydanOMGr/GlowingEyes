@@ -358,7 +358,8 @@ public class EyesEditorScreen extends Screen {
             screen.pixels.remove(new Point(point.getX(), point.getY()));
         }),
         PICKER(TextureLocations.PIPETTE_BUTTON, (screen, mouseX, mouseY, button) -> {
-            Color color = screen.getPixelColor(mouseX, mouseY);
+            Point point = screen.calculatePoint(mouseX, mouseY);
+            Color color = screen.getTexturePixelColor(screen.minecraft.player.getSkinTextureLocation(), 64, 64, point.getX(), point.getY());
             screen.mod.getModVariables().setFinalColor(color);
 
             screen.modeButtons.get(Mode.BRUSH).onPress();
