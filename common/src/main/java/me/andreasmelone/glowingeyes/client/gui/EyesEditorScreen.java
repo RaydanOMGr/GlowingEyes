@@ -231,7 +231,7 @@ public class EyesEditorScreen extends Screen {
             throw new IllegalArgumentException("y must be within the screen height: 0 to " + (window.getHeight() - 1) + ". Provided: " + y);
         }
 
-        byte[] pixel = new byte[3];
+        int[] pixel = new int[3];
 
         // Divides the actual width/height by the scaled width/height to find out by what factor it was scaled
         float scaleX = (float) window.getWidth() / window.getGuiScaledWidth();
