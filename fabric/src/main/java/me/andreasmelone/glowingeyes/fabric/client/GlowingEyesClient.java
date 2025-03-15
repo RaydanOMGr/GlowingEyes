@@ -2,6 +2,7 @@ package me.andreasmelone.glowingeyes.fabric.client;
 
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.logging.LogUtils;
+import me.andreasmelone.glowingeyes.client.commands.DumpEyesCommand;
 import me.andreasmelone.glowingeyes.client.commands.EyesCommand;
 import me.andreasmelone.glowingeyes.client.commands.GlowingEyesInfoCommand;
 import me.andreasmelone.glowingeyes.client.component.data.ClientPlayerDataComponent;
@@ -32,6 +33,7 @@ public class GlowingEyesClient implements ClientModInitializer, ClientModContext
         ClientCommandRegistrationCallback.EVENT.register((dispatcher, context) -> {
             new EyesCommand<>(GlowingEyesClient::createArgumentBuilder).register(this, dispatcher);
             new GlowingEyesInfoCommand<>(GlowingEyesClient::createArgumentBuilder).register(this, dispatcher);
+            new DumpEyesCommand<>(GlowingEyesClient::createArgumentBuilder).register(this, dispatcher);
         });
 
         GlowingEyesKeybindings.register(this);
