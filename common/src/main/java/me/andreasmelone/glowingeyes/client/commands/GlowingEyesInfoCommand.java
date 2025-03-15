@@ -39,6 +39,9 @@ public class GlowingEyesInfoCommand<T extends SharedSuggestionProvider> extends 
                     .withStyle(Style.EMPTY.withColor(finalColor.getRGB())));
             player.sendSystemMessage(Component.literal("Toggled ")
                     .append(toggledOn ? "ON" : "OFF"));
+            player.sendSystemMessage(Component.literal("Layout: ")
+                    .append(GlowingEyesComponent.getGlowingEyesMap(player).toString()));
+
 
             return 1;
         });
