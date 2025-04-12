@@ -55,4 +55,12 @@ public class GlowingEyesImpl implements IGlowingEyes {
         tag.putBoolean("toggledOn", isToggledOn());
         tag.put("glowingEyesMap", Util.toCompoundTag(Point.CODEC_STRING, Color.CODEC, getGlowingEyesMap()));
     }
+
+    @Override
+    public String toString() {
+        return "GlowingEyesImpl{" +
+                "toggledOn=" + toggledOn +
+                ", glowingEyesMap=" + glowingEyesMap +
+                '}';
+    }
 }

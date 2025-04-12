@@ -39,7 +39,7 @@ public class EyesEditorScreen extends Screen {
     private int headX, headY;
     private int endHeadX, endHeadY;
     private long openedAt;
-    private boolean displaySecondLayer = false;
+    private final boolean displaySecondLayer = false;
 
     Mode mode = Mode.BRUSH;
     SkinPart selected = SkinPart.HEAD_FRONT;
@@ -286,7 +286,7 @@ public class EyesEditorScreen extends Screen {
             long startTime = System.currentTimeMillis();
 
             minecraft.getTextureManager().getTexture(texture).bind();
-            GlStateManager._getTexImage(3553, 0, GlConst.GL_RGB, GlConst.GL_UNSIGNED_BYTE, adr);
+            GlStateManager._getTexImage(GlConst.GL_TEXTURE_2D, 0, GlConst.GL_RGB, GlConst.GL_UNSIGNED_BYTE, adr);
             LogUtils.getLogger().debug("Reading texture {} took {}ms", texture, System.currentTimeMillis() - startTime);
 
             allocatedTextures.put(texture, adr);

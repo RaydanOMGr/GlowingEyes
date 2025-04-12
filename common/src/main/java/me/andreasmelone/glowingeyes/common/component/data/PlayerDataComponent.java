@@ -3,6 +3,7 @@ package me.andreasmelone.glowingeyes.common.component.data;
 import me.andreasmelone.glowingeyes.GlowingEyes;
 import me.andreasmelone.glowingeyes.common.util.Util;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
 
 import java.util.Set;
@@ -55,6 +56,14 @@ public class PlayerDataComponent {
      */
     public static void removeTrackedBy(Player playerTracked, Player trackedBy) {
         instance.removeTrackedBy(playerTracked, trackedBy);
+    }
+
+    /**
+     * Server-side only. Notifies a player that the mod is present on the server.
+     * @param player The player to notify
+     */
+    public static void sendUpdate(ServerPlayer player) {
+        instance.sendUpdate(player);
     }
 
     public static void setImplementation(IPlayerDataComponent instance) {

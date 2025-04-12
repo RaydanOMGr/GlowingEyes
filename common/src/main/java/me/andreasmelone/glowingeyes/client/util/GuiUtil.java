@@ -36,12 +36,14 @@ public class GuiUtil {
         return new WidgetSprites(Util.id(namespace, enabled), Util.id(namespace, disabled), Util.id(namespace, enabledHighlighted), Util.id(namespace, disabledHighlighted));
     }
 
-    public static void drawWrappedText(GuiGraphics guiGraphics, Font font, Component text, int x, int y, int maxWidth, int color) {
+    public static int drawWrappedText(GuiGraphics guiGraphics, Font font, Component text, int x, int y, int maxWidth, int color) {
         List<FormattedCharSequence> lines = font.split(text, maxWidth);
         int lineHeight = font.lineHeight;
 
         for (int i = 0; i < lines.size(); i++) {
             guiGraphics.drawCenteredString(font, lines.get(i), x, y + (i * lineHeight), color);
         }
+
+        return lines.size();
     }
 }

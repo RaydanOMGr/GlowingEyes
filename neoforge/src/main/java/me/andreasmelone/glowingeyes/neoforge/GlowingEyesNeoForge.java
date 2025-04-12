@@ -2,7 +2,7 @@ package me.andreasmelone.glowingeyes.neoforge;
 
 import com.mojang.logging.LogUtils;
 import me.andreasmelone.glowingeyes.GlowingEyes;
-import me.andreasmelone.glowingeyes.neoforge.client.render.RenderManager;
+import me.andreasmelone.glowingeyes.neoforge.client.GlowingEyesClient;
 import me.andreasmelone.glowingeyes.neoforge.common.GlowingEyesEvents;
 import me.andreasmelone.glowingeyes.neoforge.common.component.ComponentHandler;
 import me.andreasmelone.glowingeyes.neoforge.common.packets.PacketHandler;
@@ -18,8 +18,8 @@ public class GlowingEyesNeoForge {
 
     public GlowingEyesNeoForge(IEventBus modEventBus) {
         modEventBus.addListener(this::commonSetup);
-        modEventBus.addListener(RenderManager::onAddLayers);
         modEventBus.addListener(PacketHandler::registerPackets);
+        modEventBus.register(new GlowingEyesClient(modEventBus));
 
         ComponentHandler.register(modEventBus);
     }
