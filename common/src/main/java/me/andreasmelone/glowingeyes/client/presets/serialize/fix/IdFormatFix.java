@@ -1,13 +1,10 @@
 package me.andreasmelone.glowingeyes.client.presets.serialize.fix;
 
-import com.google.gson.JsonElement;
 import com.mojang.datafixers.DSL;
 import com.mojang.datafixers.DataFix;
 import com.mojang.datafixers.TypeRewriteRule;
 import com.mojang.datafixers.schemas.Schema;
 import com.mojang.datafixers.types.Type;
-import com.mojang.logging.LogUtils;
-import com.mojang.serialization.Dynamic;
 import me.andreasmelone.glowingeyes.GlowingEyes;
 import me.andreasmelone.glowingeyes.client.presets.serialize.GlowingEyesReferences;
 import net.minecraft.resources.ResourceLocation;

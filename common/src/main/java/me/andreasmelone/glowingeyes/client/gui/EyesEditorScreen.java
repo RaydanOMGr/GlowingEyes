@@ -284,7 +284,7 @@ public class EyesEditorScreen extends Screen {
             long startTime = System.currentTimeMillis();
 
             minecraft.getTextureManager().getTexture(texture).bind();
-            GlStateManager._getTexImage(3553, 0, GlConst.GL_RGB, GlConst.GL_UNSIGNED_BYTE, adr);
+            GlStateManager._getTexImage(GlConst.GL_TEXTURE_2D, 0, GlConst.GL_RGB, GlConst.GL_UNSIGNED_BYTE, adr);
             LogUtils.getLogger().debug("Reading texture {} took {}ms", texture, System.currentTimeMillis() - startTime);
 
             allocatedTextures.put(texture, adr);
@@ -345,7 +345,9 @@ public class EyesEditorScreen extends Screen {
             } else if (button == 1) {
                 screen.pixels.remove(new Point(point.getX(), point.getY()));
             } else if(button == 2) {
-                screen.mod.getModVariables().setFinalColor(screen.getPixelColor(mouseX, mouseY));
+                screen.mod.getModVariables().setFinalColor(
+                        screen.getTexturePixelColor(screen.minecraft.player.getSkin().texture(), 64, 64, point.getX(), point.getY())
+                );
             }
         }),
         ERASER(TextureLocations.ERASER_BUTTON, (screen, mouseX, mouseY, button) -> {
@@ -353,7 +355,8 @@ public class EyesEditorScreen extends Screen {
             screen.pixels.remove(new Point(point.getX(), point.getY()));
         }),
         PICKER(TextureLocations.PIPETTE_BUTTON, (screen, mouseX, mouseY, button) -> {
-            Color color = screen.getPixelColor(mouseX, mouseY);
+            Point point = screen.calculatePoint(mouseX, mouseY);
+            Color color = screen.getTexturePixelColor(screen.minecraft.player.getSkin().texture(), 64, 64, point.getX(), point.getY());
             screen.mod.getModVariables().setFinalColor(color);
 
             screen.modeButtons.get(Mode.BRUSH).onPress();

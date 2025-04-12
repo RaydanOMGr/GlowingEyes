@@ -6,14 +6,20 @@ import me.andreasmelone.glowingeyes.client.gui.EyesEditorScreen;
 import me.andreasmelone.glowingeyes.client.mod.ClientModContext;
 import me.andreasmelone.glowingeyes.client.util.DynamicTextureCache;
 import me.andreasmelone.glowingeyes.common.component.eyes.GlowingEyesComponent;
+import me.andreasmelone.glowingeyes.common.util.Util;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.player.LocalPlayer;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.entity.player.Player;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.neoforge.client.event.ClientPlayerNetworkEvent;
 import net.neoforged.neoforge.event.TickEvent;
 
+import java.io.File;
+
 public class GlowingEyesClientEvents {
     private final ClientModContext mod;
+    private final File saveFile = new File(GlowingEyes.LOCAL_SAVE_PATH);
 
     public GlowingEyesClientEvents(ClientModContext mod) {
         this.mod = mod;
@@ -39,11 +45,32 @@ public class GlowingEyesClientEvents {
 
     @SubscribeEvent
     public void onPlayerLoggedIn(ClientPlayerNetworkEvent.LoggingIn event) {
-        ClientPlayerDataComponent.sendRequest();
+        LocalPlayer player = event.getPlayer();
+        if(Minecraft.getInstance().player == player) {
+            ClientPlayerDataComponent.sendRequest();
+            if(saveFile.isFile() && saveFile.exists()) {
+                CompoundTag deserialized = Util.readFromFile(saveFile);
+                if (deserialized != null) {
+                    GlowingEyesComponent.load(player, deserialized);
+                } else {
+                    Util.LOGGER.error("Failed to read file {}!", saveFile.getName());
+                }
+            }
+        }
     }
 
     @SubscribeEvent
     public void onPlayerLoggedOut(ClientPlayerNetworkEvent.LoggingOut event) {
-        DynamicTextureCache.clear();
+        LocalPlayer player = event.getPlayer();
+        if(player != null && Minecraft.getInstance().player == player) {
+            DynamicTextureCache.clear();
+            if (!ClientPlayerDataComponent.isModOnServer()) {
+                CompoundTag serialized = GlowingEyesComponent.serialize(player);
+                if (!Util.writeToFile(saveFile, serialized)) {
+                    Util.LOGGER.error("Failed to write file {}!", saveFile.getName());
+                } else Util.LOGGER.info("Saved glowing eyes data to {}!", saveFile.getName());
+            }
+            ClientPlayerDataComponent.setIsModOnServer(false);
+        }
     }
 }

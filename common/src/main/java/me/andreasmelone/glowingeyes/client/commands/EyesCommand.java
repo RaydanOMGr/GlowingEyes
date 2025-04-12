@@ -6,8 +6,6 @@ import me.andreasmelone.glowingeyes.GlowingEyes;
 import me.andreasmelone.glowingeyes.client.gui.EyesEditorScreen;
 import me.andreasmelone.glowingeyes.client.mod.ClientModContext;
 import net.minecraft.client.Minecraft;
-import net.minecraft.commands.CommandSourceStack;
-import net.minecraft.commands.Commands;
 import net.minecraft.commands.SharedSuggestionProvider;
 
 import java.util.function.Function;

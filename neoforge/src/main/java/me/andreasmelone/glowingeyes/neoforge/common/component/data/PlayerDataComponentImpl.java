@@ -1,8 +1,12 @@
 package me.andreasmelone.glowingeyes.neoforge.common.component.data;
 
 import me.andreasmelone.glowingeyes.common.component.data.IPlayerDataComponent;
+import me.andreasmelone.glowingeyes.neoforge.common.packets.HasModPacket;
+import me.andreasmelone.glowingeyes.neoforge.common.packets.PacketHandler;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
 import net.neoforged.neoforge.attachment.AttachmentType;
+import net.neoforged.neoforge.network.PacketDistributor;
 import net.neoforged.neoforge.registries.DeferredHolder;
 
 import java.util.Optional;
@@ -45,5 +49,11 @@ public class PlayerDataComponentImpl implements IPlayerDataComponent {
     @Override
     public void removeTrackedBy(Player playerTracked, Player trackedBy) {
         getComponent(playerTracked).removeTrackedBy(trackedBy);
+    }
+
+    @Override
+    public void sendUpdate(ServerPlayer player) {
+        PacketDistributor.PacketTarget target = PacketDistributor.PLAYER.with(player);
+        PacketHandler.sendTo(target, new HasModPacket());
     }
 }

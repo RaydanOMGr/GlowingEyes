@@ -9,8 +9,9 @@ import net.neoforged.neoforge.network.registration.IPayloadRegistrar;
 
 public class PacketHandler {
     public static void registerPackets(RegisterPayloadHandlerEvent event) {
-        IPayloadRegistrar registrar = event.registrar(GlowingEyes.MOD_ID);
+        IPayloadRegistrar registrar = event.registrar(GlowingEyes.MOD_ID).optional().versioned("3");
         registrar.play(HasModPacket.ID, HasModPacket::read, handler -> handler
+                .client(HasModPacket::handle)
                 .server(HasModPacket::handle));
         registrar.play(ComponentUpdatePacket.ID, ComponentUpdatePacket::read, handler -> handler
                 .client(ComponentUpdatePacket::handle)
@@ -23,7 +24,7 @@ public class PacketHandler {
      * @param target The target to receive the packet
      * @param packet The packet to send
      */
-    public static void send(PacketDistributor.PacketTarget target, CustomPacketPayload packet) {
+    public static void sendTo(PacketDistributor.PacketTarget target, CustomPacketPayload packet) {
         target.send(packet);
     }
 

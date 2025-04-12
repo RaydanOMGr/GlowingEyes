@@ -1,7 +1,10 @@
 package me.andreasmelone.glowingeyes.fabric.common.component.data;
 
+import me.andreasmelone.forgelikepackets.PacketRegistry;
 import me.andreasmelone.glowingeyes.common.component.data.IPlayerDataComponent;
 import me.andreasmelone.glowingeyes.fabric.common.component.ComponentHandler;
+import me.andreasmelone.glowingeyes.fabric.common.packet.HasModPacket;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
 
 import java.util.Set;
@@ -37,5 +40,10 @@ public class PlayerDataComponentImpl implements IPlayerDataComponent {
     @Override
     public void removeTrackedBy(Player playerTracked, Player trackedBy) {
         getComponent(playerTracked).removeTrackedBy(trackedBy);
+    }
+
+    @Override
+    public void sendUpdate(ServerPlayer player) {
+        PacketRegistry.INSTANCE.sendTo(player, HasModPacket.ID, new HasModPacket());
     }
 }
