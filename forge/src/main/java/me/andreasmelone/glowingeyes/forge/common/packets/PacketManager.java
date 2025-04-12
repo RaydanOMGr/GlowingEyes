@@ -12,7 +12,7 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 
 public class PacketManager {
-    private static final String PROTOCOL_VERSION = "2";
+    private static final String PROTOCOL_VERSION = "3";
     public static final ResourceLocation IDENTIFIER = new ResourceLocation(GlowingEyes.MOD_ID, "main_network");
     public static final SimpleChannel INSTANCE = NetworkRegistry.newSimpleChannel(
             IDENTIFIER,

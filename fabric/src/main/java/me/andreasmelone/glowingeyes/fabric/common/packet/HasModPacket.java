@@ -2,6 +2,7 @@ package me.andreasmelone.glowingeyes.fabric.common.packet;
 
 import me.andreasmelone.forgelikepackets.PacketContext;
 import me.andreasmelone.glowingeyes.GlowingEyes;
+import me.andreasmelone.glowingeyes.client.component.data.ClientPlayerDataComponent;
 import me.andreasmelone.glowingeyes.common.component.data.PlayerDataComponent;
 import me.andreasmelone.glowingeyes.common.component.eyes.GlowingEyesComponent;
 import net.minecraft.network.FriendlyByteBuf;
@@ -25,6 +26,7 @@ public class HasModPacket {
             if (ctx.getDirection() == PacketFlow.SERVERBOUND) {
                 ServerPlayer sender = ctx.getSender();
                 PlayerDataComponent.setHasMod(sender, true);
+                PlayerDataComponent.sendUpdate(sender);
                 GlowingEyesComponent.sendUpdate(sender);
 
                 for (Player trackedByPlayer : PlayerDataComponent.getTrackedBy(sender)) {
@@ -34,6 +36,8 @@ public class HasModPacket {
                     }
                     GlowingEyesComponent.sendUpdate(sender, trackedBy);
                 }
+            } else {
+                ClientPlayerDataComponent.setIsModOnServer(true);
             }
         });
     }

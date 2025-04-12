@@ -1,5 +1,6 @@
 package me.andreasmelone.glowingeyes.common.component.data;
 
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
 
 import java.util.Set;
@@ -37,4 +38,10 @@ public interface IPlayerDataComponent {
      * @param trackedBy the player tracking the other player
      */
     void removeTrackedBy(Player playerTracked, Player trackedBy);
+
+    /**
+     * Server-side only. Notifies a player that the mod is present on the server.
+     * @param player The player to notify
+     */
+    void sendUpdate(ServerPlayer player);
 }

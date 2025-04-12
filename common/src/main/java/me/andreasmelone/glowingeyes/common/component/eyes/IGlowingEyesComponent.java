@@ -2,6 +2,7 @@ package me.andreasmelone.glowingeyes.common.component.eyes;
 
 import me.andreasmelone.glowingeyes.common.util.Color;
 import me.andreasmelone.glowingeyes.common.util.Point;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
 
@@ -50,4 +51,20 @@ public interface IGlowingEyesComponent {
      * @param receivingPlayer another player who will receive the update
      */
     void sendUpdate(ServerPlayer updatedPlayer, ServerPlayer receivingPlayer);
+
+    /**
+     * Serializes the players GlowingEyesComponent as a {@link CompoundTag}
+     *
+     * @param player The player whose data must be serialized
+     * @return The serialized object
+     */
+    CompoundTag serialize(Player player);
+
+    /**
+     * Loads the GlowingEyesComponent from a {@link net.minecraft.nbt.Tag}, usually required to be serialized using {@link IGlowingEyesComponent#serialize(Player)}
+     *
+     * @param player The player to whom the data must be loaded
+     * @param tag    The serialized object
+     */
+    void load(Player player, CompoundTag tag);
 }

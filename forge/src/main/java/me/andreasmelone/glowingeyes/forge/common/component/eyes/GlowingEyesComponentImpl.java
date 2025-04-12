@@ -5,6 +5,7 @@ import me.andreasmelone.glowingeyes.common.util.Color;
 import me.andreasmelone.glowingeyes.common.util.Point;
 import me.andreasmelone.glowingeyes.forge.common.packets.ComponentUpdatePacket;
 import me.andreasmelone.glowingeyes.forge.common.packets.PacketManager;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.common.capabilities.Capability;
@@ -66,6 +67,16 @@ public class GlowingEyesComponentImpl implements IGlowingEyesComponent {
     @Override
     public void sendUpdate(ServerPlayer updatedPlayer, ServerPlayer receivingPlayer) {
         PacketDistributor.PacketTarget target = PacketDistributor.PLAYER.with(() -> receivingPlayer);
-        PacketManager.INSTANCE.send(target, new ComponentUpdatePacket(updatedPlayer, getComponent(updatedPlayer)));
+        PacketManager.INSTANCE.send(target, new ComponentUpdatePacket(updatedPlayer.getUUID(), getComponent(updatedPlayer)));
+    }
+
+    @Override
+    public CompoundTag serialize(Player player) {
+        return getComponent(player).serializeNBT();
+    }
+
+    @Override
+    public void load(Player player, CompoundTag tag) {
+        getComponent(player).deserializeNBT(tag);
     }
 }

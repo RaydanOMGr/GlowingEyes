@@ -10,11 +10,11 @@ import net.minecraft.server.level.ServerPlayer;
 public class GlowingEyesEvents {
     public static void registerEvents() {
         EntityTrackingEvents.START_TRACKING.register((trackedEntity, playerTracking) -> {
-            if(!(trackedEntity instanceof ServerPlayer trackedPlayer)) return;
+            if (!(trackedEntity instanceof ServerPlayer trackedPlayer)) return;
             PlayerDataComponent.addTrackedBy(trackedPlayer, playerTracking);
 
-            if(!PlayerDataComponent.hasMod(playerTracking)) return;
-            if(!PlayerDataComponent.hasMod(trackedPlayer)) return;
+            if (!PlayerDataComponent.hasMod(playerTracking)) return;
+            if (!PlayerDataComponent.hasMod(trackedPlayer)) return;
 
             GlowingEyes.SCHEDULER_SERVER.runLater(() -> {
                 GlowingEyesComponent.sendUpdate(playerTracking, trackedPlayer);
@@ -22,7 +22,7 @@ public class GlowingEyesEvents {
         });
 
         EntityTrackingEvents.STOP_TRACKING.register((trackedEntity, playerTracking) -> {
-            if(!(trackedEntity instanceof ServerPlayer trackedPlayer)) return;
+            if (!(trackedEntity instanceof ServerPlayer trackedPlayer)) return;
             PlayerDataComponent.removeTrackedBy(trackedPlayer, playerTracking);
         });
 

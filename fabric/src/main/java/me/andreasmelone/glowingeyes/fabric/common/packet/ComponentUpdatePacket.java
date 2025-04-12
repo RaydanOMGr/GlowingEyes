@@ -21,24 +21,23 @@ import java.util.UUID;
 public class ComponentUpdatePacket {
     public static final ResourceLocation ID = new ResourceLocation(GlowingEyes.MOD_ID, "capability_update");
 
-    UUID playerUUID;
-    Player player;
-    IGlowingEyes glowingEyes;
+    public UUID playerUUID;
+    public IGlowingEyes capability;
 
-    public ComponentUpdatePacket(Player player, IGlowingEyes glowingEyes) {
-        this.player = player;
-        this.glowingEyes = glowingEyes == null ? new GlowingEyesImpl() : glowingEyes;
+    public ComponentUpdatePacket(Player player, IGlowingEyes capability) {
+        this.playerUUID = player.getUUID();
+        this.capability = capability == null ? new GlowingEyesImpl() : capability;
     }
 
-    private ComponentUpdatePacket(UUID playerUUID, IGlowingEyes glowingEyes) {
+    private ComponentUpdatePacket(UUID playerUUID, IGlowingEyes capability) {
         this.playerUUID = playerUUID;
-        this.glowingEyes = glowingEyes == null ? new GlowingEyesImpl() : glowingEyes;
+        this.capability = capability == null ? new GlowingEyesImpl() : capability;
     }
 
     public void encode(FriendlyByteBuf buffer) {
-        buffer.writeUUID(player.getUUID());
-        buffer.writeBoolean(glowingEyes.isToggledOn());
-        buffer.writeByteArray(Util.serializeMap(glowingEyes.getGlowingEyesMap()));
+        buffer.writeUUID(playerUUID);
+        buffer.writeBoolean(capability.isToggledOn());
+        buffer.writeByteArray(Util.serializeMap(capability.getGlowingEyesMap()));
     }
 
     public static ComponentUpdatePacket decode(FriendlyByteBuf buffer) {
@@ -60,20 +59,20 @@ public class ComponentUpdatePacket {
                 if (target == null) {
                     return;
                 }
-                GlowingEyesComponent.setGlowingEyesMap(target, this.glowingEyes.getGlowingEyesMap());
-                GlowingEyesComponent.setToggledOn(target, this.glowingEyes.isToggledOn());
+                GlowingEyesComponent.setGlowingEyesMap(target, this.capability.getGlowingEyesMap());
+                GlowingEyesComponent.setToggledOn(target, this.capability.isToggledOn());
             } else {
                 MinecraftServer server = ctx.getSender().getServer();
                 if (server == null) return;
 
                 Player target = server.getPlayerList().getPlayer(this.playerUUID);
                 if (target == null) return;
-                GlowingEyesComponent.setGlowingEyesMap(target, this.glowingEyes.getGlowingEyesMap());
-                GlowingEyesComponent.setToggledOn(target, this.glowingEyes.isToggledOn());
+                GlowingEyesComponent.setGlowingEyesMap(target, this.capability.getGlowingEyesMap());
+                GlowingEyesComponent.setToggledOn(target, this.capability.isToggledOn());
 
                 for (ServerPlayer serverPlayer : PlayerLookup.tracking(target)) {
                     if (serverPlayer == target) return;
-                    ComponentUpdatePacket newPacket = new ComponentUpdatePacket(target, this.glowingEyes);
+                    ComponentUpdatePacket newPacket = new ComponentUpdatePacket(target, this.capability);
                     PacketRegistry.INSTANCE.sendTo(serverPlayer, ID, newPacket);
                 }
             }

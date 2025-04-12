@@ -7,18 +7,14 @@ import com.mojang.datafixers.TypeRewriteRule;
 import com.mojang.datafixers.schemas.Schema;
 import com.mojang.datafixers.types.Type;
 import com.mojang.datafixers.util.Pair;
-import com.mojang.logging.LogUtils;
 import com.mojang.serialization.Dynamic;
 import com.mojang.serialization.JsonOps;
 import me.andreasmelone.glowingeyes.client.presets.serialize.GlowingEyesReferences;
 import me.andreasmelone.glowingeyes.common.util.Point;
-import org.slf4j.Logger;
 
 import java.util.Optional;
 
 public class PointRangeFix extends DataFix {
-    private static final Logger LOGGER = LogUtils.getLogger();
-
     private final String name;
     public PointRangeFix(Schema outputSchema, boolean changesType) {
         super(outputSchema, changesType);
