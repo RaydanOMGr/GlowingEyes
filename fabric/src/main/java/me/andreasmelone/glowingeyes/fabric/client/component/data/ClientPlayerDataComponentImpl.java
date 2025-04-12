@@ -5,9 +5,21 @@ import me.andreasmelone.glowingeyes.client.component.data.IClientPlayerDataCompo
 import me.andreasmelone.glowingeyes.fabric.common.packet.HasModPacket;
 
 public class ClientPlayerDataComponentImpl implements IClientPlayerDataComponent {
+    private boolean isModOnServer = false;
+
     @Override
     public void sendRequest() {
         HasModPacket packet = new HasModPacket();
         PacketRegistry.INSTANCE.sendToServer(HasModPacket.ID, packet);
+    }
+
+    @Override
+    public void setIsModOnServer(boolean isModOnServer) {
+        this.isModOnServer = isModOnServer;
+    }
+
+    @Override
+    public boolean isModOnServer() {
+        return isModOnServer;
     }
 }

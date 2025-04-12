@@ -6,4 +6,15 @@ public interface IClientPlayerDataComponent {
      * This is needed, so the server can send the player the glowing eyes data
      */
     void sendRequest();
+
+    /**
+     * Sets whether the mod is present on the server or not
+     */
+    void setIsModOnServer(boolean isModOnServer);
+
+    /**
+     * Gets whether the mod is present on the server or not
+     * @return Whether the mod is on the server or no
+     */
+    boolean isModOnServer();
 }
