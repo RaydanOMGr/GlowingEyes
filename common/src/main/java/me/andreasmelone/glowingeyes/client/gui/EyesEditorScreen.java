@@ -38,7 +38,7 @@ public class EyesEditorScreen extends Screen {
     private int headX, headY;
     private int endHeadX, endHeadY;
     private long openedAt;
-    private boolean displaySecondLayer = false;
+    private final boolean displaySecondLayer = false;
 
     Mode mode = Mode.BRUSH;
     SkinPart selected = SkinPart.HEAD_FRONT;
@@ -291,7 +291,7 @@ public class EyesEditorScreen extends Screen {
             long startTime = System.currentTimeMillis();
 
             minecraft.getTextureManager().getTexture(texture).bind();
-            GlStateManager._getTexImage(3553, 0, GlConst.GL_RGB, GlConst.GL_UNSIGNED_BYTE, adr);
+            GlStateManager._getTexImage(GlConst.GL_TEXTURE_2D, 0, GlConst.GL_RGB, GlConst.GL_UNSIGNED_BYTE, adr);
             LogUtils.getLogger().debug("Reading texture {} took {}ms", texture, System.currentTimeMillis() - startTime);
 
             allocatedTextures.put(texture, adr);
@@ -354,7 +354,9 @@ public class EyesEditorScreen extends Screen {
             } else if (button == 1) {
                 screen.pixels.remove(new Point(point.getX(), point.getY()));
             } else if(button == 2) {
-                screen.mod.getModVariables().setFinalColor(screen.getPixelColor(mouseX, mouseY));
+                screen.mod.getModVariables().setFinalColor(
+                        screen.getTexturePixelColor(screen.minecraft.player.getSkinTextureLocation(), 64, 64, point.getX(), point.getY())
+                );
             }
         }),
         ERASER(TextureLocations.ERASER_BUTTON, (screen, mouseX, mouseY, button) -> {

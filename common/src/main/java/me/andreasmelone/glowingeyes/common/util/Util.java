@@ -4,11 +4,14 @@ import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
 import com.mojang.datafixers.util.Pair;
+import com.mojang.logging.LogUtils;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.JsonOps;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.NbtIo;
 import net.minecraft.nbt.NbtOps;
 import net.minecraft.nbt.Tag;
+import org.slf4j.Logger;
 
 import java.io.*;
 import java.util.LinkedHashMap;
@@ -16,6 +19,7 @@ import java.util.Locale;
 import java.util.Map;
 
 public class Util {
+    public static final Logger LOGGER = LogUtils.getLogger();
     private static final Gson GSON = new Gson();
 
     /**
@@ -32,7 +36,7 @@ public class Util {
             oos.writeObject(map);
             return baos.toByteArray();
         } catch (IOException e) {
-            e.printStackTrace();
+            LOGGER.error("An error occured while serializing map to byte array", e);
             return new byte[0];
         }
     }
@@ -51,7 +55,7 @@ public class Util {
             ObjectInputStream ois = new ObjectInputStream(bais);
             return (MAP) ois.readObject();
         } catch (IOException | ClassNotFoundException e) {
-            e.printStackTrace();
+            LOGGER.error("An error occured while deserializing byte array to map", e);
             return null;
         }
     }
@@ -90,5 +94,24 @@ public class Util {
 
     public static String sanitizeForId(String name) {
         return name.toLowerCase(Locale.ROOT).replaceAll("[^a-z0-9_]", "_");
+    }
+
+    public static boolean writeToFile(File file, CompoundTag tag) {
+        try(OutputStream out = new FileOutputStream(file)) {
+            NbtIo.writeCompressed(tag, out);
+            return true;
+        } catch (IOException e) {
+            LOGGER.error("Failed to write data to file!", e);
+            return false;
+        }
+    }
+
+    public static CompoundTag readFromFile(File file) {
+        try(InputStream in = new FileInputStream(file)) {
+            return NbtIo.readCompressed(in);
+        } catch (IOException e) {
+            LOGGER.error("Failed to write data to file!", e);
+            return null;
+        }
     }
 }

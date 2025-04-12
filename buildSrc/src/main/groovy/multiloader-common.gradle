@@ -75,6 +75,10 @@ sourcesJar {
     }
 }
 
+javadoc {
+    options.addStringOption('Xdoclint:none', '-quiet')
+}
+
 jar {
     from(rootProject.file("LICENSE")) {
         rename { "${it}_${mod_name}" }

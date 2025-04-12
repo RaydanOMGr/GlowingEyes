@@ -1,13 +1,20 @@
 package me.andreasmelone.glowingeyes.forge.common.component.eyes;
 
+import com.mojang.logging.LogUtils;
 import me.andreasmelone.glowingeyes.common.util.Color;
 import me.andreasmelone.glowingeyes.common.util.Point;
+import me.andreasmelone.glowingeyes.common.util.Util;
+import net.minecraft.nbt.ByteArrayTag;
+import net.minecraft.nbt.CompoundTag;
 import org.jetbrains.annotations.NotNull;
+import org.slf4j.Logger;
 
 import java.util.HashMap;
 import java.util.Map;
 
 public class GlowingEyesImpl implements IGlowingEyes {
+    private static final Logger LOGGER = LogUtils.getLogger();
+
     private boolean toggledOn = true;
     private Map<Point, Color> glowingEyesMap = new HashMap<>();
 
@@ -30,5 +37,25 @@ public class GlowingEyesImpl implements IGlowingEyes {
     @Override
     public void setToggledOn(boolean toggledOn) {
         this.toggledOn = toggledOn;
+    }
+
+    @Override
+    public CompoundTag serializeNBT() {
+        CompoundTag tag = new CompoundTag();
+        tag.putBoolean("toggledOn", isToggledOn());
+        tag.put("glowingEyesMap", Util.toCompoundTag(Point.CODEC_STRING, Color.CODEC, getGlowingEyesMap()));
+        return tag;
+    }
+
+    @Override
+    public void deserializeNBT(CompoundTag tag) {
+        setToggledOn(tag.getBoolean("toggledOn"));
+        if (tag.get("glowingEyesMap") instanceof ByteArrayTag) {
+            setGlowingEyesMap(new HashMap<>());
+            LOGGER.warn("Detected glowing eyes map of old format!");
+            LOGGER.warn("Your current eyes will be erased.");
+            return;
+        }
+        setGlowingEyesMap(Util.toMap(Point.CODEC_STRING, Color.CODEC, tag.getCompound("glowingEyesMap")));
     }
 }

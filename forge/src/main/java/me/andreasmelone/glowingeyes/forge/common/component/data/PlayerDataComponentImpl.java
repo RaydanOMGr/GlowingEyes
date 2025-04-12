@@ -1,11 +1,15 @@
 package me.andreasmelone.glowingeyes.forge.common.component.data;
 
 import me.andreasmelone.glowingeyes.common.component.data.IPlayerDataComponent;
+import me.andreasmelone.glowingeyes.forge.common.packets.HasModPacket;
+import me.andreasmelone.glowingeyes.forge.common.packets.PacketManager;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.CapabilityManager;
 import net.minecraftforge.common.capabilities.CapabilityToken;
 import net.minecraftforge.common.capabilities.RegisterCapabilitiesEvent;
+import net.minecraftforge.network.PacketDistributor;
 
 import java.util.Set;
 
@@ -47,5 +51,11 @@ public class PlayerDataComponentImpl implements IPlayerDataComponent {
     @Override
     public void removeTrackedBy(Player playerTracked, Player trackedBy) {
         getComponent(playerTracked).removeTrackedBy(trackedBy);
+    }
+
+    @Override
+    public void sendUpdate(ServerPlayer player) {
+        PacketDistributor.PacketTarget target = PacketDistributor.PLAYER.with(() -> player);
+        PacketManager.INSTANCE.send(target, new HasModPacket());
     }
 }

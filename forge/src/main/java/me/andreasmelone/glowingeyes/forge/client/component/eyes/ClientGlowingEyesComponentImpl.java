@@ -16,7 +16,7 @@ public class ClientGlowingEyesComponentImpl implements IClientGlowingEyesCompone
         IGlowingEyes component = ((GlowingEyesComponentImpl) GlowingEyesComponent.getImplementation())
                 .getComponent(localPlayer);
 
-        ComponentUpdatePacket packet = new ComponentUpdatePacket(localPlayer, component);
+        ComponentUpdatePacket packet = new ComponentUpdatePacket(localPlayer.getUUID(), component);
         PacketManager.INSTANCE.sendToServer(packet);
     }
 }
