@@ -2,6 +2,7 @@ package me.andreasmelone.glowingeyes.neoforge.common.packets;
 
 import io.netty.buffer.ByteBuf;
 import me.andreasmelone.glowingeyes.GlowingEyes;
+import me.andreasmelone.glowingeyes.client.component.data.ClientPlayerDataComponent;
 import me.andreasmelone.glowingeyes.common.component.data.PlayerDataComponent;
 import me.andreasmelone.glowingeyes.common.component.eyes.GlowingEyesComponent;
 import me.andreasmelone.glowingeyes.common.util.Util;
@@ -25,6 +26,7 @@ public record HasModPacket() implements CustomPacketPayload {
             if (!ctx.flow().isClientbound()) {
                 ServerPlayer player = (ServerPlayer) ctx.player();
                 PlayerDataComponent.setHasMod(player, true);
+                PlayerDataComponent.sendUpdate(player);
                 GlowingEyesComponent.sendUpdate(player);
 
                 for (Player trackedByPlayer : PlayerDataComponent.getTrackedBy(player)) {
@@ -34,6 +36,8 @@ public record HasModPacket() implements CustomPacketPayload {
                     }
                     GlowingEyesComponent.sendUpdate(player, trackedBy);
                 }
+            } else {
+                ClientPlayerDataComponent.setIsModOnServer(true);
             }
         });
     }

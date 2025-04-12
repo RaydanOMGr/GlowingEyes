@@ -30,7 +30,7 @@ displayName="${mod_name}" #mandatory
 logoFile="assets/glowingeyes/logo.png" #optional
 # A text field displayed in the mod UI
 credits="${credits}" #optional
-# A text field displayed in the mod UIy
+# A text field displayed in the mod UI
 authors="${mod_author}" #optional
 # The description text for the mod (multi line!) (#mandatory)
 description='''${description}'''

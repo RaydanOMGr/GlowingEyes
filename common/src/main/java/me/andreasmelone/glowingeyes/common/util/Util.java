@@ -4,22 +4,27 @@ import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
 import com.mojang.datafixers.util.Pair;
+import com.mojang.logging.LogUtils;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.JsonOps;
 import io.netty.buffer.ByteBuf;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.NbtOps;
-import net.minecraft.nbt.Tag;
+import net.minecraft.nbt.*;
+import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.resources.ResourceLocation;
+import org.jetbrains.annotations.NotNull;
+import org.slf4j.Logger;
 
 import java.io.*;
 import java.util.LinkedHashMap;
 import java.util.Locale;
 import java.util.Map;
+import java.util.function.BiConsumer;
+import java.util.function.Function;
 import java.util.function.Supplier;
 
 public class Util {
+    public static final Logger LOGGER = LogUtils.getLogger();
     private static final Gson GSON = new Gson();
 
     /**
@@ -114,6 +119,22 @@ public class Util {
         };
     }
 
+    public static <U> StreamCodec<ByteBuf, U> createStreamCodec(Function<FriendlyByteBuf, U> decoder, BiConsumer<FriendlyByteBuf, U> encoder) {
+        return new StreamCodec<>() {
+            @Override
+            public void encode(@NotNull ByteBuf buffer, @NotNull U object) {
+                FriendlyByteBuf wrapper = new FriendlyByteBuf(buffer);
+                encoder.accept(wrapper, object);
+            }
+
+            @Override
+            public @NotNull U decode(@NotNull ByteBuf buffer) {
+                FriendlyByteBuf wrapper = new FriendlyByteBuf(buffer);
+                return decoder.apply(wrapper);
+            }
+        };
+    }
+
     public static byte[] toByteArray(ByteBuf buf) {
         int length = buf.readableBytes();
         byte[] bytes = new byte[length];
@@ -121,5 +142,24 @@ public class Util {
         buf.getBytes(buf.readerIndex(), bytes);
 
         return bytes;
+    }
+
+    public static boolean writeToFile(File file, CompoundTag tag) {
+        try(OutputStream out = new FileOutputStream(file)) {
+            NbtIo.writeCompressed(tag, out);
+            return true;
+        } catch (IOException e) {
+            LOGGER.error("Failed to write data to file!", e);
+            return false;
+        }
+    }
+
+    public static CompoundTag readFromFile(File file) {
+        try(InputStream in = new FileInputStream(file)) {
+            return NbtIo.readCompressed(in, NbtAccounter.unlimitedHeap());
+        } catch (IOException e) {
+            LOGGER.error("Failed to write data to file!", e);
+            return null;
+        }
     }
 }

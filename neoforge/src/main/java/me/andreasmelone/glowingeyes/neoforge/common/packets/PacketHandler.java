@@ -9,8 +9,8 @@ import net.neoforged.neoforge.network.registration.PayloadRegistrar;
 
 public class PacketHandler {
     public static void registerPackets(RegisterPayloadHandlersEvent event) {
-        PayloadRegistrar registrar = event.registrar(GlowingEyes.MOD_ID);
-        registrar.playToServer(HasModPacket.TYPE, HasModPacket.STREAM_CODEC, HasModPacket::handle);
+        PayloadRegistrar registrar = event.registrar(GlowingEyes.MOD_ID).versioned("3").optional();
+        registrar.playBidirectional(HasModPacket.TYPE, HasModPacket.STREAM_CODEC, HasModPacket::handle);
         registrar.playBidirectional(ComponentUpdatePacket.TYPE, ComponentUpdatePacket.STREAM_CODEC, ComponentUpdatePacket::handle);
     }
 
@@ -20,7 +20,7 @@ public class PacketHandler {
      * @param target The target to receive the packet
      * @param packet The packet to send
      */
-    public static void send(ServerPlayer target, CustomPacketPayload packet) {
+    public static void sendTo(ServerPlayer target, CustomPacketPayload packet) {
         target.connection.send(packet);
     }
 

@@ -5,6 +5,8 @@ import me.andreasmelone.glowingeyes.common.util.Color;
 import me.andreasmelone.glowingeyes.common.util.Point;
 import me.andreasmelone.glowingeyes.neoforge.common.packets.ComponentUpdatePacket;
 import me.andreasmelone.glowingeyes.neoforge.common.packets.PacketHandler;
+import net.minecraft.core.HolderLookup;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
 import net.neoforged.neoforge.attachment.AttachmentType;
@@ -62,6 +64,16 @@ public class GlowingEyesComponentImpl implements IGlowingEyesComponent {
 
     @Override
     public void sendUpdate(ServerPlayer updatedPlayer, ServerPlayer receivingPlayer) {
-        PacketHandler.send(receivingPlayer, new ComponentUpdatePacket(updatedPlayer.getUUID(), getComponent(updatedPlayer)));
+        PacketHandler.sendTo(receivingPlayer, new ComponentUpdatePacket(updatedPlayer.getUUID(), getComponent(updatedPlayer)));
+    }
+
+    @Override
+    public CompoundTag serialize(Player player, HolderLookup.Provider provider) {
+        return getComponent(player).serializeNBT(provider);
+    }
+
+    @Override
+    public void load(Player player, HolderLookup.Provider provider, CompoundTag tag) {
+        getComponent(player).deserializeNBT(provider, tag);
     }
 }

@@ -48,6 +48,7 @@ public class DumpEyesCommand<T extends SharedSuggestionProvider> extends Abstrac
                     if(currentPart != newPart) {
                         out.write('\n');
                         out.write(newPart.toString().getBytes(StandardCharsets.UTF_8));
+                        out.write('\n');
                     }
 
                     String pointString = "x: " + point.getX() + ", y: " + point.getY();
