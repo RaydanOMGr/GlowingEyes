@@ -3,4 +3,67 @@ plugins {
     id 'fabric-loom' version '1.10-SNAPSHOT' apply false
     // see https://projects.neoforged.net/neoforged/moddevgradle for new versions
     id 'net.neoforged.moddev' version '2.0.49-beta' apply false
+
+    id "me.modmuss50.mod-publish-plugin" version "0.8.4"
+}
+
+publishMods {
+    changelog = getChangelogText()
+    type = STABLE
+
+    def cfOptions = curseforgeOptions {
+        accessToken = System.getenv("CURSEFORGE_TOKEN")
+        projectId = "921929"
+        minecraftVersions.addAll("1.20.2", "1.20.3", "1.20.4")
+    }
+
+    def mrOptions = modrinthOptions {
+        accessToken = System.getenv("MODRINTH_TOKEN")
+        projectId = "9i2aYUyi"
+        minecraftVersions.addAll("1.20.2", "1.20.3", "1.20.4")
+    }
+
+    curseforge("curseforgeFabric") {
+        from cfOptions
+        file project(":fabric")
+        modLoaders.addAll("fabric", "quilt")
+        requires {
+            slug = "fabric-api"
+        }
+    }
+
+    modrinth("modrinthFabric") {
+        from mrOptions
+        file project(":fabric")
+        modLoaders.add("fabric")
+        requires {
+            slug = "fabric-api"
+        }
+    }
+
+    curseforge("curseforgeNeoForge") {
+        from cfOptions
+        file project(":neoforge")
+        modLoaders.add("neoforge")
+    }
+
+    modrinth("modrinthNeoForge") {
+        from mrOptions
+        file project(":neoforge")
+        modLoaders.add("neoforge")
+    }
+}
+
+def getChangelogText() {
+    def url = new URI("https://raw.githubusercontent.com/RaydanOMGr/GlowingEyes/refs/heads/changelogs/changelog-${version}.md").toURL()
+    def connection = (HttpURLConnection)url.openConnection()
+    connection.setRequestMethod("GET")
+    connection.connect()
+
+    def responseCode = connection.responseCode
+    if (responseCode == 200) {
+        return connection.inputStream.text
+    } else {
+        throw new GradleException("Failed to fetch version with error code ${responseCode}")
+    }
 }
