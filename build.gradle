@@ -41,7 +41,7 @@ publishMods {
 
         from mrOptions
         file(fabricProject)
-        modLoaders.add("fabric")
+        modLoaders.addAll("fabric", "quilt")
         requires {
             slug = "fabric-api"
         }
