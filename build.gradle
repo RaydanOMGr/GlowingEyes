@@ -10,7 +10,7 @@ publishMods {
     def fabricProject = project(":fabric")
     def forgeProject = project(":forge")
 
-    def mcVersions = ["1.19.4"]
+    def mcVersions = ["1.20", "1.20.1"]
 
     def cfOptions = curseforgeOptions {
         accessToken = System.getenv("CURSEFORGE_TOKEN")
