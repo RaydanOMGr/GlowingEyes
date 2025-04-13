@@ -1,4 +1,95 @@
 plugins {
     // Required for NeoGradle
     id "org.jetbrains.gradle.plugin.idea-ext" version "1.1.7"
+    id "me.modmuss50.mod-publish-plugin" version "0.8.4"
+}
+
+publishMods {
+    changelog = getChangelogText()
+    type = STABLE
+
+    def fabricProject = project(":fabric")
+    def neoforgeProject = project(":neoforge")
+
+    def mcVersions = ["1.20.2", "1.20.3", "1.20.4"]
+
+    def cfOptions = curseforgeOptions {
+        accessToken = System.getenv("CURSEFORGE_TOKEN")
+        projectId = "921929"
+        projectSlug = "glowing-eyes"
+        minecraftVersions.addAll(mcVersions)
+    }
+
+    def mrOptions = modrinthOptions {
+        accessToken = System.getenv("MODRINTH_TOKEN")
+        projectId = "9i2aYUyi"
+        minecraftVersions.addAll(mcVersions)
+    }
+
+    curseforge("curseforgeFabric") {
+        displayName = "${mod_id}-${fabricProject.name}-${minecraft_version}-${project.version}.jar"
+
+        from cfOptions
+        file(fabricProject)
+        modLoaders.addAll("fabric", "quilt")
+        requires {
+            slug = "fabric-api"
+        }
+    }
+
+    modrinth("modrinthFabric") {
+        displayName = "[Fabric ${minecraft_version}] ${project.version}"
+
+        from mrOptions
+        file(fabricProject)
+        modLoaders.addAll("fabric", "quilt")
+        requires {
+            slug = "fabric-api"
+        }
+    }
+
+    curseforge("curseforgeNeoForge") {
+        displayName = "${mod_id}-${neoforgeProject.name}-${minecraft_version}-${project.version}.jar"
+
+        from cfOptions
+        file(neoforgeProject)
+        modLoaders.add("neoforge")
+    }
+
+    modrinth("modrinthNeoForge") {
+        displayName = "[NeoForge ${minecraft_version}] ${project.version}"
+
+        from mrOptions
+        file(neoforgeProject)
+        modLoaders.add("neoforge")
+    }
+
+    discord {
+        username = "The Update Watcher"
+        webhookUrl = "https://discord.com/api/webhooks/${System.getenv("WEBHOOK_ENDPOINT")}"
+
+        content = changelog.map {
+            "# GlowingEyes ${minecraft_version}-${project.version} \n" + it
+        }
+
+        style {
+            thumbnailUrl = "https://cdn.modrinth.com/data/9i2aYUyi/6872ffbf197f245564beb6ff4466a368f8a7a2f9_96.webp"
+        }
+
+        setPlatformsAllFrom(fabricProject)
+    }
+}
+
+def getChangelogText() {
+    def url = new URI("https://raw.githubusercontent.com/RaydanOMGr/GlowingEyes/refs/heads/changelogs/changelog-${version}.md").toURL()
+    def connection = (HttpURLConnection)url.openConnection()
+    connection.setRequestMethod("GET")
+    connection.connect()
+
+    def responseCode = connection.responseCode
+    if (responseCode == 200) {
+        return connection.inputStream.text
+    } else {
+        throw new GradleException("Failed to fetch version with error code ${responseCode}")
+    }
 }
