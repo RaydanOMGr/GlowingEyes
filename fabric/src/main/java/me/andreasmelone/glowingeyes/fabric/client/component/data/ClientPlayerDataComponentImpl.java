@@ -1,8 +1,8 @@
 package me.andreasmelone.glowingeyes.fabric.client.component.data;
 
 import me.andreasmelone.glowingeyes.client.component.data.IClientPlayerDataComponent;
-import me.andreasmelone.glowingeyes.fabric.common.packet.HasModPacket;
-import me.andreasmelone.glowingeyes.fabric.common.packet.PacketHandler;
+import me.andreasmelone.glowingeyes.common.packet.HasModPacket;
+import me.andreasmelone.glowingeyes.fabric.client.packet.ClientPacketRegistrar;
 
 public class ClientPlayerDataComponentImpl implements IClientPlayerDataComponent {
     private boolean isModOnServer = false;
@@ -10,7 +10,7 @@ public class ClientPlayerDataComponentImpl implements IClientPlayerDataComponent
     @Override
     public void sendRequest() {
         HasModPacket packet = new HasModPacket();
-        PacketHandler.send(packet);
+        ClientPacketRegistrar.send(packet);
     }
 
     @Override

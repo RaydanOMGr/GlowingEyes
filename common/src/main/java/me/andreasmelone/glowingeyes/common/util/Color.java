@@ -1,6 +1,9 @@
 package me.andreasmelone.glowingeyes.common.util;
 
 import com.mojang.serialization.Codec;
+import io.netty.buffer.ByteBuf;
+import net.minecraft.network.codec.ByteBufCodecs;
+import net.minecraft.network.codec.StreamCodec;
 
 import java.beans.ConstructorProperties;
 import java.io.Serializable;
@@ -12,6 +15,8 @@ import java.util.Objects;
  */
 public class Color implements Serializable, Cloneable {
     public static final Codec<Color> CODEC = Codec.INT.xmap(Color::new, Color::getRGB);
+
+    public static final StreamCodec<ByteBuf, Color> STREAM_CODEC = ByteBufCodecs.INT.map(Color::new, Color::getRGB);
 
     public static final Color WHITE = new Color(255, 255, 255);
     public static final Color LIGHT_GRAY = new Color(192, 192, 192);

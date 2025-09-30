@@ -1,9 +1,10 @@
 package me.andreasmelone.glowingeyes.neoforge.common.component.eyes;
 
+import me.andreasmelone.glowingeyes.common.component.eyes.GlowingEyesComponent;
 import me.andreasmelone.glowingeyes.common.component.eyes.IGlowingEyesComponent;
+import me.andreasmelone.glowingeyes.common.packet.ComponentUpdatePacket;
 import me.andreasmelone.glowingeyes.common.util.Color;
 import me.andreasmelone.glowingeyes.common.util.Point;
-import me.andreasmelone.glowingeyes.neoforge.common.packets.ComponentUpdatePacket;
 import me.andreasmelone.glowingeyes.neoforge.common.packets.PacketHandler;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
@@ -30,7 +31,7 @@ public class GlowingEyesComponentImpl implements IGlowingEyesComponent {
      */
     public IGlowingEyes getComponent(Player player) {
         if(player.isLocalPlayer()) return localComponent;
-        return Optional.ofNullable(player.getData(attachmentType))
+        return Optional.of(player.getData(attachmentType))
                 .orElseThrow(() -> new IllegalStateException("Could not get GlowingEyes data attachment from player"));
     }
 
@@ -64,7 +65,7 @@ public class GlowingEyesComponentImpl implements IGlowingEyesComponent {
 
     @Override
     public void sendUpdate(ServerPlayer updatedPlayer, ServerPlayer receivingPlayer) {
-        PacketHandler.sendTo(receivingPlayer, new ComponentUpdatePacket(updatedPlayer.getUUID(), getComponent(updatedPlayer)));
+        PacketHandler.sendTo(receivingPlayer, new ComponentUpdatePacket(updatedPlayer.getUUID(), GlowingEyesComponent.isToggledOn(updatedPlayer), GlowingEyesComponent.getGlowingEyesMap(updatedPlayer)));
     }
 
     @Override

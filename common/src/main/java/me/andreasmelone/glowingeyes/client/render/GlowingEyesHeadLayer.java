@@ -3,8 +3,6 @@ package me.andreasmelone.glowingeyes.client.render;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import me.andreasmelone.glowingeyes.client.util.DynamicTextureCache;
-import me.andreasmelone.glowingeyes.common.component.eyes.GlowingEyesComponent;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.EntityModel;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
@@ -20,16 +18,16 @@ public class GlowingEyesHeadLayer<T extends Player, S extends PlayerRenderState,
     }
 
     @Override
-    public void render(PoseStack poseStack, MultiBufferSource multiBufferSource, int i, S renderState, float v, float v1) {
-        if(!(Minecraft.getInstance().level.getEntity(renderState.id) instanceof Player player)) return;
-        if(GlowingEyesComponent.isToggledOn(player) && !player.isInvisible()) {
-            ResourceLocation eyeOverlayResource = DynamicTextureCache.getTexture(GlowingEyesComponent.getGlowingEyesMap(player));
+    public void render(PoseStack poseStack, MultiBufferSource multiBufferSource, int packedLight, S renderState, float v, float v1) {
+        IGlowingEyesRenderState glowingEyesState = (IGlowingEyesRenderState) renderState;
+        if (glowingEyesState.glowingEyes$isToggledOn() && !renderState.isInvisible) {
+            ResourceLocation eyeOverlayResource = DynamicTextureCache.getTexture(glowingEyesState.glowingEyes$getGlowingEyesMap());
 
             RenderType eyeRenderType = RenderType.eyes(eyeOverlayResource);
             VertexConsumer vertexBuilderEye = multiBufferSource.getBuffer(eyeRenderType);
 
             int packerOverlay = LivingEntityRenderer.getOverlayCoords(renderState, 0);
-            this.getParentModel().renderToBuffer(poseStack, vertexBuilderEye, i, packerOverlay);
+            this.getParentModel().renderToBuffer(poseStack, vertexBuilderEye, packedLight, packerOverlay);
         }
     }
 }

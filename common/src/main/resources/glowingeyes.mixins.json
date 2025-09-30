@@ -1,0 +1,12 @@
+{
+  "package": "me.andreasmelone.glowingeyes.mixin",
+  "client": [
+    "client.MinecraftMixin", "client.PlayerRendererMixin", "client.PlayerRenderStateMixin"
+  ],
+  "required": true,
+  "refmap": "${mod_id}.refmap.json",
+  "compatibilityLevel": "JAVA_17",
+  "injectors": {
+    "defaultRequire": 1
+  }
+}

@@ -15,7 +15,6 @@ import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.inventory.InventoryScreen;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
 import org.lwjgl.glfw.GLFW;
 
 import java.util.ArrayList;
@@ -30,7 +29,7 @@ public class PresetsScreen extends Screen {
 
     int page = 0;
 
-    ResourceLocation selectedPreset = null;
+    int selectedPreset = -1;
     int pageSize;
 
     boolean toggledState = true;
@@ -39,7 +38,7 @@ public class PresetsScreen extends Screen {
 
     Map<Point, Color> savedPixelMap = null;
     List<PresetButton> presetButtons;
-    Button createEditButton;
+    Button createEditButton, prevPageButton, nextPageButton;
     private Screen parent;
     private final PresetManager presetManager = PresetManager.getInstance();
 
@@ -66,7 +65,7 @@ public class PresetsScreen extends Screen {
         int rightButtonX = (int) (this.guiLeft + 128 * ((double) 3 / 4));
 
         this.addRenderableWidget(
-                Button.builder(Component.literal("<"),
+                prevPageButton = Button.builder(Component.literal("<"),
                                 button -> {
                                     switchPage(page - 1);
                                 })
@@ -76,7 +75,7 @@ public class PresetsScreen extends Screen {
         );
 
         this.addRenderableWidget(
-                Button.builder(Component.literal(">"),
+                nextPageButton = Button.builder(Component.literal(">"),
                                 button -> {
                                     switchPage(page + 1);
                                 })
@@ -84,13 +83,15 @@ public class PresetsScreen extends Screen {
                         .size(20, 20)
                         .build()
         );
+        prevPageButton.active = presetManager.hasPage(page - 1, pageSize);
+        nextPageButton.active = presetManager.hasPage(page + 1, pageSize);
 
         this.addRenderableWidget(
                 Button.builder(Component.translatable("gui.done"),
                                 button -> {
                                     if (parent != null) {
                                         GlowingEyesComponent.setToggledOn(Minecraft.getInstance().player, toggledState);
-                                        if (selectedPreset != null) {
+                                        if (selectedPreset != -1) {
                                             presetManager.applyPreset(selectedPreset);
                                         }
                                         presetManager.savePresets();
@@ -126,7 +127,7 @@ public class PresetsScreen extends Screen {
                                             if (result != null) {
                                                 presetManager.getPreset(selectedPreset).setName(result);
                                                 for (PresetButton presetButton : this.presetButtons) {
-                                                    if (presetButton.getPreset().getId() == selectedPreset) {
+                                                    if (PresetManager.getInstance().getId(presetButton.getPreset()) == selectedPreset) {
                                                         presetButton.setPreset(presetManager.getPreset(selectedPreset));
                                                     }
                                                 }
@@ -143,7 +144,7 @@ public class PresetsScreen extends Screen {
         this.addRenderableWidget(
                 Button.builder(Component.translatable("gui.glowingeyes.presets.delete"),
                                 button -> {
-                                    if (selectedPreset != null) {
+                                    if (selectedPreset != -1) {
                                         ConfirmDeletionScreen.askToDelete(this, presetManager.getPreset(selectedPreset).getName()).thenAccept((result) -> {
                                             if (result) {
                                                 presetManager.removePreset(selectedPreset);
@@ -185,17 +186,24 @@ public class PresetsScreen extends Screen {
             presetButtons.add(new PresetButton(
                     this.guiLeft + 10, this.guiTop + 10 + (i * 30),
                     preset, button -> {
-                if (button.getPreset().getId() == selectedPreset) selectedPreset = null;
-                else selectedPreset = button.getPreset().getId();
+                if (PresetManager.getInstance().getId(button.getPreset()) == selectedPreset) selectedPreset = -1;
+                else selectedPreset = PresetManager.getInstance().getId(button.getPreset());
 
-                this.setEditing(selectedPreset != null);
+                this.setEditing(selectedPreset != -1);
 
+                boolean hasSelected = false;
                 for (PresetButton b : this.presetButtons) {
                     if(b.getPreset() == null) continue;
-                    b.setSelected(b.getPreset().getId() == selectedPreset);
-                    if (b.getPreset().getId() == selectedPreset) {
+                    b.setSelected(PresetManager.getInstance().getId(b.getPreset()) == selectedPreset);
+                    if (!hasSelected) hasSelected = PresetManager.getInstance().getId(b.getPreset()) == selectedPreset;
+
+                    if (PresetManager.getInstance().getId(b.getPreset()) == selectedPreset) {
                         GlowingEyesComponent.setGlowingEyesMap(Minecraft.getInstance().player, b.getPreset().getContent());
                     }
+                }
+
+                if (!hasSelected) {
+                    GlowingEyesComponent.setGlowingEyesMap(Minecraft.getInstance().player, savedPixelMap);
                 }
             }
             ));
@@ -295,7 +303,7 @@ public class PresetsScreen extends Screen {
     }
 
     private void unselectPreset() {
-        selectedPreset = null;
+        selectedPreset = -1;
         for (PresetButton presetButton : this.presetButtons) {
             presetButton.setSelected(false);
         }
@@ -316,6 +324,9 @@ public class PresetsScreen extends Screen {
 
     private void switchPage(int newPage) {
         if (presetManager.hasPage(newPage, pageSize)) {
+            prevPageButton.active = presetManager.hasPage(newPage - 1, pageSize);
+            nextPageButton.active = presetManager.hasPage(newPage + 1, pageSize);
+
             page = newPage;
             updatePage();
         }
@@ -331,7 +342,7 @@ public class PresetsScreen extends Screen {
                 presetButtons.get(i).visible = true;
                 PresetButton presetButton = presetButtons.get(i);
                 presetButton.setPreset(presets.get((page * pageSize) + i));
-                if (presetButton.getPreset().getId() == selectedPreset) {
+                if (PresetManager.getInstance().getId(presetButton.getPreset()) == selectedPreset) {
                     presetButton.setSelected(true);
                     hasSelectedPreset = true;
                 }

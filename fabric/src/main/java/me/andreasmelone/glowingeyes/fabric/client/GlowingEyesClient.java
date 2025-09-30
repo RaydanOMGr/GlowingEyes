@@ -2,9 +2,7 @@ package me.andreasmelone.glowingeyes.fabric.client;
 
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.logging.LogUtils;
-import me.andreasmelone.glowingeyes.client.commands.DumpEyesCommand;
 import me.andreasmelone.glowingeyes.client.commands.EyesCommand;
-import me.andreasmelone.glowingeyes.client.commands.GlowingEyesInfoCommand;
 import me.andreasmelone.glowingeyes.client.component.data.ClientPlayerDataComponent;
 import me.andreasmelone.glowingeyes.client.component.eyes.ClientGlowingEyesComponent;
 import me.andreasmelone.glowingeyes.client.mod.ClientModContext;
@@ -12,6 +10,7 @@ import me.andreasmelone.glowingeyes.client.mod.ClientModVariables;
 import me.andreasmelone.glowingeyes.client.presets.PresetManager;
 import me.andreasmelone.glowingeyes.fabric.client.component.data.ClientPlayerDataComponentImpl;
 import me.andreasmelone.glowingeyes.fabric.client.component.eyes.ClientGlowingEyesComponentImpl;
+import me.andreasmelone.glowingeyes.fabric.client.packet.ClientPacketRegistrar;
 import me.andreasmelone.glowingeyes.fabric.client.render.RenderManager;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandManager;
@@ -32,10 +31,9 @@ public class GlowingEyesClient implements ClientModInitializer, ClientModContext
 
         ClientCommandRegistrationCallback.EVENT.register((dispatcher, context) -> {
             new EyesCommand<>(GlowingEyesClient::createArgumentBuilder).register(this, dispatcher);
-            new GlowingEyesInfoCommand<>(GlowingEyesClient::createArgumentBuilder).register(this, dispatcher);
-            new DumpEyesCommand<>(GlowingEyesClient::createArgumentBuilder).register(this, dispatcher);
         });
 
+        ClientPacketRegistrar.registerClientPackets();
         GlowingEyesKeybindings.register(this);
         GlowingEyesClientEvents.registerEvents();
         RenderManager.init();

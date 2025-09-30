@@ -1,6 +1,8 @@
 package me.andreasmelone.glowingeyes.client.presets;
 
-import com.google.gson.*;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import com.mojang.datafixers.DataFixer;
 import com.mojang.datafixers.DataFixerBuilder;
 import com.mojang.datafixers.schemas.Schema;
@@ -9,38 +11,34 @@ import com.mojang.logging.LogUtils;
 import com.mojang.serialization.DataResult;
 import com.mojang.serialization.Dynamic;
 import com.mojang.serialization.JsonOps;
-import me.andreasmelone.glowingeyes.GlowingEyes;
 import me.andreasmelone.glowingeyes.client.component.eyes.ClientGlowingEyesComponent;
 import me.andreasmelone.glowingeyes.client.presets.serialize.GlowingEyesReferences;
 import me.andreasmelone.glowingeyes.client.presets.serialize.SchemaV0;
 import me.andreasmelone.glowingeyes.client.presets.serialize.fix.IdFormatFix;
+import me.andreasmelone.glowingeyes.client.presets.serialize.fix.IdRemovedFix;
 import me.andreasmelone.glowingeyes.client.presets.serialize.fix.PointRangeFix;
 import me.andreasmelone.glowingeyes.client.presets.serialize.fix.PresetFile;
-import me.andreasmelone.glowingeyes.client.presets.serialize.gson.ColorSerializer;
 import me.andreasmelone.glowingeyes.common.component.eyes.GlowingEyesComponent;
 import me.andreasmelone.glowingeyes.common.util.Color;
 import me.andreasmelone.glowingeyes.common.util.Point;
-import me.andreasmelone.glowingeyes.common.util.Util;
 import net.minecraft.client.Minecraft;
-import net.minecraft.resources.ResourceLocation;
 import org.slf4j.Logger;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.List;
 import java.util.*;
 import java.util.function.BiFunction;
 
 public class PresetManager {
-    private static final int DATA_VERSION = 3;
+    public static final int DATA_VERSION = 4;
     private static final PresetManager INSTANCE = new PresetManager();
     private static final Logger LOGGER = LogUtils.getLogger();
 
     private final DataFixer dfu = createDFU();
     private final File presetStorage = new File("presets.json");
-    private final Map<ResourceLocation, Preset> presets = new LinkedHashMap<>();
+    private final List<Preset> presets = new ArrayList<>();
 
     public void loadPresets() {
         if (!this.presetStorage.exists() || !this.presetStorage.isFile()) {
@@ -48,9 +46,6 @@ public class PresetManager {
             this.saveDefaultPresets();
             return;
         }
-        Gson gson = new GsonBuilder()
-                .registerTypeAdapter(Color.class, new ColorSerializer())
-                .create();
         PresetFile presets;
 
         try (InputStream in = new FileInputStream(presetStorage);
@@ -91,14 +86,25 @@ public class PresetManager {
                 throw new RuntimeException("Was unable to decode updated preset for unknown reason");
             }
 
-            this.presets.put(preset.getId(), updatedPreset.get());
+            this.presets.add(updatedPreset.get());
         }
 
         LOGGER.info("Loaded {} presets", this.presets.size());
     }
 
     public void savePresets() {
-        PresetFile presets = new PresetFile(DATA_VERSION, new ArrayList<>(this.presets.values()));
+        String json = serializePresets();
+        LOGGER.info("Saving presets file");
+        LOGGER.debug("Saving presets file with content: {}", json);
+        try {
+            Files.write(this.presetStorage.toPath(), json.getBytes());
+        } catch (IOException e) {
+            LOGGER.error("Could not save presets file due to an IOException", e);
+        }
+    }
+
+    public String serializePresets() {
+        PresetFile presets = new PresetFile(DATA_VERSION, new ArrayList<>(this.presets));
         DataResult<JsonElement> serializedPresets = PresetFile.CODEC.encodeStart(JsonOps.INSTANCE, presets);
         if(serializedPresets.error().isPresent()) {
             throw new RuntimeException("Couldn't serialize presets " + serializedPresets.error().get());
@@ -107,13 +113,7 @@ public class PresetManager {
             throw new RuntimeException("Couldn't serialize presets for unknown reason");
         }
         String json = serializedPresets.result().get().toString();
-        LOGGER.info("Saving presets file");
-        LOGGER.debug("Saving presets file with content: {}", json);
-        try {
-            Files.write(this.presetStorage.toPath(), json.getBytes());
-        } catch (IOException e) {
-            LOGGER.error("Could not save presets file due to an IOException", e);
-        }
+        return json;
     }
 
     public void saveDefaultPresets() {
@@ -133,10 +133,10 @@ public class PresetManager {
     }
 
     public List<Preset> getPresets() {
-        return new ArrayList<>(this.presets.values());
+        return new ArrayList<>(this.presets);
     }
 
-    public void applyPreset(ResourceLocation id) {
+    public void applyPreset(int id) {
         if (!hasPreset(id)) {
             LOGGER.error("Tried to apply preset with id {}, but it does not exists ", id);
             return;
@@ -147,37 +147,15 @@ public class PresetManager {
         ClientGlowingEyesComponent.sendUpdate();
     }
 
-    public boolean hasPreset(ResourceLocation id) {
+    public boolean hasPreset(int id) {
         return this.presets.get(id) != null;
     }
 
-    public boolean hasPreset(int id) {
-        int i = 0;
-        for (ResourceLocation presetId : this.presets.keySet()) {
-            if (i == id) {
-                return true;
-            }
-            i++;
-        }
-        return false;
-    }
-
-    public Preset getPreset(ResourceLocation id) {
+    public Preset getPreset(int id) {
         if (!hasPreset(id)) {
             return null;
         }
         return this.presets.get(id);
-    }
-
-    public Preset getPreset(int id) {
-        int i = 0;
-        for (ResourceLocation presetId : this.presets.keySet()) {
-            if (i == id) {
-                return this.presets.get(presetId);
-            }
-            i++;
-        }
-        return null;
     }
 
     public boolean hasPage(int page, int pageSize) {
@@ -190,23 +168,15 @@ public class PresetManager {
     }
 
     private int addPreset(Preset preset, int number) {
-        ResourceLocation id = preset.getId();
-        if (number > 0) {
-            id = Util.id(preset.getId().getNamespace(), preset.getId().getPath() + "_" + number);
-        }
-        if (presets.get(id) != null) {
+        if (presets.size() < number) {
             return addPreset(preset, number + 1);
         }
 
-        this.presets.put(id, new Preset(preset.getName(), id, preset.getContent()));
+        this.presets.add(new Preset(preset.getName(), preset.getContent()));
         return this.presets.size() - 1;
     }
 
     public int createPreset(String name, Map<Point, Color> content) {
-        return this.createPreset(name, content, Util.id(GlowingEyes.MOD_ID, "preset_" + Util.sanitizeForId(name)));
-    }
-
-    public int createPreset(String name, Map<Point, Color> content, ResourceLocation id) {
         int minX = 0;
         int minY = 0;
         int maxX = 63;
@@ -216,19 +186,27 @@ public class PresetManager {
         // check if the content has pixels outside range x 0, y 0 - x 16, y 16
         for (Point point : content.keySet()) {
             if (point.getX() < minX || point.getX() > maxX || point.getY() < minY || point.getY() > maxY) {
-                LOGGER.error("Tried to create preset with id {}, but the content has pixels outside of range {}, {} - {}, {}", id, minX, minY, maxX, maxY);
+                LOGGER.error("Tried to create preset with name {}, but the content has pixels outside of range {}, {} - {}, {}", name, minX, minY, maxX, maxY);
                 // remove the invalid point
                 contentCopy.remove(point);
             }
         }
-        return this.addPreset(new Preset(name, id, contentCopy));
+        return this.addPreset(new Preset(name, contentCopy));
     }
 
-    public void removePreset(ResourceLocation id) {
+    public void removePreset(int id) {
         if (!hasPreset(id)) {
             return;
         }
         this.presets.remove(id);
+    }
+
+    public int getId(Preset preset) {
+        for (int i = 0; i < presets.size(); i++) {
+            Preset p = presets.get(i);
+            if (p == preset) return i;
+        }
+        return -1;
     }
 
     public static PresetManager getInstance() {
@@ -245,6 +223,8 @@ public class PresetManager {
         Schema schemaV2 = builder.addSchema(2, same);
         builder.addFixer(new PointRangeFix(schemaV2, true));
         Schema schemaV3 = builder.addSchema(3, same);
+        builder.addFixer(new IdRemovedFix(schemaV3, true));
+        Schema schemaV4 = builder.addSchema(4, same);
 
         return builder.build().fixer();
     }

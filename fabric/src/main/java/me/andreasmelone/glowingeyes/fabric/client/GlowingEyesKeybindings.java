@@ -1,6 +1,7 @@
 package me.andreasmelone.glowingeyes.fabric.client;
 
 import com.mojang.blaze3d.platform.InputConstants;
+import me.andreasmelone.glowingeyes.client.component.eyes.ClientGlowingEyesComponent;
 import me.andreasmelone.glowingeyes.client.gui.EyesEditorScreen;
 import me.andreasmelone.glowingeyes.client.mod.ClientModContext;
 import me.andreasmelone.glowingeyes.common.component.eyes.GlowingEyesComponent;
@@ -31,6 +32,7 @@ public class GlowingEyesKeybindings {
 
             while(GlowingEyesKeybindings.TOGGLE_MAPPING.consumeClick()) {
                 GlowingEyesComponent.setToggledOn(player, !GlowingEyesComponent.isToggledOn(player));
+                ClientGlowingEyesComponent.sendUpdate();
             }
             while(GlowingEyesKeybindings.EYES_EDITOR_MAPPING.consumeClick()) {
                 if(client.screen != null) return;

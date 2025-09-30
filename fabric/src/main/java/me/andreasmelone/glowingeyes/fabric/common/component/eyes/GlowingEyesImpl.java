@@ -18,6 +18,14 @@ public class GlowingEyesImpl implements IGlowingEyes {
     private boolean toggledOn = true;
     private Map<Point, Color> glowingEyesMap = new HashMap<>();
 
+    public GlowingEyesImpl() {
+    }
+
+    public GlowingEyesImpl(boolean toggledOn, Map<Point, Color> glowingEyesMap) {
+        this.toggledOn = toggledOn;
+        this.glowingEyesMap = glowingEyesMap;
+    }
+
     @Override
     public Map<Point, Color> getGlowingEyesMap() {
         return this.glowingEyesMap;

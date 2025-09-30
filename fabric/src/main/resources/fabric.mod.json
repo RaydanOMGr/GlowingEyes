@@ -24,6 +24,11 @@
       "me.andreasmelone.glowingeyes.fabric.common.component.ComponentHandler"
     ]
   },
+  "accessWidener": "${mod_id}.accesswidener",
+  "mixins": [
+    "${mod_id}.mixins.json",
+    "${mod_id}.fabric.mixins.json"
+  ],
   "depends": {
     "fabricloader": ">=0.14",
     "fabric": "*",

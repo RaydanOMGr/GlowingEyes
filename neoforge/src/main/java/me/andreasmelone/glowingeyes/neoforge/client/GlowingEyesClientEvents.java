@@ -2,6 +2,7 @@ package me.andreasmelone.glowingeyes.neoforge.client;
 
 import me.andreasmelone.glowingeyes.GlowingEyes;
 import me.andreasmelone.glowingeyes.client.component.data.ClientPlayerDataComponent;
+import me.andreasmelone.glowingeyes.client.component.eyes.ClientGlowingEyesComponent;
 import me.andreasmelone.glowingeyes.client.gui.EyesEditorScreen;
 import me.andreasmelone.glowingeyes.client.mod.ClientModContext;
 import me.andreasmelone.glowingeyes.client.util.DynamicTextureCache;
@@ -34,6 +35,7 @@ public class GlowingEyesClientEvents {
 
         while (GlowingEyesKeybindings.TOGGLE_MAPPING.consumeClick()) {
             GlowingEyesComponent.setToggledOn(player, !GlowingEyesComponent.isToggledOn(player));
+            ClientGlowingEyesComponent.sendUpdate();
         }
         while (GlowingEyesKeybindings.EYES_EDITOR_MAPPING.consumeClick()) {
             if (Minecraft.getInstance().screen != null) return;

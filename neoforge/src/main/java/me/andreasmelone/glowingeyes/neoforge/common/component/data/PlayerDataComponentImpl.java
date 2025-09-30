@@ -1,7 +1,7 @@
 package me.andreasmelone.glowingeyes.neoforge.common.component.data;
 
 import me.andreasmelone.glowingeyes.common.component.data.IPlayerDataComponent;
-import me.andreasmelone.glowingeyes.neoforge.common.packets.HasModPacket;
+import me.andreasmelone.glowingeyes.common.packet.HasModPacket;
 import me.andreasmelone.glowingeyes.neoforge.common.packets.PacketHandler;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;

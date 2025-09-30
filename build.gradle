@@ -83,7 +83,7 @@ publishMods {
     }
 }
 
-def getChangelogText() {
+def String getChangelogText() {
     def url = new URI("https://raw.githubusercontent.com/RaydanOMGr/GlowingEyes/refs/heads/changelogs/changelog-${version}.md").toURL()
     def connection = (HttpURLConnection)url.openConnection()
     connection.setRequestMethod("GET")
@@ -93,6 +93,7 @@ def getChangelogText() {
     if (responseCode == 200) {
         return connection.inputStream.text
     } else {
-        throw new GradleException("Failed to fetch version with error code ${responseCode}")
+        println("Failed to fetch version with error code ${responseCode}")
+        return ""
     }
 }

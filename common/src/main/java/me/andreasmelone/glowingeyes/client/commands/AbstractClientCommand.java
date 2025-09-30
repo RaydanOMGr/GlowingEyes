@@ -15,7 +15,8 @@ public abstract class AbstractClientCommand<T extends SharedSuggestionProvider> 
     }
 
     public abstract void register(ClientModContext mod, CommandDispatcher<T> dispatcher);
-    protected LiteralArgumentBuilder<T> createArgumentBuilder(String name) {
+
+    protected LiteralArgumentBuilder<T> literal(String name) {
         return argumentBuilderFunction.apply(name);
     }
 }

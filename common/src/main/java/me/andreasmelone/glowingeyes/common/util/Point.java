@@ -2,6 +2,9 @@ package me.andreasmelone.glowingeyes.common.util;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
+import io.netty.buffer.ByteBuf;
+import net.minecraft.network.codec.ByteBufCodecs;
+import net.minecraft.network.codec.StreamCodec;
 
 import java.io.Serializable;
 import java.util.Objects;
@@ -15,6 +18,14 @@ public class Point implements Serializable, Cloneable {
     public static final Codec<Point> CODEC_STRING = Codec.STRING.xmap(
             Point::deserializePointString,
             Point::serializePointString
+    );
+
+    public static final StreamCodec<ByteBuf, Point> STREAM_CODEC = StreamCodec.composite(
+            ByteBufCodecs.INT,
+            Point::getX,
+            ByteBufCodecs.INT,
+            Point::getY,
+            Point::new
     );
 
     private int x;

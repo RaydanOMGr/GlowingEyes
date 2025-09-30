@@ -1,9 +1,9 @@
 package me.andreasmelone.glowingeyes.fabric.common.component.data;
 
 import me.andreasmelone.glowingeyes.common.component.data.IPlayerDataComponent;
+import me.andreasmelone.glowingeyes.common.packet.HasModPacket;
 import me.andreasmelone.glowingeyes.fabric.common.component.ComponentHandler;
-import me.andreasmelone.glowingeyes.fabric.common.packet.HasModPacket;
-import me.andreasmelone.glowingeyes.fabric.common.packet.PacketHandler;
+import me.andreasmelone.glowingeyes.fabric.common.packet.ServerPacketRegistrar;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
 
@@ -44,6 +44,6 @@ public class PlayerDataComponentImpl implements IPlayerDataComponent {
 
     @Override
     public void sendUpdate(ServerPlayer player) {
-        PacketHandler.sendTo(player, new HasModPacket());
+        ServerPacketRegistrar.sendTo(player, new HasModPacket());
     }
 }

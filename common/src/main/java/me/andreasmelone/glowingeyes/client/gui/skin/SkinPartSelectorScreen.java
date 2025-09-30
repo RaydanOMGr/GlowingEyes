@@ -1,6 +1,7 @@
 package me.andreasmelone.glowingeyes.client.gui.skin;
 
 import me.andreasmelone.glowingeyes.client.util.GuiUtil;
+import me.andreasmelone.glowingeyes.client.util.SkinUtil;
 import me.andreasmelone.glowingeyes.client.util.TextureLocations;
 import me.andreasmelone.glowingeyes.common.util.Color;
 import net.minecraft.client.Minecraft;
@@ -10,6 +11,7 @@ import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.concurrent.CompletableFuture;
 
@@ -18,23 +20,23 @@ public class SkinPartSelectorScreen extends Screen {
     private int paddingY;
     private int maxTextureWidth;
     private int maxTextureHeight;
-    private int xCenter;
-    private int yCenter;
+    private float xCenter;
+    private float yCenter;
     private int guiLeft, guiTop;
     private int middle;
     private float factorX;
     private float factorY;
-    private SkinPart selected = null;
-    private CompletableFuture<SkinPart> future;
+    private ISkinPart selected = null;
+    private CompletableFuture<ISkinPart> future;
 
-    private final int rows = 2;
-    private final int xSize = 200;
-    private final int ySize = 143;
+    private final int rows = 7;
+    private final int xSize = 221;
+    private final int ySize = 222;
     private final Screen parent;
     private final ResourceLocation skinTexture;
     private final Color overlayColor = new Color(255, 255, 255, 120);
 
-    protected SkinPartSelectorScreen(Screen parent, ResourceLocation skinTexture, SkinPart selected) {
+    protected SkinPartSelectorScreen(Screen parent, ResourceLocation skinTexture, @NotNull ISkinPart selected) {
         super(Component.empty());
         this.parent = parent;
         this.skinTexture = skinTexture;
@@ -56,17 +58,17 @@ public class SkinPartSelectorScreen extends Screen {
         int paddedHeight = ySize - 2 * paddingY;
 
         float scaleX = (float) paddedWidth / 64.0f;
-        float scaleY = (float) paddedHeight / SkinPart.getRowY(rows);
+        float scaleY = (float) paddedHeight / ISkinPart.getRowY(rows, selected.isSlim());
         float scaleFactor = Math.min(scaleX, scaleY);
 
         maxTextureWidth = (int) (64 * scaleFactor);
-        maxTextureHeight = (int) (SkinPart.getRowY(rows) * scaleFactor);
+        maxTextureHeight = (int) (ISkinPart.getRowY(rows, selected.isSlim()) * scaleFactor);
 
-        xCenter = this.guiLeft + (xSize - maxTextureWidth) / 2;
-        yCenter = this.guiTop + (ySize - maxTextureHeight) / 2;
+        xCenter = this.guiLeft + (float) (xSize - maxTextureWidth) / 2;
+        yCenter = this.guiTop + (float) (ySize - maxTextureHeight) / 2 - 3;
 
         factorX = 64.0f / maxTextureWidth;
-        factorY = (float) SkinPart.getRowY(rows) / maxTextureHeight;
+        factorY = (float) ISkinPart.getRowY(rows, selected.isSlim()) / maxTextureHeight;
 
         middle = this.guiLeft + (xSize / 2);
 
@@ -91,15 +93,15 @@ public class SkinPartSelectorScreen extends Screen {
 
     @Override
     public void render(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTicks) {
-        if(parent != null) {
+        if (parent != null) {
             guiGraphics.pose().pushPose();
-            guiGraphics.pose().translate(0, 0, -100);
+            guiGraphics.pose().translate(0, 0, -10000);
             parent.render(guiGraphics, 0, 0, partialTicks);
             guiGraphics.pose().popPose();
         }
         super.renderBackground(guiGraphics, mouseX, mouseY, partialTicks);
         GuiUtil.drawBackground(
-                guiGraphics, TextureLocations.UI_BACKGROUND_SLIM,
+                guiGraphics, TextureLocations.UI_BACKGROUND_BIG,
                 this.guiLeft, this.guiTop,
                 this.xSize, this.ySize
         );
@@ -111,32 +113,39 @@ public class SkinPartSelectorScreen extends Screen {
                 Color.WHITE.getRGB()
         );
 
+        guiGraphics.pose().pushPose();
+        guiGraphics.pose().translate(xCenter, yCenter, 0);
         guiGraphics.blit(
                 RenderType::guiTextured,
                 skinTexture,
-                xCenter, yCenter,
+                0, 0,
                 0, 0,
                 maxTextureWidth, maxTextureHeight,
-                64, SkinPart.getRowY(rows),
+                64, ISkinPart.getRowY(rows, selected.isSlim()),
                 64, 64
         );
+        guiGraphics.pose().popPose();
 
         int textureMouseX = (int) ((mouseX - xCenter) * factorX);
         int textureMouseY = (int) ((mouseY - yCenter) * factorY);
 
         if (textureMouseX >= 0 && textureMouseX <= 63 && textureMouseY >= 0 && textureMouseY <= 63) {
-            SkinPart part = SkinPart.getFromCoordinates(textureMouseX, textureMouseY);
+            ISkinPart part = ISkinPart.getFromCoordinates(textureMouseX, textureMouseY, selected.isSlim());
             if (part != null && part.containsData() && part.getRow() < rows) {
                 int x = part.getX();
                 int y = part.getY();
 
+                guiGraphics.pose().pushPose();
+                guiGraphics.pose().translate(xCenter, yCenter, 0);
+                guiGraphics.pose().scale(1.0f / factorX, 1.0f / factorY, 1.0f);
                 guiGraphics.fill(
-                        xCenter + (int) (x / factorX),
-                        yCenter + (int) (y / factorY),
-                        xCenter + (int) ((x + part.getSizeX()) / factorX),
-                        yCenter + (int) ((y + part.getSizeY()) / factorY),
+                        x,
+                        y,
+                        (x + part.getSizeX()),
+                        (y + part.getSizeY()),
                         overlayColor.getRGB()
                 );
+                guiGraphics.pose().popPose();
 
                 guiGraphics.renderTooltip(
                         minecraft.font,
@@ -147,20 +156,23 @@ public class SkinPartSelectorScreen extends Screen {
         }
 
         if (selected != null) {
+            guiGraphics.pose().pushPose();
+            guiGraphics.pose().translate(xCenter + (selected.getX() / factorX) - 0.25, yCenter + (selected.getY() / factorY) - 0.25, 0);
             guiGraphics.fill(
-                    xCenter + (int) (selected.getX() / factorX),
-                    yCenter + (int) (selected.getY() / factorY),
-                    xCenter + (int) ((selected.getX() + selected.getSizeX()) / factorX),
-                    yCenter + (int) ((selected.getY() + selected.getSizeY()) / factorY),
+                    0,
+                    0,
+                    (int) ((selected.getSizeX()) / factorX),
+                    (int) ((selected.getSizeY()) / factorY),
                     overlayColor.getRGB()
             );
             guiGraphics.renderOutline(
-                    xCenter + (int) (selected.getX() / factorX),
-                    yCenter + (int) (selected.getY() / factorY),
+                    0,
+                    0,
                     (int) (selected.getSizeX() / factorY) + 1,
                     (int) (selected.getSizeY() / factorX) + 1,
                     Color.BLACK.getRGB()
             );
+            guiGraphics.pose().popPose();
         }
 
         super.render(guiGraphics, mouseX, mouseY, partialTicks);
@@ -170,7 +182,7 @@ public class SkinPartSelectorScreen extends Screen {
     public boolean mouseClicked(double mouseX, double mouseY, int button) {
         int textureMouseX = (int) ((mouseX - xCenter) * factorX);
         int textureMouseY = (int) ((mouseY - yCenter) * factorY);
-        SkinPart part = SkinPart.getFromCoordinates(textureMouseX, textureMouseY);
+        ISkinPart part = ISkinPart.getFromCoordinates(textureMouseX, textureMouseY, selected.isSlim());
         if (part != null && part.containsData() && part.getRow() < rows) {
             if (button == 0) selected = part;
         }
@@ -187,23 +199,18 @@ public class SkinPartSelectorScreen extends Screen {
         super.onClose();
         if (parent != null) {
             Minecraft.getInstance().setScreen(parent);
-            parent.init(
-                    Minecraft.getInstance(),
-                    Minecraft.getInstance().getWindow().getGuiScaledWidth(),
-                    Minecraft.getInstance().getWindow().getGuiScaledHeight()
-            );
         }
     }
 
-    public static CompletableFuture<SkinPart> create(Screen parent, ResourceLocation skin, SkinPart selected) {
-        CompletableFuture<SkinPart> future = new CompletableFuture<>();
+    public static CompletableFuture<ISkinPart> create(Screen parent, ResourceLocation skin, ISkinPart selected) {
+        CompletableFuture<ISkinPart> future = new CompletableFuture<>();
         SkinPartSelectorScreen screen = new SkinPartSelectorScreen(parent, skin, selected);
         screen.future = future;
         Minecraft.getInstance().setScreen(screen);
         return future;
     }
 
-    public static CompletableFuture<SkinPart> create(Screen parent, ResourceLocation skin) {
-        return create(parent, skin, SkinPart.HEAD_FRONT);
+    public static CompletableFuture<ISkinPart> create(Screen parent, ResourceLocation skin) {
+        return create(parent, skin, SkinUtil.isSlim() ? SlimSkinPart.HEAD_FRONT : ClassicSkinPart.HEAD_FRONT);
     }
 }

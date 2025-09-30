@@ -5,7 +5,7 @@ import me.andreasmelone.glowingeyes.common.util.Point;
 
 import java.util.*;
 
-public enum SkinPart {
+public enum ClassicSkinPart implements ISkinPart {
     HEAD_FRESH_MOVES_1(0, true, 8, 8),
     HEAD_TOP(0, true, 8, 8),
     HEAD_BOTTOM(0, true, 8, 8),
@@ -45,7 +45,7 @@ public enum SkinPart {
     RIGHT_ARM_FRONT(3, true, 4, 12),
     RIGHT_ARM_LEFT(3, true, 4, 12),
     RIGHT_ARM_BACK(3, true, 4, 12),
-    RIGHT_LEG_OVERLAY_EMPTY_1(4, true, 4, 4),
+    RIGHT_LEG_OVERLAY_EMPTY_1(4, false, 4, 4),
     RIGHT_LEG_OVERLAY_TOP(4, true, 4, 4),
     RIGHT_LEG_OVERLAY_BOTTOM(4, true, 4, 4),
     RIGHT_LEG_OVERLAY_EMPTY_2(4, false, 4, 4),
@@ -101,8 +101,8 @@ public enum SkinPart {
     LEFT_ARM_OVERLAY_LEFT(7, true, 4, 12),
     LEFT_ARM_OVERLAY_BACK(7, true, 4, 12);
 
-    private static final Map<Point, SkinPart> POINT_TO_SKIN_PART_MAP = new HashMap<>();
-    private static final Map<Integer, List<SkinPart>> ROW_MAP = new HashMap<>();
+    private static final Map<Point, ClassicSkinPart> POINT_TO_SKIN_PART_MAP = new HashMap<>();
+    private static final Map<Integer, List<ClassicSkinPart>> ROW_MAP = new HashMap<>();
     private static final Map<Integer, Integer> ROW_Y_MAP = new HashMap<>();
 
     private final int row;
@@ -113,43 +113,54 @@ public enum SkinPart {
     private int x = -1;
     private int y = -1;
 
-    SkinPart(int row, boolean containsData, int sizeX, int sizeY) {
+    ClassicSkinPart(int row, boolean containsData, int sizeX, int sizeY) {
         this.row = row;
         this.containsData = containsData;
         this.sizeX = sizeX;
         this.sizeY = sizeY;
     }
 
+    @Override
     public int getRow() {
         return row;
     }
 
+    @Override
     public boolean containsData() {
         return containsData;
     }
 
+    @Override
     public int getX() {
-        if(x == -1) {
+        if (x == -1) {
             x = 0;
-            for (SkinPart part : getRow(row)) {
-                if(part == this) break;
+            for (ClassicSkinPart part : getRow(row)) {
+                if (part == this) break;
                 x = x + part.getSizeX();
             }
         }
         return x;
     }
 
+    @Override
     public int getY() {
-        if(y == -1) {
+        if (y == -1) {
             y = getRowY(this.getRow());
         }
         return y;
     }
 
+    @Override
+    public boolean isSlim() {
+        return false;
+    }
+
+    @Override
     public int getSizeX() {
         return sizeX;
     }
 
+    @Override
     public int getSizeY() {
         return sizeY;
     }
@@ -162,26 +173,31 @@ public enum SkinPart {
         return ROW_Y_MAP.getOrDefault(row, -1);
     }
 
-    public static List<SkinPart> getRow(int row) {
+    public static List<ClassicSkinPart> getRow(int row) {
         return ROW_MAP.getOrDefault(row, Collections.emptyList());
     }
 
-    public static Map<Integer, List<SkinPart>> getRows() {
-        Map<Integer, List<SkinPart>> rows = new HashMap<>();
+    public static Map<Integer, List<? extends ISkinPart>> getRows() {
+        Map<Integer, List<? extends ISkinPart>> rows = new HashMap<>();
         ROW_MAP.forEach((key, value) -> {
             rows.put(key, new ArrayList<>(value));
         });
         return rows;
     }
 
-    public static SkinPart getFromCoordinates(int x, int y) {
+    public static ClassicSkinPart getFromCoordinates(int x, int y) {
         if (x < 0 || y < 0 || y > 63 || x > 63)
             return null;
         return POINT_TO_SKIN_PART_MAP.get(new Point(x, y));
     }
 
+    public static ISkinPart getPart(ClassicSkinPart part, boolean isSlim) {
+        if (!isSlim) return part;
+        return SlimSkinPart.valueOf(part.name());
+    }
+
     static {
-        for (SkinPart part : values()) {
+        for (ClassicSkinPart part : values()) {
             ROW_MAP.computeIfAbsent(part.row, k -> new ArrayList<>()).add(part);
         }
 
@@ -191,7 +207,7 @@ public enum SkinPart {
             int currentX = 0;
             int maxHeightInRow = 0;
 
-            for (SkinPart part : getRow(row)) {
+            for (ClassicSkinPart part : getRow(row)) {
                 for (int dx = 0; dx < part.getSizeX(); dx++) {
                     for (int dy = 0; dy < part.getSizeY(); dy++) {
                         POINT_TO_SKIN_PART_MAP.put(new Point(currentX + dx, currentY + dy), part);
