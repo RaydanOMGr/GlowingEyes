@@ -32,7 +32,7 @@ jobs:
       - name: Build with Gradle Wrapper
         run: |
           chmod +x ./gradlew
-          ./gradlew clean build
+          ./gradlew build
 
       - name: Upload Fabric Artifacts
         uses: actions/upload-artifact@v4.3.1
