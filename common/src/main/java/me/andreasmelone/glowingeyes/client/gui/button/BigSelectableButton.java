@@ -11,6 +11,10 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 
 public class BigSelectableButton extends Button {
+    public static final int WIDTH = 128;
+    public static final int HEIGHT = 29;
+
+    private boolean isSelected = false;
     protected final WidgetSprites sprites = GuiUtil.createSprites(
             GlowingEyes.MOD_ID,
             "big/big_button",
@@ -19,14 +23,12 @@ public class BigSelectableButton extends Button {
             "big/big_button_highlighted_disabled"
     );
 
-    private boolean isSelected = false;
-
     public BigSelectableButton(int x, int y, Component buttonText, OnPress pressedAction) {
         this(x, y, buttonText, pressedAction, DEFAULT_NARRATION);
     }
 
     public BigSelectableButton(int x, int y, Component buttonText, OnPress pressedAction, CreateNarration createNarration) {
-        super(x, y, 128, 29, buttonText, pressedAction, createNarration);
+        super(x, y, WIDTH, HEIGHT, buttonText, pressedAction, createNarration);
     }
 
     @Override
@@ -37,7 +39,7 @@ public class BigSelectableButton extends Button {
                     RenderType::guiTextured,
                     sprite,
                     this.getX(), this.getY(),
-                    128, 29
+                    WIDTH, HEIGHT
             );
 
             Minecraft mc = Minecraft.getInstance();

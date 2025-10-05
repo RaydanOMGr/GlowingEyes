@@ -1,5 +1,6 @@
 package me.andreasmelone.glowingeyes.client.util;
 
+import me.andreasmelone.glowingeyes.common.util.Color;
 import me.andreasmelone.glowingeyes.common.util.Util;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
@@ -45,5 +46,9 @@ public class GuiUtil {
         }
 
         return lines.size();
+    }
+
+    public static void drawCursorPos(GuiGraphics ctx, Font font, int mouseX, int mouseY) {
+        ctx.drawString(font, "x: " + mouseX + ", y: " + mouseY, 10, 10, Color.WHITE.getRGB());
     }
 }

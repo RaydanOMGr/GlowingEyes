@@ -32,9 +32,7 @@ import org.joml.Vector2f;
 import org.joml.Vector3f;
 import org.lwjgl.system.MemoryUtil;
 
-import java.util.EnumMap;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 public class EyesEditorScreen extends Screen {
     private int guiLeft, guiTop;
@@ -102,7 +100,7 @@ public class EyesEditorScreen extends Screen {
         ));
         presetMenuButton.setTooltip(Tooltip.create(Component.translatable("tooltip.glowingeyes.editor.presetsmenu")));
 
-        // the 2nd layer toggle button
+        // the skin part picker button
         Button skinPartPicker;
         this.addRenderableWidget(skinPartPicker = new ImageButton(
                 this.guiLeft + this.xSize - 30, this.guiTop + this.ySize - 30 - 25 * 2,
@@ -134,9 +132,17 @@ public class EyesEditorScreen extends Screen {
 
         this.modeButtons.clear();
 
-        this.createModeButton(8, 70, Mode.BRUSH);
-        this.createModeButton(8, 95, Mode.ERASER);
-        this.createModeButton(8, 120, Mode.PICKER);
+        float middleY = this.height / 2f;
+        int modeCount = Mode.values().length;
+        int buttonHeight = 20;
+        int spacing = 5;
+        float totalHeight = modeCount * buttonHeight + (modeCount - 1) * spacing;
+        float startY = middleY - totalHeight / 2f;
+
+        for (int i = 0; i < modeCount; i++) {
+            int posY = (int) (startY + i * (buttonHeight + spacing));
+            this.createModeButton(this.guiLeft + 8, posY, Mode.values()[i]);
+        }
 
         this.modeButtons.get(Mode.BRUSH).onPress();
         this.modeButtons.forEach((mode, button) -> this.addRenderableWidget(button));
@@ -281,20 +287,21 @@ public class EyesEditorScreen extends Screen {
             return new Color(color.getRed(), color.getGreen(), color.getBlue());
         }
 
+        int pixelSize = 4; // 4 channels: red, green, blue, alpha; just make sure the format is set to GL_RGBA
         if(!allocatedTextures.containsKey(texture)) {
-            int pixelSize = 3; // 3 channels: red, green, blue; just make sure the format is set to GL_RGB
             long adr = MemoryUtil.nmemCalloc((long) texSizeX * texSizeY * pixelSize, 1);
             long startTime = System.currentTimeMillis();
 
             minecraft.getTextureManager().getTexture(texture).bind();
-            GlStateManager._getTexImage(GlConst.GL_TEXTURE_2D, 0, GlConst.GL_RGB, GlConst.GL_UNSIGNED_BYTE, adr);
+            // could save memory by using GL_RGB instead of GL_RGBA, but that messes up pojavlauncher compatibility
+            GlStateManager._getTexImage(GlConst.GL_TEXTURE_2D, 0, GlConst.GL_RGBA, GlConst.GL_UNSIGNED_BYTE, adr);
             LogUtils.getLogger().debug("Reading texture {} took {}ms", texture, System.currentTimeMillis() - startTime);
 
             allocatedTextures.put(texture, adr);
             return getTexturePixelColor(texture, texSizeX, texSizeY, x, y);
         } else {
             long adr = allocatedTextures.get(texture);
-            int index = (y * texSizeX + x) * 3;
+            int index = (y * texSizeX + x) * pixelSize;
             return new Color(
                     MemoryUtil.memGetByte(adr + index) & 0xFF,
                     MemoryUtil.memGetByte(adr + index + 1) & 0xFF,
@@ -355,7 +362,7 @@ public class EyesEditorScreen extends Screen {
 
     private Button createModeButton(int x, int y, Mode buttonMode) {
         Button imageButton = new ImageButton(
-                this.guiLeft + x, this.guiTop + y,
+                x, y,
                 20, 20,
                 buttonMode.getSprites(),
                 button -> {
@@ -383,6 +390,7 @@ public class EyesEditorScreen extends Screen {
                 screen.mod.getModVariables().setFinalColor(
                         screen.getTexturePixelColor(screen.minecraft.player.getSkin().texture(), 64, 64, point.getX(), point.getY())
                 );
+                screen.openedAt = System.currentTimeMillis();
             }
         }),
         ERASER(TextureLocations.ERASER_BUTTON, (screen, mouseX, mouseY, button) -> {
@@ -397,6 +405,55 @@ public class EyesEditorScreen extends Screen {
 
             screen.modeButtons.get(Mode.BRUSH).onPress();
             screen.modeButtons.forEach((mode, b) -> b.setFocused(false));
+            screen.openedAt = System.currentTimeMillis();
+        }),
+        FILL(TextureLocations.FILL_BUCKET_BUTTON, (screen, mouseX, mouseY, button) -> {
+            Point point = screen.calculatePoint(mouseX, mouseY);
+            Color color = screen.getTexturePixelColor(screen.minecraft.player.getSkin().texture(), 64, 64, point.getX(), point.getY());
+            Color finalColor = new Color(screen.mod.getModVariables().getFinalColor().getRed(), screen.mod.getModVariables().getFinalColor().getGreen(), screen.mod.getModVariables().getFinalColor().getBlue(), 200);
+
+            Stack<Point> stack = new Stack<>();
+            Set<Point> visitedPoints = new HashSet<>();
+            stack.push(point);
+            visitedPoints.add(point);
+
+            int minX = screen.skinPart.getX();
+            int minY = screen.skinPart.getY();
+            int maxX = minX + screen.skinPart.getSizeX();
+            int maxY = minY + screen.skinPart.getSizeY();
+
+            while (!stack.isEmpty()) {
+                Point p = stack.pop();
+                int x = p.getX();
+                int y = p.getY();
+
+                if (x < minX || x >= maxX || y < minY || y >= maxY) continue;
+                Color pixelColor = screen.getTexturePixelColor(screen.minecraft.player.getSkin().texture(), 64, 64, x, y);
+                if (!pixelColor.equals(color)) continue;
+
+                screen.pixels.put(new Point(p.getX(), p.getY()), finalColor);
+
+                Point east = new Point(x + 1, y);
+                if(!visitedPoints.contains(east)) {
+                    stack.push(east);
+                    visitedPoints.add(east);
+                }
+                Point west = new Point(x - 1, y);
+                if(!visitedPoints.contains(west)) {
+                    stack.push(west);
+                    visitedPoints.add(west);
+                }
+                Point north = new Point(x, y + 1);
+                if(!visitedPoints.contains(north)) {
+                    stack.push(north);
+                    visitedPoints.add(north);
+                }
+                Point south = new Point(x, y - 1);
+                if(!visitedPoints.contains(south)) {
+                    stack.push(south);
+                    visitedPoints.add(south);
+                }
+            }
         });
 
         private final WidgetSprites sprites;

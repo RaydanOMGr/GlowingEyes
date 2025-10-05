@@ -72,6 +72,7 @@ public class PresetManager {
             throw new RuntimeException("Presets not found in preset file", e);
         }
 
+        this.presets.clear();
         int version = presets.dataVersion();
         for (Preset preset : presets.presets()) {
             Dynamic<JsonElement> dynamic = new Dynamic<>(JsonOps.INSTANCE, Preset.CODEC.encodeStart(JsonOps.INSTANCE, preset).result().orElse(new JsonObject()));
@@ -112,8 +113,7 @@ public class PresetManager {
         if(serializedPresets.result().isEmpty()) {
             throw new RuntimeException("Couldn't serialize presets for unknown reason");
         }
-        String json = serializedPresets.result().get().toString();
-        return json;
+        return serializedPresets.result().get().toString();
     }
 
     public void saveDefaultPresets() {

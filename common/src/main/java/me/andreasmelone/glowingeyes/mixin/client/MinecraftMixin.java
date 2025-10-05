@@ -1,5 +1,6 @@
 package me.andreasmelone.glowingeyes.mixin.client;
 
+import me.andreasmelone.glowingeyes.client.presets.PresetManager;
 import me.andreasmelone.glowingeyes.client.util.DynamicTextureCache;
 import net.minecraft.client.Minecraft;
 import org.spongepowered.asm.mixin.Mixin;
@@ -18,6 +19,7 @@ public abstract class MinecraftMixin {
     public void onReloadResourcePacks(boolean error, Minecraft.GameLoadCookie gameLoadCookie, CallbackInfoReturnable<CompletableFuture<Void>> cir) {
         cir.getReturnValue().thenApply((unused) -> {
             DynamicTextureCache.clear();
+            PresetManager.getInstance().loadPresets();
             return unused;
         });
     }

@@ -12,5 +12,5 @@ public class GlowingEyes {
 	public static final Color DEFAULT_COLOR = new Color(242, 0, 0, 210);
 	public static final Scheduler SCHEDULER_SERVER = new CodeScheduler();
 	public static final Scheduler SCHEDULER_CLIENT = new CodeScheduler();
-    public static final boolean DEBUG = false;
+    public static final boolean DEBUG = true;
 }
