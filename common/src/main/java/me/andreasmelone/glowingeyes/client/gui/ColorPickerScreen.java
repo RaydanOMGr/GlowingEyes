@@ -13,6 +13,7 @@ import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.EnumMap;
 import java.util.Map;
@@ -20,6 +21,29 @@ import java.util.function.Predicate;
 import java.util.function.Supplier;
 
 public class ColorPickerScreen extends Screen {
+    private static final int UI_WIDTH = TextureLocations.UI_BACKGROUND_BROAD_WIDTH;
+    private static final int UI_HEIGHT = TextureLocations.UI_BACKGROUND_BROAD_HEIGHT;
+
+    private static final int EDIT_BOX_X = UI_WIDTH - 70;
+    private static final int EDIT_BOX_Y = 20;
+    private static final int EDIT_BOX_SPACING = 30;
+
+    private static final int COLOR_WHEEL_WIDTH = 100;
+    private static final int COLOR_WHEEL_X = 20;
+
+    private static final int BRIGHTNESS_SLIDER_X = 120;
+    private static final int BRIGHTNESS_SLIDER_WIDTH = 25;
+
+    private static final int COLOR_WIDGET_HEIGHT = 100;
+
+    private static final int SELECTED_COLOR_X = UI_WIDTH - 40;
+    private static final int SELECTED_COLOR_Y = UI_HEIGHT - 40;
+    private static final int SELECTED_COLOR_WIDTH = 25;
+    private static final int SELECTED_COLOR_HEIGHT = 25;
+
+    private static final int EDIT_BOX_WIDTH = 60;
+    private static final int EDIT_BOX_HEIGHT = 20;
+
     private int guiLeft, guiTop;
     private int colorWheelX, colorWheelY;
     private int brightnessSliderX, brightnessSliderY;
@@ -27,14 +51,12 @@ public class ColorPickerScreen extends Screen {
     private ColorPickerWidget colorPickerWidget;
     private ColorSliderWidget colorSliderWidget;
 
-    private final int xSize = 256;
-    private final int ySize = 222;
     private final Screen parent;
     private final ClientModContext mod;
     private final Map<ColorType, EditBox> editBoxMap = new EnumMap<>(ColorType.class);
     public ColorPickerScreen(ClientModContext mod) {
         super(Component.empty());
-        parent = null;
+        this.parent = null;
         this.mod = mod;
     }
 
@@ -47,82 +69,84 @@ public class ColorPickerScreen extends Screen {
     @Override
     protected void init() {
         super.init();
-        if(parent != null) parent.init(minecraft, minecraft.getWindow().getGuiScaledWidth(), minecraft.getWindow().getGuiScaledHeight());
-        this.guiLeft = (this.width - this.xSize) / 2;
-        this.guiTop = (this.height - this.ySize) / 2;
+        if(this.parent != null) this.parent.init(this.minecraft, this.minecraft.getWindow().getGuiScaledWidth(), this.minecraft.getWindow().getGuiScaledHeight());
+        this.guiLeft = (this.width - UI_WIDTH) / 2;
+        this.guiTop = (this.height - UI_HEIGHT) / 2;
 
-        this.colorWheelX = this.guiLeft + 20;
-        this.colorWheelY = (this.height / 2) - (100 / 2);
+        this.colorWheelX = this.guiLeft + COLOR_WHEEL_X;
+        this.colorWheelY = (this.height / 2) - (COLOR_WIDGET_HEIGHT / 2);
 
-        this.brightnessSliderX = this.colorWheelX + 120;
+        this.brightnessSliderX = this.colorWheelX + BRIGHTNESS_SLIDER_X;
         this.brightnessSliderY = this.colorWheelY;
 
         this.editBoxMap.clear();
         this.editBoxMap.put(ColorType.RED,
-                this.createEditBox(this.guiLeft + this.xSize - 70, this.guiTop + 20,  Component.empty()));
+                this.createEditBox(this.guiLeft + EDIT_BOX_X, this.guiTop + EDIT_BOX_Y,  Component.empty()));
 
         this.editBoxMap.put(ColorType.GREEN,
-                this.createEditBox(this.guiLeft + this.xSize - 70, this.guiTop + 50, Component.empty()));
+                this.createEditBox(this.guiLeft + EDIT_BOX_X, this.guiTop + EDIT_BOX_Y + (EDIT_BOX_SPACING * this.editBoxMap.size()), Component.empty()));
 
         this.editBoxMap.put(ColorType.BLUE,
-                this.createEditBox(this.guiLeft + this.xSize - 70, this.guiTop + 80, Component.empty()));
+                this.createEditBox(this.guiLeft + EDIT_BOX_X, this.guiTop + EDIT_BOX_Y + (EDIT_BOX_SPACING * this.editBoxMap.size()), Component.empty()));
 
         this.editBoxMap.put(ColorType.HEX,
-                this.createEditBox(this.guiLeft + this.xSize - 70, this.guiTop + 110, Component.empty()));
+                this.createEditBox(this.guiLeft + EDIT_BOX_X, this.guiTop + EDIT_BOX_Y + (EDIT_BOX_SPACING * this.editBoxMap.size()), Component.empty()));
 
         this.editBoxMap.forEach((type, field) -> {
             field.setResponder((string) -> {
                 if (!field.isFocused() || string.isEmpty()) return;
-                this.editBoxMap.forEach((t, f) -> { if(t != type) f.setFocused(false); });
-                float[] hsb = ColorUtil.getHSBFromRGB(type.parseAndUpdate(mod.getModVariables().getFinalColor(), string).getRGB());
+                this.editBoxMap.forEach((t, f) -> {
+                    if(t != type) f.setFocused(false);
+                });
+                float[] hsb = ColorUtil.getHSBFromRGB(type.parseAndUpdate(this.mod.getModVariables().getFinalColor(), string).getRGB());
                 this.changeColor(hsb[0], hsb[1], hsb[2], t -> t == type);
             });
             this.addRenderableWidget(field);
         });
 
-        colorPickerWidget = createOrUpdateWidget(colorPickerWidget, colorWheelX, colorWheelY,() -> {
-            ColorPickerWidget widget = new ColorPickerWidget(colorWheelX, colorWheelY, 100, 100,
-                    mod.getModVariables().getHue(), mod.getModVariables().getBrightness(), mod.getModVariables().getSaturation());
+        this.colorPickerWidget = this.createOrUpdateWidget(this.colorPickerWidget, this.colorWheelX, this.colorWheelY,() -> {
+            ColorPickerWidget widget = new ColorPickerWidget(this.colorWheelX, this.colorWheelY, COLOR_WHEEL_WIDTH, COLOR_WIDGET_HEIGHT,
+                    this.mod.getModVariables().getHue(), this.mod.getModVariables().getBrightness(), this.mod.getModVariables().getSaturation());
             widget.onChange((picker) -> {
-                this.changeColor(mod.getModVariables().getHue(), picker.getSaturation(), picker.getBrightness());
+                this.changeColor(this.mod.getModVariables().getHue(), picker.getSaturation(), picker.getBrightness());
             });
             return widget;
         });
-        colorSliderWidget = createOrUpdateWidget(colorSliderWidget, brightnessSliderX, brightnessSliderY,() -> {
-            ColorSliderWidget widget = new ColorSliderWidget(brightnessSliderX, brightnessSliderY, 30, 100,
-                    mod.getModVariables().getHue());
+        this.colorSliderWidget = this.createOrUpdateWidget(this.colorSliderWidget, this.brightnessSliderX, this.brightnessSliderY,() -> {
+            ColorSliderWidget widget = new ColorSliderWidget(this.brightnessSliderX, this.brightnessSliderY, BRIGHTNESS_SLIDER_WIDTH, COLOR_WIDGET_HEIGHT,
+                    this.mod.getModVariables().getHue());
             widget.onChange((slider) -> {
-                this.changeColor(slider.getHue(), mod.getModVariables().getSaturation(), mod.getModVariables().getBrightness());
+                this.changeColor(slider.getHue(), this.mod.getModVariables().getSaturation(), this.mod.getModVariables().getBrightness());
             });
             return widget;
         });
 
-        this.addRenderableWidget(colorPickerWidget);
-        this.addRenderableWidget(colorSliderWidget);
-        this.changeColor(mod.getModVariables().getHue(), mod.getModVariables().getSaturation(), mod.getModVariables().getBrightness());
+        this.addRenderableWidget(this.colorPickerWidget);
+        this.addRenderableWidget(this.colorSliderWidget);
+        this.changeColor(this.mod.getModVariables().getHue(), this.mod.getModVariables().getSaturation(), this.mod.getModVariables().getBrightness());
     }
 
     @Override
-    public void render(GuiGraphics guiGraphics, int mouseX, int mouseY, float delta) {
-        if(parent != null) {
-            guiGraphics.pose().pushPose();
-            guiGraphics.pose().translate(0, 0, -100);
-            parent.render(guiGraphics, 0, 0, delta);
-            guiGraphics.pose().popPose();
+    public void render(@NotNull GuiGraphics ctx, int mouseX, int mouseY, float delta) {
+        if(this.parent != null) {
+            ctx.pose().pushPose();
+            ctx.pose().translate(0, 0, -100);
+            this.parent.render(ctx, 0, 0, delta);
+            ctx.pose().popPose();
         }
 
-        super.renderBackground(guiGraphics, mouseX, mouseY, delta);
-        GuiUtil.drawBackground(guiGraphics,
-                TextureLocations.UI_BACKGROUND_BROAD, this.guiLeft, this.guiTop, this.xSize, this.ySize);
+        super.renderBackground(ctx, mouseX, mouseY, delta);
+        GuiUtil.drawBackground(ctx,
+                TextureLocations.UI_BACKGROUND_BROAD, this.guiLeft, this.guiTop, UI_WIDTH, UI_HEIGHT);
 
         // draw the selected color on the right bottom
-        guiGraphics.fill(
-                this.guiLeft + this.xSize - 40, this.guiTop + this.ySize - 40,
-                this.guiLeft + this.xSize - 15, this.guiTop + this.ySize - 15,
-                mod.getModVariables().getFinalColor().getRGB()
+        ctx.fill(
+                this.guiLeft + SELECTED_COLOR_X, this.guiTop + SELECTED_COLOR_Y,
+                this.guiLeft + SELECTED_COLOR_X + SELECTED_COLOR_WIDTH, this.guiTop + SELECTED_COLOR_Y + SELECTED_COLOR_HEIGHT,
+                this.mod.getModVariables().getFinalColor().getRGB()
         );
 
-        super.render(guiGraphics, mouseX, mouseY, delta);
+        super.render(ctx, mouseX, mouseY, delta);
     }
 
     @Override
@@ -132,28 +156,23 @@ public class ColorPickerScreen extends Screen {
 
     @Override
     public void onClose() {
-        if(parent != null) {
-            Minecraft.getInstance().setScreen(parent);
-            parent.init(
-                    Minecraft.getInstance(),
-                    Minecraft.getInstance().getWindow().getGuiScaledWidth(),
-                    Minecraft.getInstance().getWindow().getGuiScaledHeight()
-            );
+        if(this.parent != null) {
+            Minecraft.getInstance().setScreen(this.parent);
         }
     }
 
     @Override
-    public void renderBackground(GuiGraphics $$0, int $$1, int $$2, float $$3) {
+    public void renderBackground(@NotNull GuiGraphics ctx, int mouseX, int mouseY, float partialTick) {
     }
 
     private void changeColor(float hue, float saturation, float brightness) {
-        changeColor(hue, saturation, brightness, (type) -> false);
+        this.changeColor(hue, saturation, brightness, (type) -> false);
     }
 
     private void changeColor(float hue, float saturation, float brightness, Predicate<ColorType> predicate) {
-        mod.getModVariables().setHue(hue);
-        mod.getModVariables().setSaturation(saturation);
-        mod.getModVariables().setBrightness(brightness);
+        this.mod.getModVariables().setHue(hue);
+        this.mod.getModVariables().setSaturation(saturation);
+        this.mod.getModVariables().setBrightness(brightness);
 
         this.colorPickerWidget.setHue(hue);
         this.colorPickerWidget.setSaturation(saturation);
@@ -161,9 +180,9 @@ public class ColorPickerScreen extends Screen {
 
         this.colorSliderWidget.setHue(hue);
 
-        editBoxMap.forEach((type, box) -> {
+        this.editBoxMap.forEach((type, box) -> {
             if(predicate.test(type)) return;
-            box.setValue(type.get(mod.getModVariables().getFinalColor()));
+            box.setValue(type.get(this.mod.getModVariables().getFinalColor()));
         });
     }
 
@@ -171,7 +190,7 @@ public class ColorPickerScreen extends Screen {
         return new EditBox(
                 this.font,
                 x, y,
-                60, 20,
+                EDIT_BOX_WIDTH, EDIT_BOX_HEIGHT,
                 component
         );
     }

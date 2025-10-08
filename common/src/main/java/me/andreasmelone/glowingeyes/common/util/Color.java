@@ -32,14 +32,14 @@ public class Color implements Serializable, Cloneable {
     public static final Color CYAN = new Color(0, 255, 255);
     public static final Color BLUE = new Color(0, 0, 255);
 
-    private int value;
+    private final int value;
     public Color(int r, int g, int b) {
         this(r, g, b, 255);
     }
 
     @ConstructorProperties({"red", "green", "blue", "alpha"})
     public Color(int r, int g, int b, int a) {
-        value = ((a & 0xFF) << 24) |
+        this.value = ((a & 0xFF) << 24) |
                 ((r & 0xFF) << 16) |
                 ((g & 0xFF) << 8)  |
                 ((b & 0xFF));
@@ -47,14 +47,14 @@ public class Color implements Serializable, Cloneable {
     }
 
     public Color(int rgb) {
-        value = 0xff000000 | rgb;
+        this.value = 0xff000000 | rgb;
     }
 
     public Color(int rgba, boolean hasalpha) {
         if (hasalpha) {
-            value = rgba;
+            this.value = rgba;
         } else {
-            value = 0xff000000 | rgba;
+            this.value = 0xff000000 | rgba;
         }
     }
 
@@ -64,23 +64,31 @@ public class Color implements Serializable, Cloneable {
     }
 
     public int getRed() {
-        return (getRGB() >> 16) & 0xFF;
+        return (this.getRGB() >> 16) & 0xFF;
     }
 
     public int getGreen() {
-        return (getRGB() >> 8) & 0xFF;
+        return (this.getRGB() >> 8) & 0xFF;
     }
 
     public int getBlue() {
-        return (getRGB()) & 0xFF;
+        return (this.getRGB()) & 0xFF;
     }
 
     public int getAlpha() {
-        return (getRGB() >> 24) & 0xff;
+        return (this.getRGB() >> 24) & 0xff;
     }
 
     public int getRGB() {
-        return value;
+        return this.value;
+    }
+
+    public Color withAlpha(float alpha) {
+        return this.withAlpha((int)(alpha * 255));
+    }
+
+    public Color withAlpha(int alpha) {
+        return new Color(this.getRed(), this.getGreen(), this.getBlue(), alpha);
     }
 
     private static void testColorValueRange(int r, int g, int b, int a) {
@@ -222,22 +230,22 @@ public class Color implements Serializable, Cloneable {
 
     @Override
     public boolean equals(Object o) {
-        if (o == null || getClass() != o.getClass()) return false;
+        if (o == null || this.getClass() != o.getClass()) return false;
         Color color = (Color) o;
-        return value == color.value;
+        return this.value == color.value;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hashCode(value);
+        return Objects.hashCode(this.value);
     }
 
     @Override
     public String toString() {
         return "Color{" +
-                "red=" + getRed() +
-                ", green=" + getGreen() +
-                ", blue=" + getBlue() +
+                "red=" + this.getRed() +
+                ", green=" + this.getGreen() +
+                ", blue=" + this.getBlue() +
                 '}';
     }
 

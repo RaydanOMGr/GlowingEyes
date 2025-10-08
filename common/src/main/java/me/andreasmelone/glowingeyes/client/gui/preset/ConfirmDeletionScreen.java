@@ -7,24 +7,34 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.concurrent.CompletableFuture;
 
 public class ConfirmDeletionScreen extends Screen {
-    int xSize = 200;
-    int ySize = 143;
+    private static final int UI_WIDTH = TextureLocations.UI_BACKGROUND_SLIM_WIDTH;
+    private static final int UI_HEIGHT = TextureLocations.UI_BACKGROUND_SLIM_HEIGHT;
 
-    int guiLeft, guiTop, middleX, middleY;
+    private static final int TEXT_Y = 20;
+    private static final int TEXT_PADDING = 7;
+
+    private static final int PADDING_X = 20;
+    private static final int BUTTON_SPACING = 5;
+
+    private static final int BUTTON_Y = 100;
+    private static final int BUTTON_HEIGHT = 20;
+
+    int guiLeft, guiTop;
 
     private String deletedElement;
     private Component labelComponent;
     private CompletableFuture<Boolean> future;
     private final Screen parent;
-
     public ConfirmDeletionScreen() {
         super(Component.empty());
         this.parent = null;
     }
+
     public ConfirmDeletionScreen(Screen parent) {
         super(Component.empty());
         this.parent = parent;
@@ -33,14 +43,12 @@ public class ConfirmDeletionScreen extends Screen {
     @Override
     public void init() {
         super.init();
-        if(parent != null) parent.init(minecraft, minecraft.getWindow().getGuiScaledWidth(), minecraft.getWindow().getGuiScaledHeight());
-        this.guiLeft = (this.width - this.xSize) / 2;
-        this.guiTop = (this.height - this.ySize) / 2;
+        if (this.parent != null)
+            this.parent.init(this.minecraft, this.minecraft.getWindow().getGuiScaledWidth(), this.minecraft.getWindow().getGuiScaledHeight());
+        this.guiLeft = (this.width - UI_WIDTH) / 2;
+        this.guiTop = (this.height - UI_HEIGHT) / 2;
 
-        this.middleX = this.guiLeft + this.xSize / 2;
-        this.middleY = this.guiTop + this.ySize / 2;
-
-        labelComponent = Component.empty();
+        int buttonWidth = UI_WIDTH / 2 - BUTTON_SPACING - PADDING_X;
 
         // First Button: Confirm
         this.addRenderableWidget(
@@ -53,8 +61,8 @@ public class ConfirmDeletionScreen extends Screen {
                                         Minecraft.getInstance().setScreen(this.parent);
                                     }
                                 })
-                        .pos(this.guiLeft + 20, this.guiTop + 100)
-                        .size(80 - 5, 20)
+                        .pos(this.guiLeft + PADDING_X, this.guiTop + BUTTON_Y)
+                        .size(buttonWidth, BUTTON_HEIGHT)
                         .build()
         );
 
@@ -69,56 +77,51 @@ public class ConfirmDeletionScreen extends Screen {
                                         Minecraft.getInstance().setScreen(this.parent);
                                     }
                                 })
-                        .pos(this.guiLeft + 100 + (5 * 2), this.guiTop + 100)
-                        .size(80 - 5, 20)
+                        .pos(this.guiLeft + PADDING_X + (BUTTON_SPACING * 2) + buttonWidth, this.guiTop + BUTTON_HEIGHT)
+                        .size(buttonWidth, BUTTON_HEIGHT)
                         .build()
         );
 
-        labelComponent = Component.translatable("gui.glowingeyes.delete.confirm", this.deletedElement);
+        this.labelComponent = Component.translatable("gui.glowingeyes.delete.confirm", this.deletedElement);
     }
 
     @Override
-    public void render(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTicks) {
-        if(parent != null) {
-            guiGraphics.pose().pushPose();
-            guiGraphics.pose().translate(0, 0, -100);
-            parent.render(guiGraphics, 0, 0, partialTicks);
-            guiGraphics.pose().popPose();
+    public void render(@NotNull GuiGraphics ctx, int mouseX, int mouseY, float partialTicks) {
+        if (this.parent != null) {
+            ctx.pose().pushPose();
+            ctx.pose().translate(0, 0, -100);
+            this.parent.render(ctx, 0, 0, partialTicks);
+            ctx.pose().popPose();
         }
-        super.renderBackground(guiGraphics, mouseX, mouseY, partialTicks);
+        super.renderBackground(ctx, mouseX, mouseY, partialTicks);
 
         GuiUtil.drawBackground(
-                guiGraphics, TextureLocations.UI_BACKGROUND_SLIM,
+                ctx, TextureLocations.UI_BACKGROUND_SLIM,
                 this.guiLeft, this.guiTop,
-                this.xSize, this.ySize
+                UI_WIDTH, UI_HEIGHT
         );
 
         GuiUtil.drawWrappedText(
-                guiGraphics,
+                ctx,
                 this.font,
-                labelComponent,
-                this.middleX, this.middleY - 20,
-                this.xSize - 14,
+                this.labelComponent,
+                this.width / 2, (this.height / 2) - TEXT_Y,
+                UI_WIDTH - TEXT_PADDING * 2,
                 0xFFFFFF
         );
 
-        super.render(guiGraphics, mouseX, mouseY, partialTicks);
+        super.render(ctx, mouseX, mouseY, partialTicks);
     }
 
     @Override
     public void onClose() {
-        if(parent != null) {
-            Minecraft.getInstance().setScreen(parent);
-            parent.init(
-                    Minecraft.getInstance(),
-                    Minecraft.getInstance().getWindow().getGuiScaledWidth(),
-                    Minecraft.getInstance().getWindow().getGuiScaledHeight()
-            );
+        if (this.parent != null) {
+            Minecraft.getInstance().setScreen(this.parent);
         }
     }
 
     @Override
-    public void renderBackground(GuiGraphics $$0, int $$1, int $$2, float $$3) {
+    public void renderBackground(@NotNull GuiGraphics ctx, int mouseX, int mouseY, float partialTick) {
     }
 
     public static CompletableFuture<Boolean> askToDelete(Screen parent, String element) {

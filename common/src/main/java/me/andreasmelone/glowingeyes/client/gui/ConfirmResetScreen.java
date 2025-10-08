@@ -11,17 +11,26 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
 
 public class ConfirmResetScreen extends Screen {
+    private static final int UI_WIDTH = TextureLocations.UI_BACKGROUND_SLIM_WIDTH;
+    private static final int UI_HEIGHT = TextureLocations.UI_BACKGROUND_SLIM_HEIGHT;
+
+    private static final int BUTTON_Y = UI_HEIGHT - 25;
+    private static final int BUTTON_HEIGHT = 20;
+    private static final int BUTTON_OFFSET_MIDDLE_X = 2;
+
+    private static final int TEXT_PADDING = 14;
+    private static final int TITLE_Y = -20;
+    private static final int WARNING_Y = 5;
+
     private int guiLeft;
     private int guiTop;
     private int middleX;
     private int middleY;
-
-    private final int xSize = 200;
-    private final int ySize = 143;
     private final Screen parent;
     protected ConfirmResetScreen(Screen parent) {
         super(Component.empty());
@@ -31,99 +40,94 @@ public class ConfirmResetScreen extends Screen {
     @Override
     protected void init() {
         super.init();
-        if(parent != null) parent.init(minecraft, minecraft.getWindow().getGuiScaledWidth(), minecraft.getWindow().getGuiScaledHeight());
-        this.guiLeft = (this.width - this.xSize) / 2;
-        this.guiTop = (this.height - this.ySize) / 2;
+        if(this.parent != null) this.parent.init(this.minecraft, this.minecraft.getWindow().getGuiScaledWidth(), this.minecraft.getWindow().getGuiScaledHeight());
+        this.guiLeft = (this.width - UI_WIDTH) / 2;
+        this.guiTop = (this.height - UI_HEIGHT) / 2;
 
-        middleX = this.guiLeft + (xSize / 2);
-        middleY = this.guiTop + (ySize / 2);
+        this.middleX = this.guiLeft + (UI_WIDTH / 2);
+        this.middleY = this.guiTop + (UI_HEIGHT / 2);
 
-        int width = (middleX - guiLeft) - 7;
-        int confirmX = guiLeft + 5;
+        int width = this.middleX - this.guiLeft - TEXT_PADDING / 2;
+        int confirmX = this.middleX - width - BUTTON_OFFSET_MIDDLE_X;
         this.addRenderableWidget(
             Button.builder(Component.translatable("gui.glowingeyes.confirm"),
                 button -> {
-                    if (parent != null) {
+                    if (this.parent != null) {
                         GlowingEyesComponent.setGlowingEyesMap(Minecraft.getInstance().player, new HashMap<>());
                         ClientGlowingEyesComponent.sendUpdate();
-                        Minecraft.getInstance().setScreen(parent);
+                        Minecraft.getInstance().setScreen(this.parent);
                     }
                 }
-            ).pos(confirmX, this.guiTop + this.ySize - 25)
-            .size(width, 20)
+            ).pos(confirmX, this.guiTop + BUTTON_Y)
+            .size(width, BUTTON_HEIGHT)
             .build()
         );
 
-        int cancelX = middleX + 2;
+        int cancelX = this.middleX + BUTTON_OFFSET_MIDDLE_X;
         this.addRenderableWidget(
             Button.builder(Component.translatable("gui.glowingeyes.cancel"),
                 button -> {
-                    if (parent != null) {
-                        Minecraft.getInstance().setScreen(parent);
+                    if (this.parent != null) {
+                        Minecraft.getInstance().setScreen(this.parent);
                     }
                 }
-            ).pos(cancelX, this.guiTop + this.ySize - 25)
-            .size(width, 20)
+            ).pos(cancelX, this.guiTop + BUTTON_Y)
+            .size(width, BUTTON_HEIGHT)
             .build()
         );
     }
 
     @Override
-    public void render(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTicks) {
-        if(parent != null) {
-            guiGraphics.pose().pushPose();
-            guiGraphics.pose().translate(0, 0, -100);
-            parent.render(guiGraphics, 0, 0, partialTicks);
-            guiGraphics.pose().popPose();
+    public void render(@NotNull GuiGraphics ctx, int mouseX, int mouseY, float partialTicks) {
+        if(this.parent != null) {
+            ctx.pose().pushPose();
+            ctx.pose().translate(0, 0, -100);
+            this.parent.render(ctx, 0, 0, partialTicks);
+            ctx.pose().popPose();
         }
-        super.renderBackground(guiGraphics, mouseX, mouseY, partialTicks);
+        super.renderBackground(ctx, mouseX, mouseY, partialTicks);
         GuiUtil.drawBackground(
-                guiGraphics, TextureLocations.UI_BACKGROUND_SLIM,
+                ctx, TextureLocations.UI_BACKGROUND_SLIM,
                 this.guiLeft, this.guiTop,
-                this.xSize, this.ySize
+                UI_WIDTH, UI_HEIGHT
         );
 
-        guiGraphics.drawCenteredString(
-                minecraft.font,
+        ctx.drawCenteredString(
+                this.minecraft.font,
                 Component.translatable("gui.glowingeyes.warning").withStyle(ChatFormatting.BOLD),
-                middleX, this.guiTop + 7,
+                this.middleX, this.guiTop + TEXT_PADDING / 2,
                 Color.RED.getRGB()
         );
 
         GuiUtil.drawWrappedText(
-                guiGraphics,
-                minecraft.font,
+                ctx,
+                this.minecraft.font,
                 Component.translatable("gui.glowingeyes.reset.title"),
-                this.guiLeft + (xSize / 2), middleY - 20,
-                this.xSize - 14,
+                this.guiLeft + (UI_WIDTH / 2), this.middleY + TITLE_Y,
+                UI_WIDTH - TEXT_PADDING,
                 Color.WHITE.getRGB()
         );
 
         GuiUtil.drawWrappedText(
-                guiGraphics,
-                minecraft.font,
+                ctx,
+                this.minecraft.font,
                 Component.translatable("gui.glowingeyes.reset.warning"),
-                this.guiLeft + (xSize / 2), middleY + 5,
-                this.xSize - 14,
+                this.guiLeft + (UI_WIDTH / 2), this.middleY + WARNING_Y,
+                UI_WIDTH - TEXT_PADDING,
                 Color.RED.getRGB()
         );
 
-        super.render(guiGraphics, mouseX, mouseY, partialTicks);
+        super.render(ctx, mouseX, mouseY, partialTicks);
     }
 
     @Override
     public void onClose() {
-        if(parent != null) {
-            Minecraft.getInstance().setScreen(parent);
-            parent.init(
-                    Minecraft.getInstance(),
-                    Minecraft.getInstance().getWindow().getGuiScaledWidth(),
-                    Minecraft.getInstance().getWindow().getGuiScaledHeight()
-            );
+        if(this.parent != null) {
+            Minecraft.getInstance().setScreen(this.parent);
         }
     }
 
     @Override
-    public void renderBackground(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTicks) {
+    public void renderBackground(@NotNull GuiGraphics ctx, int mouseX, int mouseY, float partialTicks) {
     }
 }

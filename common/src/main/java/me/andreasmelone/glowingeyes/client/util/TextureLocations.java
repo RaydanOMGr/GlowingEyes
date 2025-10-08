@@ -28,23 +28,46 @@ public class TextureLocations {
 
     // 176x222
     public static final ResourceLocation UI_BACKGROUND = Util.id(GlowingEyes.MOD_ID, "textures/gui/background/background.png");
+    public static final int UI_BACKGROUND_WIDTH = 176;
+    public static final int UI_BACKGROUND_HEIGHT = 222;
+
     // 221x222
     public static final ResourceLocation UI_BACKGROUND_BIG = Util.id(GlowingEyes.MOD_ID, "textures/gui/background/background_big.png");
+    public static final int UI_BACKGROUND_BIG_WIDTH = 221;
+    public static final int UI_BACKGROUND_BIG_HEIGHT = 222;
+
     // 256x222
     public static final ResourceLocation UI_BACKGROUND_BROAD = Util.id(GlowingEyes.MOD_ID, "textures/gui/background/background_broad.png");
     public static final int UI_BACKGROUND_BROAD_WIDTH = 256;
     public static final int UI_BACKGROUND_BROAD_HEIGHT = 222;
+
     // 200x143
     public static final ResourceLocation UI_BACKGROUND_SLIM = Util.id(GlowingEyes.MOD_ID, "textures/gui/background/background_slim.png");
+    public static final int UI_BACKGROUND_SLIM_WIDTH = 200;
+    public static final int UI_BACKGROUND_SLIM_HEIGHT = 143;
+
     // 252x143
     public static final ResourceLocation UI_BACKGROUND_SLIM_LONG = Util.id(GlowingEyes.MOD_ID, "textures/gui/background/background_slim_long.png");
+    public static final int UI_BACKGROUND_SLIM_LONG_WIDTH = 252;
+    public static final int UI_BACKGROUND_SLIM_LONG_HEIGHT = 143;
+
     // 34x45
     public static final ResourceLocation UI_PLAYERBOX = Util.id(GlowingEyes.MOD_ID, "textures/gui/playerbox.png");
+    public static final int UI_PLAYERBOX_WIDTH = 34;
+    public static final int UI_PLAYERBOX_HEIGHT = 45;
 
     public static final ResourceLocation UI_PRESETBOX = Util.id(GlowingEyes.MOD_ID, "textures/gui/presetbox.png");
     public static final int UI_PRESETBOX_WIDTH = 147;
     public static final int UI_PRESETBOX_HEIGHT = 163;
 
     // 128x29
-    public static final ResourceLocation BIG_BUTTON = Util.id(GlowingEyes.MOD_ID, "textures/gui/button/big_button.png");
+    public static final WidgetSprites BIG_BUTTON = GuiUtil.createSprites(
+            GlowingEyes.MOD_ID,
+            "big/big_button",
+            "big/big_button_disabled",
+            "big/big_button_highlighted",
+            "big/big_button_highlighted_disabled"
+    );
+    public static final int BIG_BUTTON_WIDTH = 128;
+    public static final int BIG_BUTTON_HEIGHT = 29;
 }

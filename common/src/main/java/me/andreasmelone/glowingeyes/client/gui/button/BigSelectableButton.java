@@ -1,27 +1,24 @@
 package me.andreasmelone.glowingeyes.client.gui.button;
 
-import me.andreasmelone.glowingeyes.GlowingEyes;
-import me.andreasmelone.glowingeyes.client.util.GuiUtil;
+import me.andreasmelone.glowingeyes.client.util.TextureLocations;
+import me.andreasmelone.glowingeyes.common.util.Color;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
-import net.minecraft.client.gui.components.WidgetSprites;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.ARGB;
+import org.jetbrains.annotations.NotNull;
 
 public class BigSelectableButton extends Button {
-    public static final int WIDTH = 128;
-    public static final int HEIGHT = 29;
+    public static final int WIDTH = TextureLocations.BIG_BUTTON_WIDTH;
+    public static final int HEIGHT = TextureLocations.BIG_BUTTON_HEIGHT;
+
+    private static final int ACTIVE_COLOR = 0xFFFFFFFF;
+    private static final int NOT_ACTIVE_COLOR = 0xFFA0A0A0;
 
     private boolean isSelected = false;
-    protected final WidgetSprites sprites = GuiUtil.createSprites(
-            GlowingEyes.MOD_ID,
-            "big/big_button",
-            "big/big_button_disabled",
-            "big/big_button_highlighted",
-            "big/big_button_highlighted_disabled"
-    );
 
     public BigSelectableButton(int x, int y, Component buttonText, OnPress pressedAction) {
         this(x, y, buttonText, pressedAction, DEFAULT_NARRATION);
@@ -32,36 +29,32 @@ public class BigSelectableButton extends Button {
     }
 
     @Override
-    public void renderWidget(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTicks) {
+    public void renderWidget(@NotNull GuiGraphics ctx, int mouseX, int mouseY, float partialTicks) {
         if(this.visible) {
-            ResourceLocation sprite = this.sprites.get(!this.isSelected() && this.isActive(), this.isHoveredOrFocused());
-            guiGraphics.blitSprite(
+            Minecraft mc = Minecraft.getInstance();
+            ResourceLocation sprite = TextureLocations.BIG_BUTTON.get(!this.isSelected() && this.isActive(), this.isHoveredOrFocused());
+            ctx.blitSprite(
                     RenderType::guiTextured,
                     sprite,
                     this.getX(), this.getY(),
-                    WIDTH, HEIGHT
+                    WIDTH, HEIGHT,
+                    ARGB.white(this.alpha)
             );
 
-            Minecraft mc = Minecraft.getInstance();
-            guiGraphics.drawString(
-                    mc.font,
-                    this.getMessage(),
-                    (int)(this.getX() + (float) this.width / 2 - (float) mc.font.width(this.getMessage()) / 2),
-                    (int)(this.getY() + (float) (this.height - 8) / 2),
-                    0xFFFFFF
-            );
+            Color color = new Color(this.active ? ACTIVE_COLOR : NOT_ACTIVE_COLOR);
+            this.renderString(ctx, mc.font, color.withAlpha(this.alpha).getRGB());
         }
     }
 
     public boolean isSelected() {
-        return isSelected;
+        return this.isSelected;
     }
 
     public void setSelected(boolean selected) {
-        isSelected = selected;
+        this.isSelected = selected;
     }
 
     public void toggleSelected() {
-        isSelected = !isSelected;
+        this.isSelected = !this.isSelected;
     }
 }

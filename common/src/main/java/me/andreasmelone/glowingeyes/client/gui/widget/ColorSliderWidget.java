@@ -22,6 +22,18 @@ import java.util.List;
 import java.util.function.Consumer;
 
 public class ColorSliderWidget extends AbstractWidget implements GuiEventListener {
+    private static final int TEXTURE_WIDTH = 16;
+    private static final int TEXTURE_HEIGHT = 16;
+
+    // texture width is the width of the actual texture in our case
+    // the sprite width (aka UI_WIDTH) is the width of the sprite
+    // same applies to height
+    private static final int SPRITE_WIDTH = 16;
+    private static final int SPRITE_HEIGHT = 3;
+    private static final int CURSOR_OFFSET_Y = 2;
+    private static final int SPRITE_OFFSET_X = -1;
+
+
     private float hue;
     private ResourceLocation colorSliderTexture;
 
@@ -33,30 +45,39 @@ public class ColorSliderWidget extends AbstractWidget implements GuiEventListene
     }
 
     @Override
-    public void renderWidget(@NotNull GuiGraphics guiGraphics, int mouseX, int mouseY, float deltaTime) {
-        guiGraphics.blit(
+    public void renderWidget(@NotNull GuiGraphics ctx, int mouseX, int mouseY, float deltaTime) {
+        ctx.blit(
                 RenderType::guiTextured,
-                getColorSliderTexture(),
-                getX(), getY(),
+                this.getColorSliderTexture(),
+                this.getX(), this.getY(),
                 0, 0,
-                width, height,
-                width, height
+                this.width, this.height,
+                this.width, this.height
         );
 
-        guiGraphics.blit(
+        int newSpriteWidth = SPRITE_WIDTH + (SPRITE_OFFSET_X * 2);
+        int spriteRatio = newSpriteWidth / SPRITE_HEIGHT;
+        float xScale = (float) this.width / newSpriteWidth;
+        float yScale = (float) (Math.floor((float) this.width / spriteRatio) / SPRITE_HEIGHT);
+
+        ctx.pose().pushPose();
+        ctx.pose().translate(this.getX(), this.getCursor(), 0.0f);
+        ctx.pose().scale(xScale, yScale, 1.0f);
+        ctx.pose().translate(SPRITE_OFFSET_X, -1 * (CURSOR_OFFSET_Y + (1 - CURSOR_OFFSET_Y) * this.hue), 0);
+        ctx.blit(
                 RenderType::guiTextured,
                 TextureLocations.BRIGHTNESS_CURSOR,
-                getX() - (2 * (width / 16)), (int) (getCursor() - ((2 + (1 - 2) * this.hue) * ((float) width / 16))),
                 0, 0,
-                width + (4 * (width / 16)), height / 3,
-                16, 16,
-                16, 16
+                0, 0,
+                SPRITE_WIDTH, SPRITE_HEIGHT,
+                TEXTURE_WIDTH, TEXTURE_HEIGHT
         );
+        ctx.pose().popPose();
     }
 
     @Override
     public boolean mouseClicked(double mouseX, double mouseY, int button) {
-        if(isInbounds((int) mouseX, (int) mouseY)) return mouseDragged(mouseX, mouseY, button, 0, 0);
+        if(button == 0 && this.isInbounds((int) mouseX, (int) mouseY)) return this.mouseDragged(mouseX, mouseY, button, 0, 0);
 
         return super.mouseClicked(mouseX, mouseY, button);
     }
@@ -64,9 +85,18 @@ public class ColorSliderWidget extends AbstractWidget implements GuiEventListene
     @Override
     public boolean mouseDragged(double mouseX, double mouseY, int button, double dragX, double dragY) {
         this.setCursor(Math.clamp((int) mouseY, this.getY(), this.getY() + this.height));
-        triggerChange();
+        this.triggerChange();
 
         return super.mouseDragged(mouseX, mouseY, button, dragX, dragY);
+    }
+
+    @Override
+    public boolean mouseScrolled(double mouseX, double mouseY, double scrollX, double scrollY) {
+        if(this.isInbounds((int) mouseX, (int) mouseY)) {
+            this.hue = (float)Math.clamp(this.hue + scrollY / 1500f, 0.0f, 1.0f);
+            this.triggerChange();
+        }
+        return super.mouseScrolled(mouseX, mouseY, scrollX, scrollY);
     }
 
     private boolean isInbounds(int x, int y) {
@@ -75,16 +105,16 @@ public class ColorSliderWidget extends AbstractWidget implements GuiEventListene
                 && y <= this.getY() + this.height;
     }
 
-    public int getCursor() {
-        return (int) (this.getY() + (1.0f - this.hue) * this.height);
+    public float getCursor() {
+        return (this.getY() + (1.0f - this.hue) * this.height);
     }
 
-    public void setCursor(int cursorY) {
-        this.hue = 1.0f - (float) (cursorY - this.getY()) / this.height;
+    public void setCursor(float cursorY) {
+        this.hue = 1.0f - (cursorY - this.getY()) / this.height;
     }
 
     public float getHue() {
-        return hue;
+        return this.hue;
     }
 
     public void setHue(float hue) {
@@ -100,10 +130,10 @@ public class ColorSliderWidget extends AbstractWidget implements GuiEventListene
     }
 
     private NativeImage createColorSliderTexture() {
-        NativeImage image = new NativeImage(width, height, true);
-        for(int y = 0; y < height; y++) {
-            for(int x = 0; x < width; x++) {
-                float ratioY = 1.0f - ((float) y / height);
+        NativeImage image = new NativeImage(this.width, this.height, true);
+        for(int y = 0; y < this.height; y++) {
+            for(int x = 0; x < this.width; x++) {
+                float ratioY = 1.0f - ((float) y / this.height);
 
                 Color color = new Color(ColorUtil.HSBtoBGR(ratioY, 1.0f, 1.0f));
                 image.setPixel(x, y, new Color(color.getBlue(), color.getGreen(), color.getRed()).getRGB());
@@ -113,24 +143,24 @@ public class ColorSliderWidget extends AbstractWidget implements GuiEventListene
     }
 
     private ResourceLocation getColorSliderTexture() {
-        if(colorSliderTexture == null) {
-            NativeImage image = createColorSliderTexture();
-            colorSliderTexture = Util.id(GlowingEyes.MOD_ID, "color_slider");
+        if(this.colorSliderTexture == null) {
+            NativeImage image = this.createColorSliderTexture();
+            this.colorSliderTexture = Util.id(GlowingEyes.MOD_ID, "color_slider");
             Minecraft.getInstance().getTextureManager().register(
-                    colorSliderTexture,
+                    this.colorSliderTexture,
                     new DynamicTexture(image)
             );
         }
-        return colorSliderTexture;
+        return this.colorSliderTexture;
     }
 
     private void clearColorSliderTexture() {
-        Minecraft.getInstance().getTextureManager().release(colorSliderTexture);
+        Minecraft.getInstance().getTextureManager().release(this.colorSliderTexture);
         this.colorSliderTexture = null;
     }
 
     @Override
-    protected void updateWidgetNarration(NarrationElementOutput narrationElementOutput) {
+    protected void updateWidgetNarration(@NotNull NarrationElementOutput narrationElementOutput) {
 
     }
 }

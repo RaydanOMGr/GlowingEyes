@@ -14,7 +14,7 @@ public class PresetButton extends BigSelectableButton {
     }
 
     public Preset getPreset() {
-        return preset;
+        return this.preset;
     }
 
     public void setPreset(Preset preset) {
