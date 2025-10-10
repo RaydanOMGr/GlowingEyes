@@ -1,20 +1,14 @@
 package me.andreasmelone.glowingeyes.client.gui.widget;
 
-import com.mojang.blaze3d.platform.NativeImage;
-import me.andreasmelone.glowingeyes.GlowingEyes;
+import me.andreasmelone.glowingeyes.client.util.GuiUtil;
 import me.andreasmelone.glowingeyes.client.util.TextureLocations;
-import me.andreasmelone.glowingeyes.client.util.color.ColorUtil;
 import me.andreasmelone.glowingeyes.common.util.Color;
-import me.andreasmelone.glowingeyes.common.util.Util;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
 import net.minecraft.client.renderer.RenderType;
-import net.minecraft.client.renderer.texture.DynamicTexture;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.NotNull;
 import org.lwjgl.glfw.GLFW;
 
@@ -26,12 +20,13 @@ public class ColorPickerWidget extends AbstractWidget implements GuiEventListene
     private static final int CURSOR_OFFSET_X = 5;
     private static final int CURSOR_OFFSET_Y = 5; // I am not sure if those are the right names lol
 
+    private static final int HOVERED_COLOR = 0xFFFFFFFF;
+    private static final int INACTIVE_COLOR = 0xFF000000;
+
     private float hue;
     private float brightness; // [0.0, 1.0]
     private float saturation; // [0.0, 1.0]
     private boolean isShiftPressed = false;
-    private ResourceLocation colorSquareTexture;
-
     private final List<Consumer<ColorPickerWidget>> onChangeListeners = new ArrayList<>();
 
     public ColorPickerWidget(int x, int y, int width, int height, float hue,
@@ -44,13 +39,16 @@ public class ColorPickerWidget extends AbstractWidget implements GuiEventListene
 
     @Override
     public void renderWidget(@NotNull GuiGraphics ctx, int mouseX, int mouseY, float deltaTime) {
-        ctx.blit(
-                RenderType::guiTextured,
-                this.getColorSquareTexture(),
+        GuiUtil.drawColorSquare(
+                ctx,
                 this.getX(), this.getY(),
-                0, 0,
                 this.width, this.height,
-                this.width, this.height
+                Color.HSBtoRGB(this.hue, 1.0f, 1.0f)
+        );
+        ctx.renderOutline(
+                this.getX() - 1, this.getY() - 1,
+                this.width + 2, this.height + 2,
+                this.isHoveredOrFocused() ? HOVERED_COLOR : INACTIVE_COLOR
         );
 
         ctx.pose().pushPose();
@@ -153,7 +151,6 @@ public class ColorPickerWidget extends AbstractWidget implements GuiEventListene
 
     public void setHue(float hue) {
         this.hue = hue;
-        this.clearColorSquareTexture();
     }
 
     public float getBrightness() {
@@ -184,38 +181,6 @@ public class ColorPickerWidget extends AbstractWidget implements GuiEventListene
         return x >= this.getX() && y >= this.getY()
                 && x <= this.getX() + this.width
                 && y <= this.getY() + this.height;
-    }
-
-    private NativeImage createColorGradientImage() {
-        NativeImage image = new NativeImage(this.width, this.height, true);
-        for(int y = 0; y < image.getHeight(); y++) {
-            for(int x = 0; x < image.getWidth(); x++) {
-                float saturation = (float) x / this.width;
-                float brightness = 1.0f - (float) y / this.height;
-
-                Color color = new Color(ColorUtil.HSBtoBGR(this.hue, saturation, brightness));
-                image.setPixel(x, y, new Color(color.getBlue(), color.getGreen(), color.getRed()).getRGB());
-            }
-        }
-
-        return image;
-    }
-
-    private ResourceLocation getColorSquareTexture() {
-        if(this.colorSquareTexture == null) {
-            NativeImage image = this.createColorGradientImage();
-            this.colorSquareTexture = Util.id(GlowingEyes.MOD_ID, "color_square");
-            Minecraft.getInstance().getTextureManager().register(
-                    this.colorSquareTexture,
-                    new DynamicTexture(image)
-            );
-        }
-        return this.colorSquareTexture;
-    }
-
-    private void clearColorSquareTexture() {
-        Minecraft.getInstance().getTextureManager().release(this.colorSquareTexture);
-        this.colorSquareTexture = null;
     }
 
     @Override

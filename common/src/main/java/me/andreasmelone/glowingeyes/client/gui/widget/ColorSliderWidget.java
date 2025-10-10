@@ -1,20 +1,13 @@
 package me.andreasmelone.glowingeyes.client.gui.widget;
 
-import com.mojang.blaze3d.platform.NativeImage;
-import me.andreasmelone.glowingeyes.GlowingEyes;
+import me.andreasmelone.glowingeyes.client.util.GuiUtil;
 import me.andreasmelone.glowingeyes.client.util.TextureLocations;
-import me.andreasmelone.glowingeyes.client.util.color.ColorUtil;
-import me.andreasmelone.glowingeyes.common.util.Color;
-import me.andreasmelone.glowingeyes.common.util.Util;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
 import net.minecraft.client.renderer.RenderType;
-import net.minecraft.client.renderer.texture.DynamicTexture;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -33,9 +26,10 @@ public class ColorSliderWidget extends AbstractWidget implements GuiEventListene
     private static final int CURSOR_OFFSET_Y = 2;
     private static final int SPRITE_OFFSET_X = -1;
 
-    private float hue;
-    private ResourceLocation colorSliderTexture;
+    private static final int HOVERED_COLOR = 0xFFFFFFFF;
+    private static final int INACTIVE_COLOR = 0xFF000000;
 
+    private float hue;
     private final List<Consumer<ColorSliderWidget>> onChangeListeners = new ArrayList<>();
 
     public ColorSliderWidget(int x, int y, int width, int height, float hue) {
@@ -45,13 +39,16 @@ public class ColorSliderWidget extends AbstractWidget implements GuiEventListene
 
     @Override
     public void renderWidget(@NotNull GuiGraphics ctx, int mouseX, int mouseY, float deltaTime) {
-        ctx.blit(
-                RenderType::guiTextured,
-                this.getColorSliderTexture(),
+        GuiUtil.drawHueBar(
+                ctx,
                 this.getX(), this.getY(),
-                0, 0,
                 this.width, this.height,
-                this.width, this.height
+                0xFFFFFFFF
+        );
+        ctx.renderOutline(
+                this.getX() - 1, this.getY() - 1,
+                this.width + 2, this.height + 2,
+                this.isHoveredOrFocused() ? HOVERED_COLOR : INACTIVE_COLOR
         );
 
         int newSpriteWidth = SPRITE_WIDTH + (SPRITE_OFFSET_X * 2);
@@ -126,36 +123,6 @@ public class ColorSliderWidget extends AbstractWidget implements GuiEventListene
 
     private void triggerChange() {
         this.onChangeListeners.forEach((l) -> l.accept(this));
-    }
-
-    private NativeImage createColorSliderTexture() {
-        NativeImage image = new NativeImage(this.width, this.height, true);
-        for(int y = 0; y < this.height; y++) {
-            for(int x = 0; x < this.width; x++) {
-                float ratioY = 1.0f - ((float) y / this.height);
-
-                Color color = new Color(ColorUtil.HSBtoBGR(ratioY, 1.0f, 1.0f));
-                image.setPixel(x, y, new Color(color.getBlue(), color.getGreen(), color.getRed()).getRGB());
-            }
-        }
-        return image;
-    }
-
-    private ResourceLocation getColorSliderTexture() {
-        if(this.colorSliderTexture == null) {
-            NativeImage image = this.createColorSliderTexture();
-            this.colorSliderTexture = Util.id(GlowingEyes.MOD_ID, "color_slider");
-            Minecraft.getInstance().getTextureManager().register(
-                    this.colorSliderTexture,
-                    new DynamicTexture(image)
-            );
-        }
-        return this.colorSliderTexture;
-    }
-
-    private void clearColorSliderTexture() {
-        Minecraft.getInstance().getTextureManager().release(this.colorSliderTexture);
-        this.colorSliderTexture = null;
     }
 
     @Override

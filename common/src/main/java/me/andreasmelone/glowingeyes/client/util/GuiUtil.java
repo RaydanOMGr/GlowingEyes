@@ -1,5 +1,6 @@
 package me.andreasmelone.glowingeyes.client.util;
 
+import me.andreasmelone.glowingeyes.client.render.RenderTypes;
 import me.andreasmelone.glowingeyes.common.util.Color;
 import me.andreasmelone.glowingeyes.common.util.Util;
 import me.andreasmelone.glowingeyes.mixin.client.GuiGraphicsAccessor;
@@ -63,5 +64,28 @@ public class GuiUtil {
 
         TextureAtlasSprite sprite = sprites.getSprite(spriteLocation);
         ((GuiGraphicsAccessor)ctx).invokeInnerBlit(renderTypeGetter, sprite.atlasLocation(), x, x + width, y, y + height, sprite.getU0(), sprite.getU1(), sprite.getV0(), sprite.getV1(), color);
+    }
+
+    // color affects hue and alpha, not brightness and saturation
+    public static void drawColorSquare(GuiGraphics ctx, int x, int y, int width, int height, int color) {
+        ctx.blit(
+                RenderTypes::colorSquare,
+                TextureLocations.CURSOR,    // random texture, it will never get rendered anyway
+                x, y, 0, 0,  // this is a dirty hack to acquire normalized coordinates in the shader
+                width, height, width, height,
+                color
+        );
+    }
+
+    // color affects alpha in this case, not the hue tho
+    // probably should affect saturation and brightness too, but I am too stupid for that
+    public static void drawHueBar(GuiGraphics ctx, int x, int y, int width, int height, int color) {
+        ctx.blit(
+                RenderTypes::hueBar,
+                TextureLocations.CURSOR,
+                x, y, 0, 0,
+                width, height, width, height,
+                color
+        );
     }
 }
