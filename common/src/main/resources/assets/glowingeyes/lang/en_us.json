@@ -34,6 +34,7 @@
   "tooltip.glowingeyes.editor.brush": "Brush",
   "tooltip.glowingeyes.editor.eraser": "Eraser",
   "tooltip.glowingeyes.editor.picker": "Pipette",
+  "tooltip.glowingeyes.editor.fill": "Bucket Fill",
 
   "gui.glowingeyes.reset.title": "Are you sure you want to reset your glowing eyes?",
   "gui.glowingeyes.reset.warning": "This affects all skin parts!",

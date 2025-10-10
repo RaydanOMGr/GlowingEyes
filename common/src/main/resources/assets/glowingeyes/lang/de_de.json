@@ -34,6 +34,7 @@
   "tooltip.glowingeyes.editor.brush": "Pinsel",
   "tooltip.glowingeyes.editor.eraser": "Radiergummi",
   "tooltip.glowingeyes.editor.picker": "Pipette",
+  "tooltip.glowingeyes.editor.fill": "Farbeimer",
 
   "gui.glowingeyes.reset.title": "Bist du sicher, dass du deine Glowing Eyes zurücksetzen willst?",
   "gui.glowingeyes.reset.warning": "Dies betrifft alle Skinfächen!",

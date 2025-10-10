@@ -18,7 +18,7 @@ public class BigSelectableButton extends Button {
     private static final int ACTIVE_COLOR = 0xFFFFFFFF;
     private static final int NOT_ACTIVE_COLOR = 0xFFA0A0A0;
 
-    private boolean isSelected = false;
+    protected boolean isSelected = false;
 
     public BigSelectableButton(int x, int y, Component buttonText, OnPress pressedAction) {
         this(x, y, buttonText, pressedAction, DEFAULT_NARRATION);

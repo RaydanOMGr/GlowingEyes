@@ -8,18 +8,31 @@ import net.minecraft.resources.ResourceLocation;
 public class TextureLocations {
     public static final WidgetSprites BRUSH_BUTTON =
             GuiUtil.createSprites(GlowingEyes.MOD_ID, "brush/brush_button", "brush/brush_button_disabled", "brush/brush_button_highlighted");
+    public static final ResourceLocation BRUSH_COLOR_OVERLAY =
+            Util.id(GlowingEyes.MOD_ID, "brush/brush_color_overlay");
+
     public static final WidgetSprites ERASER_BUTTON =
             GuiUtil.createSprites(GlowingEyes.MOD_ID, "eraser/eraser_button", "eraser/eraser_button_disabled", "eraser/eraser_button_highlighted");
+
     public static final WidgetSprites PIPETTE_BUTTON =
             GuiUtil.createSprites(GlowingEyes.MOD_ID, "pipette/pipette_button", "pipette/pipette_button_disabled", "pipette/pipette_button_highlighted");
+    public static final ResourceLocation PIPETTE_COLOR_OVERLAY =
+            Util.id(GlowingEyes.MOD_ID, "pipette/pipette_color_overlay");
+
     public static final WidgetSprites COLOR_PICKER_BUTTON =
             GuiUtil.createSprites(GlowingEyes.MOD_ID, "color_picker/color_picker_button", "color_picker/color_picker_button_disabled", "color_picker/color_picker_button_highlighted");
+
     public static final WidgetSprites FILL_BUCKET_BUTTON =
             GuiUtil.createSprites(GlowingEyes.MOD_ID, "fill_bucket/fill_bucket_button", "fill_bucket/fill_bucket_button_disabled", "fill_bucket/fill_bucket_button_highlighted");
+    public static final ResourceLocation FILL_BUCKET_COLOR_OVERLAY =
+            Util.id(GlowingEyes.MOD_ID, "fill_bucket/fill_bucket_color_overlay");
+
     public static final WidgetSprites PRESET_MENU_BUTTON =
             GuiUtil.createSprites(GlowingEyes.MOD_ID, "preset_menu/preset_menu_button", "preset_menu/preset_menu_button_highlighted");
+
     public static final WidgetSprites SKIN_PART_PICKER_BUTTON =
             GuiUtil.createSprites(GlowingEyes.MOD_ID, "skin_part_picker/skin_part_picker_button", "skin_part_picker/skin_part_picker_button_highlighted");
+
     public static final WidgetSprites RESET_BUTTON =
             GuiUtil.createSprites(GlowingEyes.MOD_ID, "reset/reset_button", "reset/reset_button_highlighted");
 
@@ -44,7 +57,7 @@ public class TextureLocations {
     // 200x143
     public static final ResourceLocation UI_BACKGROUND_SLIM = Util.id(GlowingEyes.MOD_ID, "textures/gui/background/background_slim.png");
     public static final int UI_BACKGROUND_SLIM_WIDTH = 200;
-    public static final int UI_BACKGROUND_SLIM_HEIGHT = 143;
+    public static final int UI_BACKGROUND_SLIM_HEIGHT = 118;
 
     // 252x143
     public static final ResourceLocation UI_BACKGROUND_SLIM_LONG = Util.id(GlowingEyes.MOD_ID, "textures/gui/background/background_slim_long.png");

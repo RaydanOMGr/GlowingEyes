@@ -5,6 +5,7 @@ import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.logging.LogUtils;
 import me.andreasmelone.glowingeyes.client.component.eyes.ClientGlowingEyesComponent;
+import me.andreasmelone.glowingeyes.client.gui.button.TintedOverlayImageButton;
 import me.andreasmelone.glowingeyes.client.gui.preset.PresetsScreen;
 import me.andreasmelone.glowingeyes.client.gui.skin.ClassicSkinPart;
 import me.andreasmelone.glowingeyes.client.gui.skin.ISkinPart;
@@ -102,34 +103,22 @@ public class EyesEditorScreen extends Screen {
             LogUtils.getLogger().error("Could not load glowing eyes map from player capability");
         }
 
-        int buttons = 0;
+        List<Button> menuButtons = new ArrayList<>();
 
-        // the color picker button
-        Button colorPickerButton;
-        this.addRenderableWidget(colorPickerButton = new ImageButton(
-                this.guiLeft + MENU_BUTTONS_X, this.guiTop + MENU_BUTTONS_Y,
+        // the reset button
+        Button resetButton = new ImageButton(
+                this.guiLeft + MENU_BUTTONS_X, 0,
                 BUTTON_WIDTH, BUTTON_HEIGHT,
-                TextureLocations.COLOR_PICKER_BUTTON,
-                button -> Minecraft.getInstance().setScreen(new ColorPickerScreen(this.mod, this))
-        ));
-        colorPickerButton.setTooltip(Tooltip.create(Component.translatable("tooltip.glowingeyes.editor.colorpicker")));
-        buttons++;
-
-        // the preset menu button
-        Button presetMenuButton;
-        this.addRenderableWidget(presetMenuButton = new ImageButton(
-                this.guiLeft + MENU_BUTTONS_X, this.guiTop + MENU_BUTTONS_Y - buttons * MENU_BUTTONS_TOTAL_HEIGHT,
-                BUTTON_WIDTH, BUTTON_HEIGHT,
-                TextureLocations.PRESET_MENU_BUTTON,
-                button -> Minecraft.getInstance().setScreen(new PresetsScreen(this))
-        ));
-        presetMenuButton.setTooltip(Tooltip.create(Component.translatable("tooltip.glowingeyes.editor.presetsmenu")));
-        buttons++;
+                TextureLocations.RESET_BUTTON,
+                button -> this.minecraft.setScreen(new ConfirmResetScreen(this))
+        );
+        menuButtons.add(resetButton);
+        this.addRenderableWidget(resetButton);
+        resetButton.setTooltip(Tooltip.create(Component.translatable("tooltip.glowingeyes.editor.reset")));
 
         // the skin part picker button
-        Button skinPartPicker;
-        this.addRenderableWidget(skinPartPicker = new ImageButton(
-                this.guiLeft + MENU_BUTTONS_X, this.guiTop + MENU_BUTTONS_Y - buttons * MENU_BUTTONS_TOTAL_HEIGHT,
+        Button skinPartPicker = new ImageButton(
+                this.guiLeft + MENU_BUTTONS_X, 0,
                 BUTTON_WIDTH, BUTTON_HEIGHT,
                 TextureLocations.SKIN_PART_PICKER_BUTTON,
                 button -> SkinPartSelectorScreen.create(this, this.minecraft.player.getSkin().texture(), this.skinPart).thenAccept((part) -> {
@@ -140,34 +129,55 @@ public class EyesEditorScreen extends Screen {
                         this.calculateHeadSize();
                     }
                 })
-        ));
+        );
+        menuButtons.add(skinPartPicker);
+        this.addRenderableWidget(skinPartPicker);
         skinPartPicker.setTooltip(Tooltip.create(Component.translatable("tooltip.glowingeyes.editor.partpicker")));
-        buttons++;
 
-        Button resetButton;
-        this.addRenderableWidget(resetButton = new ImageButton(
-                this.guiLeft + MENU_BUTTONS_X, this.guiTop + MENU_BUTTONS_Y - buttons * MENU_BUTTONS_TOTAL_HEIGHT,
+        // the preset menu button
+        Button presetMenuButton = new ImageButton(
+                this.guiLeft + MENU_BUTTONS_X, 0,
                 BUTTON_WIDTH, BUTTON_HEIGHT,
-                TextureLocations.RESET_BUTTON,
-                button -> this.minecraft.setScreen(new ConfirmResetScreen(this))
-        ));
-        resetButton.setTooltip(Tooltip.create(Component.translatable("tooltip.glowingeyes.editor.reset")));
-        buttons++;
+                TextureLocations.PRESET_MENU_BUTTON,
+                button -> Minecraft.getInstance().setScreen(new PresetsScreen(this))
+        );
+        menuButtons.add(presetMenuButton);
+        this.addRenderableWidget(presetMenuButton);
+        presetMenuButton.setTooltip(Tooltip.create(Component.translatable("tooltip.glowingeyes.editor.presetsmenu")));
+
+        // the color picker button
+        Button colorPickerButton = new ImageButton(
+                this.guiLeft + MENU_BUTTONS_X, 0, // this is going to be set later on
+                BUTTON_WIDTH, BUTTON_HEIGHT,
+                TextureLocations.COLOR_PICKER_BUTTON,
+                button -> Minecraft.getInstance().setScreen(new ColorPickerScreen(this.mod, this))
+        );
+        menuButtons.add(colorPickerButton);
+        this.addRenderableWidget(colorPickerButton);
+        colorPickerButton.setTooltip(Tooltip.create(Component.translatable("tooltip.glowingeyes.editor.colorpicker")));
+
+        float middleY = this.height / 2f;
+        int count = menuButtons.size();
+        float totalHeight = count * BUTTON_HEIGHT + (count - 1) * MENU_BUTTONS_SPACING;
+        float startY = middleY - totalHeight / 2f;
+
+        for (int i = 0; i < count; i++) {
+            int posY = (int) (startY + i * (BUTTON_HEIGHT + MENU_BUTTONS_SPACING));
+            menuButtons.get(i).setY(posY);
+        }
 
         this.modeButtons.clear();
 
-        float middleY = this.height / 2f;
         int modeCount = Mode.values().length;
-        float totalHeight = modeCount * MODE_BUTTON_HEIGHT + (modeCount - 1) * MODE_BUTTON_SPACING;
-        float startY = middleY - totalHeight / 2f;
+        totalHeight = modeCount * MODE_BUTTON_HEIGHT + (modeCount - 1) * MODE_BUTTON_SPACING;
+        startY = middleY - totalHeight / 2f;
 
         for (int i = 0; i < modeCount; i++) {
             int posY = (int) (startY + i * (MODE_BUTTON_HEIGHT + MODE_BUTTON_SPACING));
-            this.createModeButton(this.guiLeft + MODE_BUTTON_X, posY, Mode.values()[i]);
+            this.addRenderableWidget(this.createModeButton(this.guiLeft + MODE_BUTTON_X, posY, Mode.values()[i]));
         }
 
         this.modeButtons.get(Mode.BRUSH).onPress();
-        this.modeButtons.forEach((mode, button) -> this.addRenderableWidget(button));
     }
 
     /**
@@ -387,16 +397,18 @@ public class EyesEditorScreen extends Screen {
     }
 
     private Button createModeButton(int x, int y, Mode buttonMode) {
-        Button imageButton = new ImageButton(
+        TintedOverlayImageButton imageButton = new TintedOverlayImageButton(
                 x, y,
                 MODE_BUTTON_WIDTH, MODE_BUTTON_HEIGHT,
                 buttonMode.getSprites(),
-                button -> {
+                buttonMode.getColorOverlay(),
+                (button) -> {
                     this.mode = buttonMode;
                     this.modeButtons.forEach((m, b) -> b.active = true);
                     button.active = false;
                 }
         );
+        imageButton.setColorSupplier(this.mod.getModVariables().getFinalColor()::getRGB);
         imageButton.setTooltip(Tooltip.create(Component.translatable("tooltip.glowingeyes.editor." + buttonMode.name().toLowerCase())));
 
         this.modeButtons.put(buttonMode, imageButton);
@@ -404,7 +416,7 @@ public class EyesEditorScreen extends Screen {
     }
 
     public enum Mode {
-        BRUSH(TextureLocations.BRUSH_BUTTON, (screen, mouseX, mouseY, button) -> {
+        BRUSH(TextureLocations.BRUSH_BUTTON, TextureLocations.BRUSH_COLOR_OVERLAY, (screen, mouseX, mouseY, button) -> {
             Point point = screen.calculatePoint(mouseX, mouseY);
 
             if (button == 0) {
@@ -419,11 +431,11 @@ public class EyesEditorScreen extends Screen {
                 screen.openedAt = System.currentTimeMillis();
             }
         }),
-        ERASER(TextureLocations.ERASER_BUTTON, (screen, mouseX, mouseY, button) -> {
+        ERASER(TextureLocations.ERASER_BUTTON, null, (screen, mouseX, mouseY, button) -> {
             Point point = screen.calculatePoint(mouseX, mouseY);
             screen.pixels.remove(new Point(point.getX(), point.getY()));
         }),
-        PICKER(TextureLocations.PIPETTE_BUTTON, (screen, mouseX, mouseY, button) -> {
+        PICKER(TextureLocations.PIPETTE_BUTTON, TextureLocations.PIPETTE_COLOR_OVERLAY, (screen, mouseX, mouseY, button) -> {
             Point point = screen.calculatePoint(mouseX, mouseY);
 
             Color color = screen.getTexturePixelColor(screen.minecraft.player.getSkin().texture(), 64, 64, point.getX(), point.getY());
@@ -433,7 +445,7 @@ public class EyesEditorScreen extends Screen {
             screen.modeButtons.forEach((mode, b) -> b.setFocused(false));
             screen.openedAt = System.currentTimeMillis();
         }),
-        FILL(TextureLocations.FILL_BUCKET_BUTTON, (screen, mouseX, mouseY, button) -> {
+        FILL(TextureLocations.FILL_BUCKET_BUTTON, TextureLocations.FILL_BUCKET_COLOR_OVERLAY, (screen, mouseX, mouseY, button) -> {
             Point point = screen.calculatePoint(mouseX, mouseY);
             Color color = screen.getTexturePixelColor(screen.minecraft.player.getSkin().texture(), 64, 64, point.getX(), point.getY());
             Color finalColor = screen.mod.getModVariables().getFinalColor().withAlpha(200);
@@ -484,10 +496,12 @@ public class EyesEditorScreen extends Screen {
 
         private final WidgetSprites sprites;
         private final ButtonPressCallback onButtonPress;
+        private final ResourceLocation colorOverlay;
 
-        Mode(final WidgetSprites sprites, final ButtonPressCallback onButtonPress) {
+        Mode(final WidgetSprites sprites, final ResourceLocation colorOverlay, final ButtonPressCallback onButtonPress) {
             this.sprites = sprites;
             this.onButtonPress = onButtonPress;
+            this.colorOverlay = colorOverlay;
         }
 
         public WidgetSprites getSprites() {
@@ -496,6 +510,10 @@ public class EyesEditorScreen extends Screen {
 
         public void onButtonPress(EyesEditorScreen screen, double mouseX, double mouseY, int button) {
             this.onButtonPress.onButtonPress(screen, mouseX, mouseY, button);
+        }
+
+        public ResourceLocation getColorOverlay() {
+            return this.colorOverlay;
         }
 
         @FunctionalInterface

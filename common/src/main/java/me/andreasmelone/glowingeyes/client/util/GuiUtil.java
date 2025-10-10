@@ -2,15 +2,20 @@ package me.andreasmelone.glowingeyes.client.util;
 
 import me.andreasmelone.glowingeyes.common.util.Color;
 import me.andreasmelone.glowingeyes.common.util.Util;
+import me.andreasmelone.glowingeyes.mixin.client.GuiGraphicsAccessor;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiSpriteManager;
 import net.minecraft.client.gui.components.WidgetSprites;
 import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.FormattedCharSequence;
 
 import java.util.List;
+import java.util.function.Function;
 
 public class GuiUtil {
     /**
@@ -50,5 +55,13 @@ public class GuiUtil {
 
     public static void drawCursorPos(GuiGraphics ctx, Font font, int mouseX, int mouseY) {
         ctx.drawString(font, "x: " + mouseX + ", y: " + mouseY, 10, 10, Color.WHITE.getRGB());
+    }
+
+    public static void blitTintedSprite(GuiGraphics ctx, Function<ResourceLocation, RenderType> renderTypeGetter, ResourceLocation spriteLocation, int x, int y, int width, int height, int color) {
+        Minecraft mc = Minecraft.getInstance();
+        GuiSpriteManager sprites = mc.getGuiSprites();
+
+        TextureAtlasSprite sprite = sprites.getSprite(spriteLocation);
+        ((GuiGraphicsAccessor)ctx).invokeInnerBlit(renderTypeGetter, sprite.atlasLocation(), x, x + width, y, y + height, sprite.getU0(), sprite.getU1(), sprite.getV0(), sprite.getV1(), color);
     }
 }

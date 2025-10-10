@@ -33,7 +33,6 @@ public class ColorSliderWidget extends AbstractWidget implements GuiEventListene
     private static final int CURSOR_OFFSET_Y = 2;
     private static final int SPRITE_OFFSET_X = -1;
 
-
     private float hue;
     private ResourceLocation colorSliderTexture;
 
@@ -57,8 +56,8 @@ public class ColorSliderWidget extends AbstractWidget implements GuiEventListene
 
         int newSpriteWidth = SPRITE_WIDTH + (SPRITE_OFFSET_X * 2);
         int spriteRatio = newSpriteWidth / SPRITE_HEIGHT;
-        float xScale = (float) this.width / newSpriteWidth;
-        float yScale = (float) (Math.floor((float) this.width / spriteRatio) / SPRITE_HEIGHT);
+        float xScale = Math.abs((float) this.width / newSpriteWidth);
+        float yScale = Math.abs((float) (Math.floor((float) this.width / spriteRatio) / SPRITE_HEIGHT));
 
         ctx.pose().pushPose();
         ctx.pose().translate(this.getX(), this.getCursor(), 0.0f);

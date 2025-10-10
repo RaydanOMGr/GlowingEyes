@@ -21,8 +21,8 @@ public class ConfirmDeletionScreen extends Screen {
     private static final int PADDING_X = 20;
     private static final int BUTTON_SPACING = 5;
 
-    private static final int BUTTON_Y = 100;
     private static final int BUTTON_HEIGHT = 20;
+    private static final int BUTTON_Y = UI_HEIGHT - BUTTON_HEIGHT - 20;
 
     int guiLeft, guiTop;
 
@@ -77,7 +77,7 @@ public class ConfirmDeletionScreen extends Screen {
                                         Minecraft.getInstance().setScreen(this.parent);
                                     }
                                 })
-                        .pos(this.guiLeft + PADDING_X + (BUTTON_SPACING * 2) + buttonWidth, this.guiTop + BUTTON_HEIGHT)
+                        .pos(this.guiLeft + PADDING_X + (BUTTON_SPACING * 2) + buttonWidth, this.guiTop + BUTTON_Y)
                         .size(buttonWidth, BUTTON_HEIGHT)
                         .build()
         );

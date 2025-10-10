@@ -16,7 +16,7 @@ public class EditPresetScreen extends Screen {
     private static final int UI_WIDTH = TextureLocations.UI_BACKGROUND_SLIM_WIDTH;
     private static final int UI_HEIGHT = TextureLocations.UI_BACKGROUND_SLIM_HEIGHT;
 
-    private static final int NAME_FIELD_Y = 50;
+    private static final int NAME_FIELD_Y = 45;
     private static final int NAME_FIELD_HEIGHT = 20;
 
     private static final int PADDING_X = 20;

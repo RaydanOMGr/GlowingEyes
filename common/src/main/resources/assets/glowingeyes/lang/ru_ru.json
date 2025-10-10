@@ -34,6 +34,7 @@
   "tooltip.glowingeyes.editor.brush": "Кисточка",
   "tooltip.glowingeyes.editor.eraser": "Ластик",
   "tooltip.glowingeyes.editor.picker": "Пипетка",
+  "tooltip.glowingeyes.editor.fill": "Заливка",
 
   "gui.glowingeyes.reset.title": "Ты уверен, что хочешь сбросить свои светящиеся глаза?",
   "gui.glowingeyes.reset.warning": "Это распостраняется на все части скина!",

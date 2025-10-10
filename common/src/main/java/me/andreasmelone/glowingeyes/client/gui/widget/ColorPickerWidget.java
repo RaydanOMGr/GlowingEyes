@@ -76,16 +76,14 @@ public class ColorPickerWidget extends AbstractWidget implements GuiEventListene
 
     @Override
     public boolean mouseDragged(double mouseX, double mouseY, int button, double dragX, double dragY) {
-        int intX = (int) mouseX;
-        int intY = (int) mouseY;
-        if(this.isInbounds(intX, intY)) {
-            this.setCursorX(intX);
-            this.setCursorY(intY);
+        if(this.isInbounds((int) mouseX, (int) mouseY)) {
+            this.setCursorX((float) mouseX);
+            this.setCursorY((float) mouseY);
 
             this.triggerChange();
         } else {
-            int newX = (int) Math.max(this.getX(), Math.min(mouseX, this.getX() + this.width));
-            int newY = (int) Math.max(this.getY(), Math.min(mouseY, this.getY() + this.height));
+            float newX = (float) Math.max(this.getX(), Math.min(mouseX, this.getX() + this.width));
+            float newY = (float) Math.max(this.getY(), Math.min(mouseY, this.getY() + this.height));
             this.setCursorX(newX);
             this.setCursorY(newY);
 
@@ -206,7 +204,7 @@ public class ColorPickerWidget extends AbstractWidget implements GuiEventListene
     private ResourceLocation getColorSquareTexture() {
         if(this.colorSquareTexture == null) {
             NativeImage image = this.createColorGradientImage();
-            this.colorSquareTexture = Util.id(GlowingEyes.MOD_ID,  "color_square");
+            this.colorSquareTexture = Util.id(GlowingEyes.MOD_ID, "color_square");
             Minecraft.getInstance().getTextureManager().register(
                     this.colorSquareTexture,
                     new DynamicTexture(image)
