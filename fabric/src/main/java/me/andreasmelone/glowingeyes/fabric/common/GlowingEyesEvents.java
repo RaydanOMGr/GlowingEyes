@@ -14,10 +14,9 @@ public class GlowingEyesEvents {
             PlayerDataComponent.addTrackedBy(trackedPlayer, playerTracking);
 
             if(!PlayerDataComponent.hasMod(playerTracking)) return;
-            if(!PlayerDataComponent.hasMod(trackedPlayer)) return;
 
             GlowingEyes.SCHEDULER_SERVER.runLater(() -> {
-                GlowingEyesComponent.sendUpdate(playerTracking, trackedPlayer);
+                GlowingEyesComponent.sendUpdate(trackedPlayer, playerTracking);
             }, 1L);
         });
 

@@ -10,6 +10,6 @@ import java.util.function.Function;
 
 @Mixin(GuiGraphics.class)
 public interface GuiGraphicsAccessor {
-    @Invoker("innerBlit")
-    void innerBlit(Function<ResourceLocation, RenderType> renderTypeGetter, ResourceLocation atlasLocation, int x1, int x2, int y1, int y2, float minU, float maxU, float minV, float maxV, int color);
+    @Invoker
+    void invokeInnerBlit(Function<ResourceLocation, RenderType> renderTypeGetter, ResourceLocation atlasLocation, int x1, int x2, int y1, int y2, float minU, float maxU, float minV, float maxV, int color);
 }

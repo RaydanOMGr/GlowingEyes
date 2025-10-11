@@ -9,6 +9,7 @@ import me.andreasmelone.glowingeyes.client.mod.ClientModContext;
 import me.andreasmelone.glowingeyes.client.mod.ClientModVariables;
 import me.andreasmelone.glowingeyes.client.presets.PresetManager;
 import me.andreasmelone.glowingeyes.client.render.ShaderManager;
+import me.andreasmelone.glowingeyes.fabric.client.compat.FabricCompatPlugins;
 import me.andreasmelone.glowingeyes.fabric.client.component.data.ClientPlayerDataComponentImpl;
 import me.andreasmelone.glowingeyes.fabric.client.component.eyes.ClientGlowingEyesComponentImpl;
 import me.andreasmelone.glowingeyes.fabric.client.packet.ClientPacketRegistrar;
@@ -39,6 +40,8 @@ public class GlowingEyesClient implements ClientModInitializer, ClientModContext
         GlowingEyesKeybindings.register(this);
         GlowingEyesClientEvents.registerEvents();
         RenderManager.init();
+
+        FabricCompatPlugins.init();
 
         ShaderManager.register(CoreShaders.getProgramsToPreload()::add);
 

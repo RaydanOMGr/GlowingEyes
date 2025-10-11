@@ -14,8 +14,8 @@ import java.util.function.BiConsumer;
 
 public class ServerPacketRegistrar {
     public static void registerServerPackets() {
-        server(HasModPacket.TYPE, HasModPacket.STREAM_CODEC, ServerPacketHandler::handleHasModPacket);
-        server(ComponentUpdatePacket.TYPE, ComponentUpdatePacket.STREAM_CODEC, ServerPacketHandler::handleComponentUpdatePacket);
+        bidirectional(HasModPacket.TYPE, HasModPacket.STREAM_CODEC, ServerPacketHandler::handleHasModPacket);
+        bidirectional(ComponentUpdatePacket.TYPE, ComponentUpdatePacket.STREAM_CODEC, ServerPacketHandler::handleComponentUpdatePacket);
     }
 
     /**
@@ -27,6 +27,11 @@ public class ServerPacketRegistrar {
      */
     public static <T extends CustomPacketPayload> void sendTo(ServerPlayer player, T packet) {
         ServerPlayNetworking.send(player, packet);
+    }
+
+    public static <T extends CustomPacketPayload> void bidirectional(CustomPacketPayload.Type<T> type, StreamCodec<ByteBuf, T> streamCodec, BiConsumer<T, ServerPlayer> handler) {
+        PayloadTypeRegistry.playS2C().register(type, streamCodec);
+        server(type, streamCodec, handler);
     }
 
     public static <T extends CustomPacketPayload> void server(CustomPacketPayload.Type<T> type, StreamCodec<ByteBuf, T> streamCodec, BiConsumer<T, ServerPlayer> handler) {

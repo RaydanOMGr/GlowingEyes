@@ -54,3 +54,6 @@ description='''${description}'''
     versionRange="${minecraft_version_range}"
     ordering="NONE"
     side="BOTH"
+
+[[mixins]]
+config="${mod_id}.mixins.json"

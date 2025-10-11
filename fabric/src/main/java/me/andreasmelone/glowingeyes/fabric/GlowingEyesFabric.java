@@ -5,7 +5,6 @@ import me.andreasmelone.glowingeyes.client.util.IrisUtils;
 import me.andreasmelone.glowingeyes.common.component.data.PlayerDataComponent;
 import me.andreasmelone.glowingeyes.common.component.eyes.GlowingEyesComponent;
 import me.andreasmelone.glowingeyes.common.util.LoaderUtils;
-import me.andreasmelone.glowingeyes.fabric.client.compat.FabricCompatPlugins;
 import me.andreasmelone.glowingeyes.fabric.common.GlowingEyesEvents;
 import me.andreasmelone.glowingeyes.fabric.common.component.data.PlayerDataComponentImpl;
 import me.andreasmelone.glowingeyes.fabric.common.component.eyes.GlowingEyesComponentImpl;
@@ -24,8 +23,6 @@ public class GlowingEyesFabric implements ModInitializer {
 
         ServerPacketRegistrar.registerServerPackets();
         GlowingEyesEvents.registerEvents();
-
-        FabricCompatPlugins.init();
 
         LoaderUtils.LOADER_NAME = "Fabric";
         Collection<ModContainer> allMods = FabricLoader.getInstance().getAllMods();

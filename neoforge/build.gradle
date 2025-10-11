@@ -26,6 +26,9 @@ neoForge {
             programArgument "--uuid"
             programArgument "7f6708c5-5820-4550-a24a-2c123566d052"
         }
+        client1 {
+            client()
+        }
         data {
             clientData()
         }

@@ -1,11 +1,11 @@
 package me.andreasmelone.glowingeyes.fabric.client.compat.replaymod;
 
+import com.replaymod.core.versions.MCVer;
 import com.replaymod.recording.handler.RecordingEventHandler;
 import me.andreasmelone.glowingeyes.GlowingEyes;
 import me.andreasmelone.glowingeyes.client.compat.CompatPlugin;
 import me.andreasmelone.glowingeyes.common.packet.ComponentUpdatePacket;
 import me.andreasmelone.glowingeyes.common.util.Util;
-import net.minecraft.client.Minecraft;
 import net.minecraft.network.protocol.common.ClientboundCustomPayloadPacket;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 
@@ -31,6 +31,6 @@ public class ReplayModCompatPlugin extends CompatPlugin {
     }
 
     public RecordingEventHandler getRecordingEventHandler() {
-        return ((RecordingEventHandler.RecordingEventSender) Minecraft.getInstance().levelRenderer).getRecordingEventHandler();
+        return ((RecordingEventHandler.RecordingEventSender) MCVer.getMinecraft()).getRecordingEventHandler();
     }
 }

@@ -12,16 +12,16 @@ import net.neoforged.neoforge.event.tick.ServerTickEvent;
 public class GlowingEyesEvents {
     @SubscribeEvent
     public void onPlayerStartTracking(PlayerEvent.StartTracking event) {
-        if (!(event.getTarget() instanceof Player target)) return;
+        if (!(event.getTarget() instanceof ServerPlayer trackedPlayer)) return;
+        ServerPlayer playerTracking = (ServerPlayer) event.getEntity();
 
-        ServerPlayer entity = (ServerPlayer) event.getEntity();
-        ServerPlayer serverTarget = (ServerPlayer) target;
+        PlayerDataComponent.addTrackedBy(playerTracking, trackedPlayer);
 
-        if (!PlayerDataComponent.hasMod(entity)) return;
-        if (!PlayerDataComponent.hasMod(serverTarget)) return;
+        if (!PlayerDataComponent.hasMod(playerTracking)) return;
 
-        PlayerDataComponent.addTrackedBy(event.getEntity(), target);
-        GlowingEyesComponent.sendUpdate(serverTarget, entity);
+        GlowingEyes.SCHEDULER_SERVER.runLater(() -> {
+            GlowingEyesComponent.sendUpdate(trackedPlayer, playerTracking);
+        }, 1L);
     }
 
     @SubscribeEvent
