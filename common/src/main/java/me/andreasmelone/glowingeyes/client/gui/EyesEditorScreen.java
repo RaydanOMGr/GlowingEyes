@@ -57,14 +57,14 @@ public class EyesEditorScreen extends Screen {
     private static final Color GRID_LINES_COLOR = new Color(120, 120, 120, 255);
 
     private static final int MENU_BUTTONS_X = UI_WIDTH - 30;
-    private static final int MENU_BUTTONS_Y = UI_HEIGHT - 30;
     private static final int MENU_BUTTONS_SPACING = 5;
-    private static final int MENU_BUTTONS_TOTAL_HEIGHT = BUTTON_HEIGHT + MENU_BUTTONS_SPACING;
 
     private static final int COLOR_BOX_WIDTH = 20;
-    private static final int COLOR_BOX_HEIGHT = 10;
+    private static final int COLOR_BOX_HEIGHT = 20;
     private static final int COLOR_BOX_OFFSET_Y = -25;
     private static final int COLOR_LABEL_OFFSET_Y = 10;
+    private static final int COLOR_BOX_BG_MARGIN_X = 3;
+    private static final int COLOR_BOX_BG_MARGIN_Y = 10;
 
     private int guiLeft, guiTop;
     private int headX, headY;
@@ -258,13 +258,20 @@ public class EyesEditorScreen extends Screen {
         if (this.mode == Mode.PICKER && this.checkBounds(mouseX, mouseY, this.headX, this.endHeadX, this.headY, this.endHeadY)) {
             Point convertedMouse = this.calculatePoint(mouseX, mouseY);
             Color color = this.getTexturePixelColor(playerSkin, 64, 64, convertedMouse.getX(), convertedMouse.getY());
+            String text = ColorType.HEX.get(color);
+            int length = this.font.width(text);
 
+            ctx.fill(
+                    mouseX - (length / 2) - COLOR_BOX_BG_MARGIN_X, mouseY - COLOR_LABEL_OFFSET_Y + COLOR_BOX_BG_MARGIN_Y,
+                    mouseX + (length / 2) + COLOR_BOX_BG_MARGIN_X, mouseY - COLOR_BOX_HEIGHT / 2 + COLOR_BOX_OFFSET_Y - COLOR_BOX_BG_MARGIN_Y,
+                    0xAA000000
+            );
             ctx.fill(
                     mouseX - COLOR_BOX_WIDTH / 2, mouseY - COLOR_BOX_HEIGHT / 2 + COLOR_BOX_OFFSET_Y,
                     mouseX + COLOR_BOX_WIDTH / 2, mouseY + COLOR_BOX_HEIGHT / 2 + COLOR_BOX_OFFSET_Y,
                     color.getRGB()
             );
-            ctx.drawCenteredString(this.minecraft.font, ColorType.HEX.get(color),
+            ctx.drawCenteredString(this.minecraft.font, text,
                     mouseX, mouseY - COLOR_LABEL_OFFSET_Y, Color.WHITE.getRGB());
         }
         super.render(ctx, mouseX, mouseY, deltaTime);
