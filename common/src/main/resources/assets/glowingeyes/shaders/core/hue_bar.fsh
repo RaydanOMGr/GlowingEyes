@@ -24,8 +24,12 @@ vec3 hsv2rgb(vec3 c) {
 void main() {
     vec4 color = vertexColor;
 
+    vec3 hsvcolor = rgb2hsv(color.rgb);
+    float saturation = hsvcolor.g;
+    float brightness = hsvcolor.b;
+
     float hue = 1.0f - texCoord.y;
-    vec3 rgb = hsv2rgb(vec3(hue, 1.0f, 1.0f));
+    vec3 rgb = hsv2rgb(vec3(hue, saturation, brightness));
 
     fragColor = vec4(rgb, color.a);
 }

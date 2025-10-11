@@ -2,6 +2,7 @@ package me.andreasmelone.glowingeyes.client.gui.widget;
 
 import me.andreasmelone.glowingeyes.client.util.GuiUtil;
 import me.andreasmelone.glowingeyes.client.util.TextureLocations;
+import me.andreasmelone.glowingeyes.common.util.Color;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.components.events.GuiEventListener;
@@ -43,7 +44,7 @@ public class ColorSliderWidget extends AbstractWidget implements GuiEventListene
                 ctx,
                 this.getX(), this.getY(),
                 this.width, this.height,
-                0xFFFFFFFF
+                Color.HSBtoRGB(this.hue, 1.0f, 1.0f)
         );
         ctx.renderOutline(
                 this.getX() - 1, this.getY() - 1,

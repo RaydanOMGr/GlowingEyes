@@ -66,7 +66,24 @@ public class GuiUtil {
         ((GuiGraphicsAccessor)ctx).invokeInnerBlit(renderTypeGetter, sprite.atlasLocation(), x, x + width, y, y + height, sprite.getU0(), sprite.getU1(), sprite.getV0(), sprite.getV1(), color);
     }
 
-    // color affects hue and alpha, not brightness and saturation
+    /**
+     * Draws a "color" square, commonly used in color selection tools.<p>
+     * The top-left corner (0, 0) will have a saturation of 0.0 and a brightness of 1.0<p>
+     * The top-right corner (0, 1) will have a saturation of 1.0 and a brightness of 1.0<p>
+     * The bottom-left corner (1, 0) will have a saturation of 0.0 and a brightness of 0.0<p>
+     * The bottom-right corner (1, 1) will have a saturation of 1.0 and a brightness of 0.0<p>
+     *
+     * @implNote The colorSquare RenderType takes a texture, but this texture is never actually used by the shader.
+     *           This is done in order to acquire the normalized coordinates of the current pass from the fragment shader.
+     *
+     * @param ctx The {@link GuiGraphics} object
+     * @param x the x coordinate at which the top-left corner of the drawn square will be located
+     * @param y the y coordinate at which the top-left corner of the drawn square will be located
+     * @param width the width of the bar
+     * @param height the height of the bar
+     * @param color an ARGB color, from which the hue and alpha for the drawn square will be taken.
+     *              The saturation and brightness are ignored.
+     */
     public static void drawColorSquare(GuiGraphics ctx, int x, int y, int width, int height, int color) {
         ctx.blit(
                 RenderTypes::colorSquare,
@@ -77,12 +94,24 @@ public class GuiUtil {
         );
     }
 
-    // color affects alpha in this case, not the hue tho
-    // probably should affect saturation and brightness too, but I am too stupid for that
+    /**
+     * Draws a vertical bar that includes all hues from 0.0 to 1.0
+     *
+     * @implNote The hueBar RenderType takes a texture, but this texture is never actually used by the shader.
+     *           This is done in order to acquire the normalized coordinates of the current pass from the fragment shader.
+     *
+     * @param ctx The {@link GuiGraphics} object
+     * @param x the x coordinate at which the top-left corner of the drawn bar will be located
+     * @param y the y coordinate at which the top-left corner of the drawn bar will be located
+     * @param width the width of the bar
+     * @param height the height of the bar
+     * @param color an ARGB color, from which the saturation, brightness and alpha for the drawn bar will be taken.
+     *              The hue of this color does not affect the final output, meaning that 0xFFFF0000 and 0xFF00FF00 draw the exact same thing.
+     */
     public static void drawHueBar(GuiGraphics ctx, int x, int y, int width, int height, int color) {
         ctx.blit(
                 RenderTypes::hueBar,
-                TextureLocations.CURSOR,
+                TextureLocations.CURSOR, // similarly to the color square, just a random texture, never used or rendered by the actual shader
                 x, y, 0, 0,
                 width, height, width, height,
                 color
