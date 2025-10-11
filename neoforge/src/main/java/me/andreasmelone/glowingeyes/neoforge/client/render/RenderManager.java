@@ -12,6 +12,7 @@ import net.minecraft.world.entity.player.Player;
 import net.neoforged.neoforge.client.event.EntityRenderersEvent;
 
 public class RenderManager {
+    @SuppressWarnings("unchecked")
     static <T extends Player, Q extends EntityModel<O>,
             Z extends HumanoidModel<O>, I extends LivingEntity, O extends HumanoidRenderState,
             S extends PlayerRenderState, M extends EntityModel<? super S>>

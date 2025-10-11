@@ -12,7 +12,7 @@ public abstract class CompatPlugin {
     public abstract Info getPluginInfo();
 
     public final boolean isLoaded() {
-        return loaded;
+        return this.loaded;
     }
 
     /**

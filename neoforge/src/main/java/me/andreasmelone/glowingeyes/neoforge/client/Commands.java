@@ -16,7 +16,7 @@ public class Commands {
 
     @SubscribeEvent
     public void onRegisterCommands(RegisterClientCommandsEvent event) {
-        new EyesCommand<>(Commands::createArgumentBuilder).register(mod, event.getDispatcher());
+        new EyesCommand<>(Commands::createArgumentBuilder).register(this.mod, event.getDispatcher());
     }
 
     private static LiteralArgumentBuilder<CommandSourceStack> createArgumentBuilder(String name) {

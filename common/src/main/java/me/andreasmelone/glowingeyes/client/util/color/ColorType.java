@@ -93,24 +93,24 @@ public enum ColorType {
     }
 
     public String get(Color color) {
-        return getter.apply(color);
+        return this.getter.apply(color);
     }
 
     public Color parseAndUpdate(Color color, String input) {
         int parsedValue;
         try {
-            parsedValue = parse(input);
-            return update(color, parsedValue);
+            parsedValue = this.parse(input);
+            return this.update(color, parsedValue);
         } catch (NumberFormatException e) {
             return color;
         }
     }
 
     public Color update(Color color, int value) {
-        return updater.apply(color, value);
+        return this.updater.apply(color, value);
     }
 
     public int parse(String input) throws NumberFormatException {
-        return parser.apply(input);
+        return this.parser.apply(input);
     }
 }

@@ -18,7 +18,7 @@ public class PlayerRenderStateMixin implements IGlowingEyesRenderState {
 
     @Override
     public Map<Point, Color> glowingEyes$getGlowingEyesMap() {
-        return glowingEyes$glowingEyesMap;
+        return this.glowingEyes$glowingEyesMap;
     }
 
     @Override
@@ -28,7 +28,7 @@ public class PlayerRenderStateMixin implements IGlowingEyesRenderState {
 
     @Override
     public boolean glowingEyes$isToggledOn() {
-        return glowingEyes$toggledOn;
+        return this.glowingEyes$toggledOn;
     }
 
     @Override

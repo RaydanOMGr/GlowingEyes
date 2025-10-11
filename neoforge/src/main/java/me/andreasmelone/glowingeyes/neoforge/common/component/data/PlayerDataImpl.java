@@ -11,7 +11,7 @@ public class PlayerDataImpl implements IPlayerData {
 
     @Override
     public boolean hasMod() {
-        return hasMod;
+        return this.hasMod;
     }
 
     @Override
@@ -21,16 +21,16 @@ public class PlayerDataImpl implements IPlayerData {
 
     @Override
     public Set<Player> trackedBy() {
-        return new HashSet<>(trackedBy);
+        return new HashSet<>(this.trackedBy);
     }
 
     @Override
     public void addTrackedBy(Player player) {
-        trackedBy.add(player);
+        this.trackedBy.add(player);
     }
 
     @Override
     public void removeTrackedBy(Player player) {
-        trackedBy.remove(player);
+        this.trackedBy.remove(player);
     }
 }

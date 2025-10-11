@@ -33,6 +33,7 @@ public class ActionGlowingEyesUpdate implements Action {
         }
     }
 
+    @SuppressWarnings("ResultOfMethodCallIgnored")
     public static void submitUpdatePacket(ComponentUpdatePacket packet) {
         Minecraft.getInstance().submit(() -> {
             if (Flashback.RECORDER != null && Flashback.RECORDER.readyToWrite()) {

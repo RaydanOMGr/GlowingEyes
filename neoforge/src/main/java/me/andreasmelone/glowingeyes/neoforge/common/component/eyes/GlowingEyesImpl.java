@@ -7,6 +7,7 @@ import me.andreasmelone.glowingeyes.common.util.Util;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.ByteArrayTag;
 import net.minecraft.nbt.CompoundTag;
+import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 
 import javax.annotation.Nonnull;
@@ -32,7 +33,7 @@ public class GlowingEyesImpl implements IGlowingEyes {
 
     @Override
     public boolean isToggledOn() {
-        return toggledOn;
+        return this.toggledOn;
     }
 
     @Override
@@ -41,22 +42,22 @@ public class GlowingEyesImpl implements IGlowingEyes {
     }
 
     @Override
-    public CompoundTag serializeNBT(HolderLookup.Provider provider) {
+    public CompoundTag serializeNBT(HolderLookup.@NotNull Provider provider) {
         CompoundTag tag = new CompoundTag();
-        tag.putBoolean("toggledOn", isToggledOn());
-        tag.put("glowingEyesMap", Util.toCompoundTag(Point.CODEC_STRING, Color.CODEC, getGlowingEyesMap()));
+        tag.putBoolean("toggledOn", this.isToggledOn());
+        tag.put("glowingEyesMap", Util.toCompoundTag(Point.CODEC_STRING, Color.CODEC, this.getGlowingEyesMap()));
         return tag;
     }
 
     @Override
-    public void deserializeNBT(HolderLookup.Provider provider, CompoundTag compoundTag) {
-        setToggledOn(compoundTag.getBoolean("toggledOn"));
+    public void deserializeNBT(HolderLookup.@NotNull Provider provider, CompoundTag compoundTag) {
+        this.setToggledOn(compoundTag.getBoolean("toggledOn"));
         if (compoundTag.get("glowingEyesMap") instanceof ByteArrayTag) {
-            setGlowingEyesMap(new HashMap<>());
+            this.setGlowingEyesMap(new HashMap<>());
             LOGGER.warn("Detected glowing eyes map of old format!");
             LOGGER.warn("Your current eyes will be erased.");
             return;
         }
-        setGlowingEyesMap(Util.toMap(Point.CODEC_STRING, Color.CODEC, compoundTag.getCompound("glowingEyesMap")));
+        this.setGlowingEyesMap(Util.toMap(Point.CODEC_STRING, Color.CODEC, compoundTag.getCompound("glowingEyesMap")));
     }
 }

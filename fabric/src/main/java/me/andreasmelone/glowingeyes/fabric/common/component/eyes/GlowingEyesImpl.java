@@ -7,6 +7,7 @@ import me.andreasmelone.glowingeyes.common.util.Util;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.ByteArrayTag;
 import net.minecraft.nbt.CompoundTag;
+import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 
 import java.util.HashMap;
@@ -38,7 +39,7 @@ public class GlowingEyesImpl implements IGlowingEyes {
 
     @Override
     public boolean isToggledOn() {
-        return toggledOn;
+        return this.toggledOn;
     }
 
     @Override
@@ -47,28 +48,28 @@ public class GlowingEyesImpl implements IGlowingEyes {
     }
 
     @Override
-    public void readFromNbt(CompoundTag tag, HolderLookup.Provider registryLookup) {
-        setToggledOn(tag.getBoolean("toggledOn"));
+    public void readFromNbt(CompoundTag tag, HolderLookup.@NotNull Provider registryLookup) {
+        this.setToggledOn(tag.getBoolean("toggledOn"));
         if(tag.get("glowingEyesMap") instanceof ByteArrayTag) {
-            setGlowingEyesMap(new HashMap<>());
+            this.setGlowingEyesMap(new HashMap<>());
             LOGGER.warn("Detected glowing eyes map of old format!");
             LOGGER.warn("Your current eyes will be erased.");
             return;
         }
-        setGlowingEyesMap(Util.toMap(Point.CODEC_STRING, Color.CODEC, tag.getCompound("glowingEyesMap")));
+        this.setGlowingEyesMap(Util.toMap(Point.CODEC_STRING, Color.CODEC, tag.getCompound("glowingEyesMap")));
     }
 
     @Override
-    public void writeToNbt(CompoundTag tag, HolderLookup.Provider registryLookup) {
-        tag.putBoolean("toggledOn", isToggledOn());
-        tag.put("glowingEyesMap", Util.toCompoundTag(Point.CODEC_STRING, Color.CODEC, getGlowingEyesMap()));
+    public void writeToNbt(CompoundTag tag, HolderLookup.@NotNull Provider registryLookup) {
+        tag.putBoolean("toggledOn", this.isToggledOn());
+        tag.put("glowingEyesMap", Util.toCompoundTag(Point.CODEC_STRING, Color.CODEC, this.getGlowingEyesMap()));
     }
 
     @Override
     public String toString() {
         return "GlowingEyesImpl{" +
-                "toggledOn=" + toggledOn +
-                ", glowingEyesMap=" + glowingEyesMap +
+                "toggledOn=" + this.toggledOn +
+                ", glowingEyesMap=" + this.glowingEyesMap +
                 '}';
     }
 }

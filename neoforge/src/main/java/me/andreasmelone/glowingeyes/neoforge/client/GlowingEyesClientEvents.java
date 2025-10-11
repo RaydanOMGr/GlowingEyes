@@ -39,7 +39,7 @@ public class GlowingEyesClientEvents {
         }
         while (GlowingEyesKeybindings.EYES_EDITOR_MAPPING.consumeClick()) {
             if (Minecraft.getInstance().screen != null) return;
-            Minecraft.getInstance().setScreen(new EyesEditorScreen(mod));
+            Minecraft.getInstance().setScreen(new EyesEditorScreen(this.mod));
         }
     }
 
@@ -48,12 +48,12 @@ public class GlowingEyesClientEvents {
         LocalPlayer player = event.getPlayer();
         if(Minecraft.getInstance().player == player) {
             ClientPlayerDataComponent.sendRequest();
-            if(saveFile.isFile() && saveFile.exists()) {
-                CompoundTag deserialized = Util.readFromFile(saveFile);
+            if(this.saveFile.isFile() && this.saveFile.exists()) {
+                CompoundTag deserialized = Util.readFromFile(this.saveFile);
                 if (deserialized != null) {
                     GlowingEyesComponent.load(player, player.registryAccess(), deserialized);
                 } else {
-                    Util.LOGGER.error("Failed to read file {}!", saveFile.getName());
+                    Util.LOGGER.error("Failed to read file {}!", this.saveFile.getName());
                 }
             }
         }
@@ -66,9 +66,9 @@ public class GlowingEyesClientEvents {
             DynamicTextureCache.clear();
             if (!ClientPlayerDataComponent.isModOnServer()) {
                 CompoundTag serialized = GlowingEyesComponent.serialize(player, player.registryAccess());
-                if (!Util.writeToFile(saveFile, serialized)) {
-                    Util.LOGGER.error("Failed to write file {}!", saveFile.getName());
-                } else Util.LOGGER.info("Saved glowing eyes data to {}!", saveFile.getName());
+                if (!Util.writeToFile(this.saveFile, serialized)) {
+                    Util.LOGGER.error("Failed to write file {}!", this.saveFile.getName());
+                } else Util.LOGGER.info("Saved glowing eyes data to {}!", this.saveFile.getName());
             }
             ClientPlayerDataComponent.setIsModOnServer(false);
         }

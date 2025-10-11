@@ -17,13 +17,13 @@ public class GlowingEyesComponentImpl implements IGlowingEyesComponent {
     private final IGlowingEyes localComponent = new GlowingEyesImpl();
 
     public IGlowingEyes getComponent(Player player) {
-        if(player.isLocalPlayer()) return localComponent;
+        if(player.isLocalPlayer()) return this.localComponent;
         return ComponentHandler.GLOWING_EYES.get(player);
     }
 
     @Override
     public Map<Point, Color> getGlowingEyesMap(Player player) {
-        return getComponent(player).getGlowingEyesMap();
+        return this.getComponent(player).getGlowingEyesMap();
     }
 
     @Override
@@ -31,38 +31,38 @@ public class GlowingEyesComponentImpl implements IGlowingEyesComponent {
         glowingEyesMap.replaceAll((point, color) ->
                 new Color(color.getRed(), color.getGreen(), color.getBlue(), 200)
         );
-        getComponent(player).setGlowingEyesMap(glowingEyesMap);
+        this.getComponent(player).setGlowingEyesMap(glowingEyesMap);
     }
 
     @Override
     public boolean isToggledOn(Player player) {
-        return getComponent(player).isToggledOn();
+        return this.getComponent(player).isToggledOn();
     }
 
     @Override
     public void setToggledOn(Player player, boolean toggledOn) {
-        getComponent(player).setToggledOn(toggledOn);
+        this.getComponent(player).setToggledOn(toggledOn);
     }
 
     @Override
     public void sendUpdate(ServerPlayer updatedPlayer) {
-        sendUpdate(updatedPlayer, updatedPlayer);
+        this.sendUpdate(updatedPlayer, updatedPlayer);
     }
 
     @Override
     public void sendUpdate(ServerPlayer updatedPlayer, ServerPlayer receivingPlayer) {
-        ServerPacketRegistrar.sendTo(receivingPlayer, new ComponentUpdatePacket(updatedPlayer.getUUID(), isToggledOn(updatedPlayer), getGlowingEyesMap(updatedPlayer)));
+        ServerPacketRegistrar.sendTo(receivingPlayer, new ComponentUpdatePacket(updatedPlayer.getUUID(), this.isToggledOn(updatedPlayer), this.getGlowingEyesMap(updatedPlayer)));
     }
 
     @Override
     public CompoundTag serialize(Player player, HolderLookup.Provider provider) {
         CompoundTag tag = new CompoundTag();
-        getComponent(player).writeToNbt(tag, provider);
+        this.getComponent(player).writeToNbt(tag, provider);
         return tag;
     }
 
     @Override
     public void load(Player player, HolderLookup.Provider provider, CompoundTag tag) {
-        getComponent(player).readFromNbt(tag, provider);
+        this.getComponent(player).readFromNbt(tag, provider);
     }
 }

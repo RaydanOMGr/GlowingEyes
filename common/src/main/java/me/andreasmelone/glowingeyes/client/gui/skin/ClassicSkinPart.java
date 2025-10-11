@@ -122,32 +122,32 @@ public enum ClassicSkinPart implements ISkinPart {
 
     @Override
     public int getRow() {
-        return row;
+        return this.row;
     }
 
     @Override
     public boolean containsData() {
-        return containsData;
+        return this.containsData;
     }
 
     @Override
     public int getX() {
-        if (x == -1) {
-            x = 0;
-            for (ClassicSkinPart part : getRow(row)) {
+        if (this.x == -1) {
+            this.x = 0;
+            for (ClassicSkinPart part : getRow(this.row)) {
                 if (part == this) break;
-                x = x + part.getSizeX();
+                this.x = this.x + part.getSizeX();
             }
         }
-        return x;
+        return this.x;
     }
 
     @Override
     public int getY() {
-        if (y == -1) {
-            y = getRowY(this.getRow());
+        if (this.y == -1) {
+            this.y = getRowY(this.getRow());
         }
-        return y;
+        return this.y;
     }
 
     @Override
@@ -157,12 +157,12 @@ public enum ClassicSkinPart implements ISkinPart {
 
     @Override
     public int getSizeX() {
-        return sizeX;
+        return this.sizeX;
     }
 
     @Override
     public int getSizeY() {
-        return sizeY;
+        return this.sizeY;
     }
 
     public String getTranslationKey() {

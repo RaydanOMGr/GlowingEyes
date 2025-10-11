@@ -44,11 +44,11 @@ public class EyesCommand<T extends SharedSuggestionProvider> extends AbstractCli
 
     @Override
     public void register(ClientModContext mod, CommandDispatcher<T> dispatcher) {
-        LiteralArgumentBuilder<T> command = literal("eyes");
-        command.executes(ctx -> open(mod))
-                .then(literal("open").executes(ctx -> open(mod)))
-                .then(literal("dump").executes(ctx -> dump(mod)))
-                .then(literal("debuginfo").executes(ctx -> debugInfo(mod)));
+        LiteralArgumentBuilder<T> command = this.literal("eyes");
+        command.executes(ctx -> this.open(mod))
+                .then(this.literal("open").executes(ctx -> this.open(mod)))
+                .then(this.literal("dump").executes(ctx -> this.dump(mod)))
+                .then(this.literal("debuginfo").executes(ctx -> this.debugInfo(mod)));
 
         dispatcher.register(command);
     }

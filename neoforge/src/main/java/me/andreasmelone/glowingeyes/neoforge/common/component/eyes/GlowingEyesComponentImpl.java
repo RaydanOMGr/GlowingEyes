@@ -30,14 +30,14 @@ public class GlowingEyesComponentImpl implements IGlowingEyesComponent {
      * @return the GlowingEyes attachment
      */
     public IGlowingEyes getComponent(Player player) {
-        if(player.isLocalPlayer()) return localComponent;
-        return Optional.of(player.getData(attachmentType))
+        if(player.isLocalPlayer()) return this.localComponent;
+        return Optional.of(player.getData(this.attachmentType))
                 .orElseThrow(() -> new IllegalStateException("Could not get GlowingEyes data attachment from player"));
     }
 
     @Override
     public Map<Point, Color> getGlowingEyesMap(Player player) {
-        return getComponent(player).getGlowingEyesMap();
+        return this.getComponent(player).getGlowingEyesMap();
     }
 
     @Override
@@ -45,22 +45,22 @@ public class GlowingEyesComponentImpl implements IGlowingEyesComponent {
         glowingEyesMap.replaceAll((point, color) ->
                 new Color(color.getRed(), color.getGreen(), color.getBlue(), 200)
         );
-        getComponent(player).setGlowingEyesMap(glowingEyesMap);
+        this.getComponent(player).setGlowingEyesMap(glowingEyesMap);
     }
 
     @Override
     public boolean isToggledOn(Player player) {
-        return getComponent(player).isToggledOn();
+        return this.getComponent(player).isToggledOn();
     }
 
     @Override
     public void setToggledOn(Player player, boolean toggledOn) {
-        getComponent(player).setToggledOn(toggledOn);
+        this.getComponent(player).setToggledOn(toggledOn);
     }
 
     @Override
     public void sendUpdate(ServerPlayer updatedPlayer) {
-        sendUpdate(updatedPlayer, updatedPlayer);
+        this.sendUpdate(updatedPlayer, updatedPlayer);
     }
 
     @Override
@@ -70,11 +70,11 @@ public class GlowingEyesComponentImpl implements IGlowingEyesComponent {
 
     @Override
     public CompoundTag serialize(Player player, HolderLookup.Provider provider) {
-        return getComponent(player).serializeNBT(provider);
+        return this.getComponent(player).serializeNBT(provider);
     }
 
     @Override
     public void load(Player player, HolderLookup.Provider provider, CompoundTag tag) {
-        getComponent(player).deserializeNBT(provider, tag);
+        this.getComponent(player).deserializeNBT(provider, tag);
     }
 }

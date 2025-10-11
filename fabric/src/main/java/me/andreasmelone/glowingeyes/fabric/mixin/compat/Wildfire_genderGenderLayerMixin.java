@@ -43,13 +43,13 @@ public abstract class Wildfire_genderGenderLayerMixin<S extends HumanoidRenderSt
     @SuppressWarnings("unchecked")
     public void renderInject(PoseStack matrixStack, MultiBufferSource vertexConsumerProvider, int light, S state, float limbAngle, float limbDistance, CallbackInfo ci) {
         int overlay = LivingEntityRenderer.getOverlayCoords(state, 0.0F);
-        isGlowingEyesRender = true;
+        this.isGlowingEyesRender = true;
         this.renderSides(
                 state,
                 ((GenderLayer<S, M>) (Object) this).getParentModel(),
                 matrixStack, (side) -> this.renderBreast(state, matrixStack, vertexConsumerProvider, light, overlay, side)
         );
-        isGlowingEyesRender = false;
+        this.isGlowingEyesRender = false;
     }
 
     @Inject(
@@ -58,7 +58,7 @@ public abstract class Wildfire_genderGenderLayerMixin<S extends HumanoidRenderSt
             cancellable = true
     )
     public void renderGlowingBoobs(S state, CallbackInfoReturnable<RenderType> cir) {
-        if (isGlowingEyesRender && state instanceof IGlowingEyesRenderState eyesState) {
+        if (this.isGlowingEyesRender && state instanceof IGlowingEyesRenderState eyesState) {
             ResourceLocation eyeOverlayResource = DynamicTextureCache.getTexture(eyesState.glowingEyes$getGlowingEyesMap());
             cir.setReturnValue(RenderType.eyes(eyeOverlayResource));
         }

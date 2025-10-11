@@ -13,8 +13,7 @@ public class Preset {
     public static final Codec<Preset> CODEC = RecordCodecBuilder.create(instance -> instance.group(
             Codec.STRING.fieldOf("name").forGetter(Preset::getName),
             Codec.unboundedMap(Point.CODEC_STRING, Color.CODEC).fieldOf("content").forGetter(Preset::getContent)
-        ).apply(instance,
-            (name, content) -> new Preset(name, content)));
+        ).apply(instance, Preset::new));
 
     private String name;
     private final Map<Point, Color> content;
@@ -38,21 +37,21 @@ public class Preset {
 
     @Override
     public boolean equals(Object o) {
-        if (o == null || getClass() != o.getClass()) return false;
+        if (o == null || this.getClass() != o.getClass()) return false;
         Preset preset = (Preset) o;
-        return Objects.equals(name, preset.name) && Objects.equals(content, preset.content);
+        return Objects.equals(this.name, preset.name) && Objects.equals(this.content, preset.content);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(name, content);
+        return Objects.hash(this.name, this.content);
     }
 
     @Override
     public String toString() {
         return "Preset{" +
-                "name='" + name + '\'' +
-                ", content=" + content +
+                "name='" + this.name + '\'' +
+                ", content=" + this.content +
                 '}';
     }
 }

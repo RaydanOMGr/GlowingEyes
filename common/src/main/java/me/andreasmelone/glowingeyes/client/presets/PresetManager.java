@@ -48,9 +48,9 @@ public class PresetManager {
         }
         PresetFile presets;
 
-        try (InputStream in = new FileInputStream(presetStorage);
-                InputStreamReader reader = new InputStreamReader(in, StandardCharsets.UTF_8);
-                BufferedReader bufferedReader = new BufferedReader(reader)) {
+        try (InputStream in = new FileInputStream(this.presetStorage);
+             InputStreamReader reader = new InputStreamReader(in, StandardCharsets.UTF_8);
+             BufferedReader bufferedReader = new BufferedReader(reader)) {
 
             StringBuilder sb = new StringBuilder();
             String line;
@@ -76,7 +76,7 @@ public class PresetManager {
         int version = presets.dataVersion();
         for (Preset preset : presets.presets()) {
             Dynamic<JsonElement> dynamic = new Dynamic<>(JsonOps.INSTANCE, Preset.CODEC.encodeStart(JsonOps.INSTANCE, preset).result().orElse(new JsonObject()));
-            dynamic = dfu.update(GlowingEyesReferences.PRESET, dynamic, version, DATA_VERSION);
+            dynamic = this.dfu.update(GlowingEyesReferences.PRESET, dynamic, version, DATA_VERSION);
             var updatedPresetResult = Preset.CODEC.decode(dynamic);
             if(updatedPresetResult.error().isPresent()) {
                 throw new RuntimeException("Was unable to decode updated preset: " + updatedPresetResult.error().get());
@@ -94,7 +94,7 @@ public class PresetManager {
     }
 
     public void savePresets() {
-        String json = serializePresets();
+        String json = this.serializePresets();
         LOGGER.info("Saving presets file");
         LOGGER.debug("Saving presets file with content: {}", json);
         try {
@@ -118,12 +118,12 @@ public class PresetManager {
 
     public void saveDefaultPresets() {
         // extract the presets.json file from the jar
-        try (InputStream presetStream = getClass().getClassLoader().getResourceAsStream("presets.json")) {
+        try (InputStream presetStream = this.getClass().getClassLoader().getResourceAsStream("presets.json")) {
             if (presetStream == null) {
                 LOGGER.error("Could not save default presets file due to it not being found in the jar");
                 return;
             }
-            Path dest = presetStorage.toPath();
+            Path dest = this.presetStorage.toPath();
             Files.copy(presetStream, dest);
         } catch (IOException e) {
             LOGGER.error("Could not save default presets file due to an IOException", e);
@@ -137,7 +137,7 @@ public class PresetManager {
     }
 
     public void applyPreset(int id) {
-        if (!hasPreset(id)) {
+        if (!this.hasPreset(id)) {
             LOGGER.error("Tried to apply preset with id {}, but it does not exists ", id);
             return;
         }
@@ -152,7 +152,7 @@ public class PresetManager {
     }
 
     public Preset getPreset(int id) {
-        if (!hasPreset(id)) {
+        if (!this.hasPreset(id)) {
             return null;
         }
         return this.presets.get(id);
@@ -164,12 +164,12 @@ public class PresetManager {
     }
 
     public int addPreset(Preset preset) {
-        return addPreset(preset, 0);
+        return this.addPreset(preset, 0);
     }
 
     private int addPreset(Preset preset, int number) {
-        if (presets.size() < number) {
-            return addPreset(preset, number + 1);
+        if (this.presets.size() < number) {
+            return this.addPreset(preset, number + 1);
         }
 
         this.presets.add(new Preset(preset.getName(), preset.getContent()));
@@ -195,15 +195,15 @@ public class PresetManager {
     }
 
     public void removePreset(int id) {
-        if (!hasPreset(id)) {
+        if (!this.hasPreset(id)) {
             return;
         }
         this.presets.remove(id);
     }
 
     public int getId(Preset preset) {
-        for (int i = 0; i < presets.size(); i++) {
-            Preset p = presets.get(i);
+        for (int i = 0; i < this.presets.size(); i++) {
+            Preset p = this.presets.get(i);
             if (p == preset) return i;
         }
         return -1;

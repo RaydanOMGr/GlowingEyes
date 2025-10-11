@@ -13,33 +13,33 @@ public class PlayerDataComponentImpl implements IPlayerDataComponent {
     private final IPlayerData localComponent = new PlayerDataImpl();
 
     public IPlayerData getComponent(Player player) {
-        if(player.isLocalPlayer()) return localComponent;
+        if(player.isLocalPlayer()) return this.localComponent;
         return ComponentHandler.PLAYER_DATA.get(player);
     }
 
     @Override
     public boolean hasMod(Player player) {
-        return getComponent(player).hasMod();
+        return this.getComponent(player).hasMod();
     }
 
     @Override
     public void setHasMod(Player player, boolean hasMod) {
-        getComponent(player).setHasMod(hasMod);
+        this.getComponent(player).setHasMod(hasMod);
     }
 
     @Override
     public Set<Player> getTrackedBy(Player player) {
-        return getComponent(player).trackedBy();
+        return this.getComponent(player).trackedBy();
     }
 
     @Override
     public void addTrackedBy(Player playerTracked, Player trackedBy) {
-        getComponent(playerTracked).addTrackedBy(trackedBy);
+        this.getComponent(playerTracked).addTrackedBy(trackedBy);
     }
 
     @Override
     public void removeTrackedBy(Player playerTracked, Player trackedBy) {
-        getComponent(playerTracked).removeTrackedBy(trackedBy);
+        this.getComponent(playerTracked).removeTrackedBy(trackedBy);
     }
 
     @Override

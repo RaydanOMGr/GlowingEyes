@@ -10,17 +10,17 @@ public class CodeTask implements Task {
 
     @Override
     public void run() {
-        if (!cancelled) {
-            runnable.run();
+        if (!this.cancelled) {
+            this.runnable.run();
         }
     }
 
     @Override
     public boolean isCancelled() {
-        return cancelled;
+        return this.cancelled;
     }
     @Override
     public void cancel() {
-        cancelled = true;
+        this.cancelled = true;
     }
 }

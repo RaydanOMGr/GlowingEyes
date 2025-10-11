@@ -20,34 +20,34 @@ public class PlayerDataComponentImpl implements IPlayerDataComponent {
     }
 
     public IPlayerData getComponent(Player player) {
-        if(player.isLocalPlayer()) return localComponent;
-        return Optional.ofNullable(player.getData(attachmentType))
+        if(player.isLocalPlayer()) return this.localComponent;
+        return Optional.of(player.getData(this.attachmentType))
                 .orElseThrow(() -> new IllegalStateException("Could not get PlayerData attachment from player"));
     }
 
     @Override
     public boolean hasMod(Player player) {
-        return getComponent(player).hasMod();
+        return this.getComponent(player).hasMod();
     }
 
     @Override
     public void setHasMod(Player player, boolean hasMod) {
-        getComponent(player).setHasMod(hasMod);
+        this.getComponent(player).setHasMod(hasMod);
     }
 
     @Override
     public Set<Player> getTrackedBy(Player player) {
-        return getComponent(player).trackedBy();
+        return this.getComponent(player).trackedBy();
     }
 
     @Override
     public void addTrackedBy(Player playerTracked, Player trackedBy) {
-        getComponent(playerTracked).addTrackedBy(trackedBy);
+        this.getComponent(playerTracked).addTrackedBy(trackedBy);
     }
 
     @Override
     public void removeTrackedBy(Player playerTracked, Player trackedBy) {
-        getComponent(playerTracked).removeTrackedBy(trackedBy);
+        this.getComponent(playerTracked).removeTrackedBy(trackedBy);
     }
 
     @Override

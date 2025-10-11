@@ -47,7 +47,7 @@ public class GlowingEyesClient implements ClientModInitializer, ClientModContext
 
     @Override
     public ClientModVariables getModVariables() {
-        return variables;
+        return this.variables;
     }
 
     private static LiteralArgumentBuilder<FabricClientCommandSource> createArgumentBuilder(String name) {

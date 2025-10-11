@@ -20,6 +20,6 @@ public class ClientPlayerDataComponentImpl implements IClientPlayerDataComponent
 
     @Override
     public boolean isModOnServer() {
-        return isModOnServer;
+        return this.isModOnServer;
     }
 }

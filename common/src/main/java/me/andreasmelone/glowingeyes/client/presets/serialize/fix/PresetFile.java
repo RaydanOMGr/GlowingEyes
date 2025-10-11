@@ -16,6 +16,6 @@ public record PresetFile(int dataVersion, List<Preset> presets) {
 
     @Override
     public List<Preset> presets() {
-        return new ArrayList<>(presets);
+        return new ArrayList<>(this.presets);
     }
 }

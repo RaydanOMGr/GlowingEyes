@@ -63,7 +63,7 @@ public class GuiUtil {
         GuiSpriteManager sprites = mc.getGuiSprites();
 
         TextureAtlasSprite sprite = sprites.getSprite(spriteLocation);
-        ((GuiGraphicsAccessor)ctx).invokeInnerBlit(renderTypeGetter, sprite.atlasLocation(), x, x + width, y, y + height, sprite.getU0(), sprite.getU1(), sprite.getV0(), sprite.getV1(), color);
+        ((GuiGraphicsAccessor)ctx).innerBlit(renderTypeGetter, sprite.atlasLocation(), x, x + width, y, y + height, sprite.getU0(), sprite.getU1(), sprite.getV0(), sprite.getV1(), color);
     }
 
     /**

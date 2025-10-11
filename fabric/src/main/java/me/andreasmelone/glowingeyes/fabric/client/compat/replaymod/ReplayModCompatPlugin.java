@@ -12,7 +12,7 @@ import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 public class ReplayModCompatPlugin extends CompatPlugin {
     public static final Info INFO = new Info(Util.id(GlowingEyes.MOD_ID, "replaymod_compat_plugin"), "ReplayMod Compat Plugin", "1.0.0");
     @SuppressWarnings("unused")
-    private final RecordingEventHandler handler = getRecordingEventHandler(); // this field is never used,
+    private final RecordingEventHandler handler = this.getRecordingEventHandler(); // this field is never used,
     // but it makes the class throw an exception when loaded forcing the plugin not to get registered
 
     @Override
@@ -23,7 +23,7 @@ public class ReplayModCompatPlugin extends CompatPlugin {
     @Override
     public <T extends CustomPacketPayload> void onPacketSendToServer(T packet) {
         if(packet instanceof ComponentUpdatePacket) {
-            RecordingEventHandler handler = getRecordingEventHandler();
+            RecordingEventHandler handler = this.getRecordingEventHandler();
             if(handler != null) {
                 handler.onPacket(new ClientboundCustomPayloadPacket(packet));
             }

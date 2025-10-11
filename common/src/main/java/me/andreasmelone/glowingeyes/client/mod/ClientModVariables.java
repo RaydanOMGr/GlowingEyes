@@ -13,7 +13,7 @@ public class ClientModVariables {
             GlowingEyes.DEFAULT_COLOR.getRGB()) / 100.0f;
 
     public float getHue() {
-        return hue;
+        return this.hue;
     }
 
     public void setHue(float hue) {
@@ -21,7 +21,7 @@ public class ClientModVariables {
     }
 
     public float getSaturation() {
-        return saturation;
+        return this.saturation;
     }
 
     public void setSaturation(float saturation) {
@@ -29,7 +29,7 @@ public class ClientModVariables {
     }
 
     public float getBrightness() {
-        return brightness;
+        return this.brightness;
     }
 
     public void setBrightness(float brightness) {

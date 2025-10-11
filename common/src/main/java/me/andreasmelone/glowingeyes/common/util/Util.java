@@ -68,14 +68,14 @@ public class Util {
     }
 
     public static <T, U> StreamCodec<T, U> emptyStreamCodec(Supplier<U> constructor) {
-        return new StreamCodec<T, U>() {
+        return new StreamCodec<>() {
             @Override
-            public U decode(T t) {
+            public @NotNull U decode(@NotNull T t) {
                 return constructor.get();
             }
 
             @Override
-            public void encode(T o, U u) {
+            public void encode(@NotNull T o, @NotNull U u) {
 
             }
         };
