@@ -5,6 +5,7 @@ in vec2 texCoord;
 
 out vec4 fragColor;
 
+// hsv <-> rgb conversion functions taken from https://gist.github.com/983/e170a24ae8eba2cd174f
 vec3 rgb2hsv(vec3 c) {
     vec4 K = vec4(0.0, -1.0 / 3.0, 2.0 / 3.0, -1.0);
     vec4 p = mix(vec4(c.bg, K.wz), vec4(c.gb, K.xy), step(c.b, c.g));

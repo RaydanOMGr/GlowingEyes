@@ -6,7 +6,6 @@ import me.andreasmelone.glowingeyes.client.packet.ClientPacketHandler;
 import me.andreasmelone.glowingeyes.common.packet.ComponentUpdatePacket;
 import me.andreasmelone.glowingeyes.common.packet.HasModPacket;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
-import net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 
@@ -30,7 +29,6 @@ public class ClientPacketRegistrar {
     }
 
     public static <T extends CustomPacketPayload> void client(CustomPacketPayload.Type<T> type, StreamCodec<ByteBuf, T> streamCodec, Consumer<T> handler) {
-        PayloadTypeRegistry.playS2C().register(type, streamCodec);
         ClientPlayNetworking.registerGlobalReceiver(type, (packet, ctx) -> {
             handler.accept(packet);
         });
