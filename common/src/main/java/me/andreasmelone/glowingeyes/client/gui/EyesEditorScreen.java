@@ -10,6 +10,7 @@ import me.andreasmelone.glowingeyes.client.gui.preset.PresetsScreen;
 import me.andreasmelone.glowingeyes.client.gui.skin.ClassicSkinPart;
 import me.andreasmelone.glowingeyes.client.gui.skin.ISkinPart;
 import me.andreasmelone.glowingeyes.client.gui.skin.SkinPartSelectorScreen;
+import me.andreasmelone.glowingeyes.client.gui.widget.CursorSpaceWidget;
 import me.andreasmelone.glowingeyes.client.mod.ClientModContext;
 import me.andreasmelone.glowingeyes.client.util.GuiUtil;
 import me.andreasmelone.glowingeyes.client.util.SkinUtil;
@@ -73,12 +74,13 @@ public class EyesEditorScreen extends Screen {
     private float scale = 1f;
     private long openedAt;
 
-    Mode mode = Mode.values()[0];
-    ISkinPart skinPart = ISkinPart.getPart(ClassicSkinPart.HEAD_FRONT, SkinUtil.isSlim());
-    Map<Point, Color> pixels = new HashMap<>();
-    Map<Mode, Button> modeButtons = new EnumMap<>(Mode.class);
-    Map<ResourceLocation, Long> allocatedTextures = new HashMap<>();
+    protected Mode mode = Mode.values()[0];
+    protected ISkinPart skinPart = ISkinPart.getPart(ClassicSkinPart.HEAD_FRONT, SkinUtil.isSlim());
+    protected Map<Point, Color> pixels = new HashMap<>();
 
+    private CursorSpaceWidget cursorSpaceWidget;
+    private final Map<Mode, Button> modeButtons = new EnumMap<>(Mode.class);
+    private final Map<ResourceLocation, Long> allocatedTextures = new HashMap<>();
     private final ClientModContext mod;
     public EyesEditorScreen(ClientModContext mod) {
         super(Component.empty());
@@ -102,6 +104,23 @@ public class EyesEditorScreen extends Screen {
         } else {
             LogUtils.getLogger().error("Could not load glowing eyes map from player capability");
         }
+
+        this.modeButtons.clear();
+
+        float middleY = this.height / 2f;
+        int modeCount = Mode.values().length;
+        float totalHeight = modeCount * MODE_BUTTON_HEIGHT + (modeCount - 1) * MODE_BUTTON_SPACING;
+        float startY = middleY - totalHeight / 2f;
+
+        for (int i = 0; i < modeCount; i++) {
+            int posY = (int) (startY + i * (MODE_BUTTON_HEIGHT + MODE_BUTTON_SPACING));
+            this.addRenderableWidget(this.createModeButton(this.guiLeft + MODE_BUTTON_X, posY, Mode.values()[i]));
+        }
+
+        this.modeButtons.get(Mode.BRUSH).onPress();
+
+        this.cursorSpaceWidget = new CursorSpaceWidget(this.headX, this.headY, this.endHeadX - this.headX, this.endHeadY - this.headY, this::mouseMoved, this::mouseClicked);
+        this.addRenderableWidget(this.cursorSpaceWidget);
 
         List<Button> menuButtons = new ArrayList<>();
 
@@ -156,28 +175,14 @@ public class EyesEditorScreen extends Screen {
         this.addRenderableWidget(colorPickerButton);
         colorPickerButton.setTooltip(Tooltip.create(Component.translatable("tooltip.glowingeyes.editor.colorpicker")));
 
-        float middleY = this.height / 2f;
         int count = menuButtons.size();
-        float totalHeight = count * BUTTON_HEIGHT + (count - 1) * MENU_BUTTONS_SPACING;
-        float startY = middleY - totalHeight / 2f;
+        totalHeight = count * BUTTON_HEIGHT + (count - 1) * MENU_BUTTONS_SPACING;
+        startY = middleY - totalHeight / 2f;
 
         for (int i = 0; i < count; i++) {
             int posY = (int) (startY + i * (BUTTON_HEIGHT + MENU_BUTTONS_SPACING));
             menuButtons.get(i).setY(posY);
         }
-
-        this.modeButtons.clear();
-
-        int modeCount = Mode.values().length;
-        totalHeight = modeCount * MODE_BUTTON_HEIGHT + (modeCount - 1) * MODE_BUTTON_SPACING;
-        startY = middleY - totalHeight / 2f;
-
-        for (int i = 0; i < modeCount; i++) {
-            int posY = (int) (startY + i * (MODE_BUTTON_HEIGHT + MODE_BUTTON_SPACING));
-            this.addRenderableWidget(this.createModeButton(this.guiLeft + MODE_BUTTON_X, posY, Mode.values()[i]));
-        }
-
-        this.modeButtons.get(Mode.BRUSH).onPress();
     }
 
     /**

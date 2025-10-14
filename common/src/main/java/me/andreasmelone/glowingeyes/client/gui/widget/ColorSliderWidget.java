@@ -10,6 +10,7 @@ import net.minecraft.client.gui.narration.NarrationElementOutput;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.network.chat.Component;
 import org.jetbrains.annotations.NotNull;
+import org.lwjgl.glfw.GLFW;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -29,6 +30,10 @@ public class ColorSliderWidget extends AbstractWidget implements GuiEventListene
 
     private static final int HOVERED_COLOR = 0xFFFFFFFF;
     private static final int INACTIVE_COLOR = 0xFF000000;
+
+    private static final float INCREMENT = 1 / 360f;
+    private static final float INCREMENT_NORMAL_FACTOR = 1.0f;
+    private static final float INCREMENT_CTRL_PRESSED_FACTOR = 2.5f;
 
     private float hue;
     private final List<Consumer<ColorSliderWidget>> onChangeListeners = new ArrayList<>();
@@ -70,6 +75,23 @@ public class ColorSliderWidget extends AbstractWidget implements GuiEventListene
                 TEXTURE_WIDTH, TEXTURE_HEIGHT
         );
         ctx.pose().popPose();
+    }
+
+    @Override
+    public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
+        boolean isCtrlPressed = (modifiers & GLFW.GLFW_MOD_CONTROL) != 0;
+        float increment = INCREMENT * (isCtrlPressed ? INCREMENT_CTRL_PRESSED_FACTOR : INCREMENT_NORMAL_FACTOR);
+        if(keyCode == GLFW.GLFW_KEY_UP) {
+            this.hue = ((this.hue + increment) % 1.0f + 1.0f) % 1.0f;
+            this.triggerChange();
+            return true;
+        }
+        if(keyCode == GLFW.GLFW_KEY_DOWN) {
+            this.hue = ((this.hue - increment) % 1.0f + 1.0f) % 1.0f;
+            this.triggerChange();
+            return true;
+        }
+        return super.keyPressed(keyCode, scanCode, modifiers);
     }
 
     @Override

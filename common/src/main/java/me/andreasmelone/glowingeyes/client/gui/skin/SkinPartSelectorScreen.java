@@ -1,5 +1,6 @@
 package me.andreasmelone.glowingeyes.client.gui.skin;
 
+import me.andreasmelone.glowingeyes.client.gui.widget.CursorSpaceWidget;
 import me.andreasmelone.glowingeyes.client.util.GuiUtil;
 import me.andreasmelone.glowingeyes.client.util.SkinUtil;
 import me.andreasmelone.glowingeyes.client.util.TextureLocations;
@@ -27,8 +28,8 @@ public class SkinPartSelectorScreen extends Screen {
     private int maxTextureWidth;
     private int maxTextureHeight;
 
-    private float xCenter;
-    private float yCenter;
+    private float textureX;
+    private float textureY;
 
     private int guiLeft, guiTop;
     private int middle;
@@ -37,6 +38,8 @@ public class SkinPartSelectorScreen extends Screen {
     private float factorY;
     private ISkinPart selected;
     private CompletableFuture<ISkinPart> future;
+
+    private CursorSpaceWidget cursorSpaceWidget;
 
     private final int rows = 7;
     private final Screen parent;
@@ -53,8 +56,10 @@ public class SkinPartSelectorScreen extends Screen {
     @Override
     protected void init() {
         super.init();
-        if (this.parent != null)
+        if (this.parent != null) {
             this.parent.init(this.minecraft, this.minecraft.getWindow().getGuiScaledWidth(), this.minecraft.getWindow().getGuiScaledHeight());
+            this.parent.clearFocus();
+        }
         this.guiLeft = (this.width - TEXTURE_WIDTH) / 2;
         this.guiTop = (this.height - TEXTURE_HEIGHT) / 2;
 
@@ -68,13 +73,16 @@ public class SkinPartSelectorScreen extends Screen {
         this.maxTextureWidth = (int) (64 * scaleFactor);
         this.maxTextureHeight = (int) (ISkinPart.getRowY(this.rows, this.selected.isSlim()) * scaleFactor);
 
-        this.xCenter = this.guiLeft + (float) (TEXTURE_WIDTH - this.maxTextureWidth) / 2;
-        this.yCenter = this.guiTop + (float) (TEXTURE_HEIGHT - this.maxTextureHeight) / 2 - 3;
+        this.textureX = this.guiLeft + (float) (TEXTURE_WIDTH - this.maxTextureWidth) / 2;
+        this.textureY = this.guiTop + (float) (TEXTURE_HEIGHT - this.maxTextureHeight) / 2 - 3;
 
         this.factorX = 64.0f / this.maxTextureWidth;
         this.factorY = (float) ISkinPart.getRowY(this.rows, this.selected.isSlim()) / this.maxTextureHeight;
 
         this.middle = this.guiLeft + (TEXTURE_WIDTH / 2);
+
+        this.addRenderableWidget(this.cursorSpaceWidget
+                = new CursorSpaceWidget((int) this.textureX, (int) this.textureY, this.maxTextureWidth, this.maxTextureHeight, this::mouseMoved, this::mouseClicked));
 
         int width = (this.middle - this.guiLeft) - 7;
         int doneX = this.guiLeft + 5;
@@ -118,7 +126,7 @@ public class SkinPartSelectorScreen extends Screen {
         );
 
         ctx.pose().pushPose();
-        ctx.pose().translate(this.xCenter, this.yCenter, 0);
+        ctx.pose().translate(this.textureX, this.textureY, 0);
         ctx.blit(
                 RenderType::guiTextured,
                 this.skinTexture,
@@ -130,8 +138,11 @@ public class SkinPartSelectorScreen extends Screen {
         );
         ctx.pose().popPose();
 
-        int textureMouseX = (int) ((mouseX - this.xCenter) * this.factorX);
-        int textureMouseY = (int) ((mouseY - this.yCenter) * this.factorY);
+        double cursorX = (this.cursorSpaceWidget.isUsed() ? this.cursorSpaceWidget.getCursorX() : mouseX);
+        double cursorY = (this.cursorSpaceWidget.isUsed() ? this.cursorSpaceWidget.getCursorY() : mouseY);
+
+        int textureMouseX = (int) ((cursorX - this.textureX) * this.factorX);
+        int textureMouseY = (int) ((cursorY - this.textureY) * this.factorY);
 
         if (textureMouseX >= 0 && textureMouseX <= 63 && textureMouseY >= 0 && textureMouseY <= 63) {
             ISkinPart part = ISkinPart.getFromCoordinates(textureMouseX, textureMouseY, this.selected.isSlim());
@@ -140,7 +151,7 @@ public class SkinPartSelectorScreen extends Screen {
                 int y = part.getY();
 
                 ctx.pose().pushPose();
-                ctx.pose().translate(this.xCenter, this.yCenter, 0);
+                ctx.pose().translate(this.textureX, this.textureY, 0);
                 ctx.pose().scale(1.0f / this.factorX, 1.0f / this.factorY, 1.0f);
                 ctx.fill(
                         x,
@@ -154,14 +165,14 @@ public class SkinPartSelectorScreen extends Screen {
                 ctx.renderTooltip(
                         this.minecraft.font,
                         Component.translatable(part.getTranslationKey()),
-                        mouseX, mouseY
+                        (int) cursorX, (int) cursorY
                 );
             }
         }
 
         if (this.selected != null) {
             ctx.pose().pushPose();
-            ctx.pose().translate(this.xCenter + (this.selected.getX() / this.factorX) - 0.25, this.yCenter + (this.selected.getY() / this.factorY) - 0.25, 0);
+            ctx.pose().translate(this.textureX + (this.selected.getX() / this.factorX) - 0.25, this.textureY + (this.selected.getY() / this.factorY) - 0.25, 0);
             ctx.fill(
                     0,
                     0,
@@ -184,8 +195,8 @@ public class SkinPartSelectorScreen extends Screen {
 
     @Override
     public boolean mouseClicked(double mouseX, double mouseY, int button) {
-        int textureMouseX = (int) ((mouseX - this.xCenter) * this.factorX);
-        int textureMouseY = (int) ((mouseY - this.yCenter) * this.factorY);
+        int textureMouseX = (int) ((mouseX - this.textureX) * this.factorX);
+        int textureMouseY = (int) ((mouseY - this.textureY) * this.factorY);
         ISkinPart part = ISkinPart.getFromCoordinates(textureMouseX, textureMouseY, this.selected.isSlim());
         if (part != null && part.containsData() && part.getRow() < this.rows) {
             if (button == 0) this.selected = part;

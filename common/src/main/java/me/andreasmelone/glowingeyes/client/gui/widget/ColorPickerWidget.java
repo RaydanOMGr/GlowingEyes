@@ -23,6 +23,10 @@ public class ColorPickerWidget extends AbstractWidget implements GuiEventListene
     private static final int HOVERED_COLOR = 0xFFFFFFFF;
     private static final int INACTIVE_COLOR = 0xFF000000;
 
+    private static final float INCREMENT_CTRL_PRESS_FACTOR = 3.5f;
+    private static final float INCREMENT_NORMAL_FACTOR = 1.0f;
+    private static final float INCREMENT = 1 / 255f;
+
     private float hue;
     private float brightness; // [0.0, 1.0]
     private float saturation; // [0.0, 1.0]
@@ -109,6 +113,28 @@ public class ColorPickerWidget extends AbstractWidget implements GuiEventListene
     public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
         if(keyCode == GLFW.GLFW_KEY_LEFT_SHIFT) {
             this.isShiftPressed = true;
+        }
+        boolean isCtrlPressed = (modifiers & GLFW.GLFW_MOD_CONTROL) != 0;
+        float increment = INCREMENT * (isCtrlPressed ? INCREMENT_CTRL_PRESS_FACTOR : INCREMENT_NORMAL_FACTOR);
+        if(keyCode == GLFW.GLFW_KEY_UP) {
+            this.brightness = Math.clamp(this.brightness + increment, 0.0f, 1.0f);
+            this.triggerChange();
+            return true;
+        }
+        if(keyCode == GLFW.GLFW_KEY_DOWN) {
+            this.brightness = Math.clamp(this.brightness - increment, 0.0f, 1.0f);
+            this.triggerChange();
+            return true;
+        }
+        if(keyCode == GLFW.GLFW_KEY_LEFT) {
+            this.saturation = Math.clamp(this.saturation - increment, 0.0f, 1.0f);
+            this.triggerChange();
+            return true;
+        }
+        if(keyCode == GLFW.GLFW_KEY_RIGHT) {
+            this.saturation = Math.clamp(this.saturation + increment, 0.0f, 1.0f);
+            this.triggerChange();
+            return true;
         }
         return super.keyPressed(keyCode, scanCode, modifiers);
     }
