@@ -40,7 +40,10 @@ public class ConfirmResetScreen extends Screen {
     @Override
     protected void init() {
         super.init();
-        if(this.parent != null) this.parent.init(this.minecraft, this.minecraft.getWindow().getGuiScaledWidth(), this.minecraft.getWindow().getGuiScaledHeight());
+        if(this.parent != null) {
+            this.parent.init(this.minecraft, this.minecraft.getWindow().getGuiScaledWidth(), this.minecraft.getWindow().getGuiScaledHeight());
+            this.parent.clearFocus();
+        }
         this.guiLeft = (this.width - UI_WIDTH) / 2;
         this.guiTop = (this.height - UI_HEIGHT) / 2;
 
