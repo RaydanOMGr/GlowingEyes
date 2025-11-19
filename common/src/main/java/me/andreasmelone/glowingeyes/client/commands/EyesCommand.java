@@ -1,5 +1,10 @@
 package me.andreasmelone.glowingeyes.client.commands;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
+import com.mojang.blaze3d.platform.GLX;
 import com.mojang.blaze3d.platform.GlUtil;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
@@ -70,55 +75,65 @@ public class EyesCommand<T extends SharedSuggestionProvider> extends AbstractCli
         float brightness = mod.getModVariables().getBrightness();
         Color finalColor = mod.getModVariables().getFinalColor();
         boolean toggledOn = GlowingEyesComponent.isToggledOn(mc.player);
-        File dumpFile = new File("glowingeyes-dump-" + System.currentTimeMillis() + ".txt");
+        File dumpFile = new File("glowingeyes-dump-" + System.currentTimeMillis() + ".json");
         try (OutputStream out = new FileOutputStream(dumpFile)) {
-            StringBuilder sb = new StringBuilder();
-            sb.append('V').append(LoaderUtils.MOD_VERSION)
-                    .append(" L").append(LoaderUtils.LOADER_NAME)
-                    .append(" MC").append(SharedConstants.getCurrentVersion().getName())
-                    .append("\n");
-            sb.append("modOptifine=").append(OptifineUtils.IS_OPTIFINE_PRESENT)
-                    .append(" modIris=").append(IrisUtils.IS_IRIS_PRESENT).append("\n\n");
+            Gson gson = new GsonBuilder().setPrettyPrinting().create();
+            JsonObject obj = new JsonObject();
 
-            sb.append("CPU: ").append(GlUtil.getCpuInfo()).append('\n')
-                    .append("GPU: ").append(GlUtil.getRenderer()).append("\n\n");
+            obj.addProperty("mod_version", LoaderUtils.MOD_VERSION);
+            obj.addProperty("loader", LoaderUtils.LOADER_NAME);
+            obj.addProperty("minecraft_version", SharedConstants.getCurrentVersion().getName());
 
-            sb.append("startmods\n");
+            obj.addProperty("optifine_present", OptifineUtils.IS_OPTIFINE_PRESENT);
+            obj.addProperty("iris_present", IrisUtils.IS_IRIS_PRESENT);
+
+            obj.addProperty("cpu", GLX._getCpuInfo());
+            obj.addProperty("gpu", GlUtil.getRenderer());
+
+            JsonArray mods = new JsonArray();
             for (int i = 0; i < LoaderUtils.LOADED_MODS.length; i++) {
                 LoaderUtils.ModData data = LoaderUtils.LOADED_MODS[i];
-                sb.append("\tname \"").append(data.name()).append("\" id ").append(data.id()).append(" version ").append(data.version()).append('\n');
+                JsonObject modObject = new JsonObject();
+                modObject.addProperty("name", data.name());
+                modObject.addProperty("id", data.id());
+                modObject.addProperty("version", data.version());
+                mods.add(modObject);
             }
-            sb.append("endmods\n\n");
+            obj.add("loaded_mods", mods);
 
-            sb.append("selectedColor: ")
-                    .append("{ r: ").append(selectedColor.getRed()).append(", g: ").append(selectedColor.getGreen()).append(", b: ").append(selectedColor.getBlue()).append(" }\n");
-            sb.append("brightness: ").append(brightness).append("f\n");
-            sb.append("finalColor: ")
-                    .append("{ r: ").append(finalColor.getRed()).append(", g: ").append(finalColor.getGreen()).append(", b: ").append(finalColor.getBlue()).append(" }\n");
-            sb.append("toggledOn: ").append(toggledOn).append("\n\n");
+            obj.add("selected_color", colorToJson(selectedColor));
+            obj.addProperty("brightness", brightness);
+            obj.add("finalColor", colorToJson(finalColor));
+            obj.addProperty("toggled_on", toggledOn);
 
             if (OptifineUtils.IS_OPTIFINE_PRESENT) {
-                sb.append("ofshader: ").append(OptifineUtils.getShaderName()).append("\n\n");
+                obj.addProperty("optifine_shader", OptifineUtils.getShaderName());
             }
             if (IrisUtils.IS_IRIS_PRESENT) {
-                sb.append("irisshader: ").append(IrisUtils.getShaderName()).append("\n\n");
+                obj.addProperty("iris_shader", IrisUtils.getShaderName());
             }
 
-            sb.append("startcompatplugins\n");
+            JsonArray compatPlugins = new JsonArray();
             for (CompatPlugin plugin : CompatPluginRegistry.getCompatPlugins()) {
                 CompatPlugin.Info info = plugin.getPluginInfo();
-                sb.append("\tid ").append(info.id().toString()).append(" name \"").append(info.name()).append("\" version ").append(info.version()).append("\n");
+                JsonObject compatPluginObj = new JsonObject();
+                compatPluginObj.addProperty("id", info.id().toString());
+                compatPluginObj.addProperty("name", info.name());
+                compatPluginObj.addProperty("version", info.version());
+                compatPlugins.add(compatPluginObj);
             }
-            sb.append("endcompatplugins\n\n");
+            obj.add("compat_plugins", compatPlugins);
 
-            sb.append("startresourcepacks\n");
+            JsonArray resourcePacks = new JsonArray();
             for (Pack pack : mc.getResourcePackRepository().getSelectedPacks()) {
-                sb.append("\tid \"").append(pack.getTitle().getString())
-                        .append("\" desc \"").append(pack.getDescription().getString()).append("\"\n");
+                JsonObject resourcePack = new JsonObject();
+                resourcePack.addProperty("title", pack.getTitle().getString());
+                resourcePack.addProperty("description", pack.getDescription().getString());
             }
-            sb.append("endresourcepacks\n\n");
+            obj.add("resourcepacks", resourcePacks);
 
-            sb.append("startmap\nL").append(map.size());
+            JsonObject skinMap = new JsonObject();
+            JsonObject currentPartObj = new JsonObject();
 
             ISkinPart currentPart = null;
             for (Map.Entry<Point, Color> entry : map.entrySet()) {
@@ -127,22 +142,20 @@ public class EyesCommand<T extends SharedSuggestionProvider> extends AbstractCli
                 ISkinPart newPart = ISkinPart.getFromCoordinates(point.getX(), point.getY(), SkinUtil.isSlim());
 
                 if (currentPart != newPart) {
-                    sb.append("\n\t").append(newPart).append('\n');
+                    if(currentPart != null) skinMap.add(currentPart.toString(), currentPartObj);
+                    currentPartObj = new JsonObject();
                 }
 
-                sb.append("\tx: ").append(point.getX()).append(", y: ").append(point.getY())
-                        .append(" = ")
-                        .append("{ r: ").append(color.getRed()).append(", g: ").append(color.getGreen()).append(", b: ").append(color.getBlue()).append(" }")
-                        .append('\n');
-
+                currentPartObj.add("x: " + point.getX() + ", y: " + point.getY(), colorToJson(color));
                 currentPart = newPart;
             }
-            sb.append("endmap\n\n");
+            if(currentPart != null) skinMap.add(currentPart.toString(), currentPartObj);
+            obj.add("glowing_map", skinMap);
 
-            sb.append("presets version: ").append(PresetManager.DATA_VERSION).append("\n");
-            sb.append("presets: ").append(PresetManager.getInstance().serializePresets());
+            obj.addProperty("presets_version", PresetManager.DATA_VERSION);
+            obj.add("presets", PresetManager.getInstance().serializePresets());
 
-            out.write(sb.toString().getBytes(StandardCharsets.UTF_8));
+            out.write(gson.toJson(obj).getBytes(StandardCharsets.UTF_8));
 
             Component clickableComponent = Component.literal(dumpFile.getName())
                     .withStyle(ChatFormatting.UNDERLINE)
@@ -179,5 +192,13 @@ public class EyesCommand<T extends SharedSuggestionProvider> extends AbstractCli
                 .append(GlowingEyesComponent.getGlowingEyesMap(player).toString()), false);
 
         return 1;
+    }
+
+    private static JsonObject colorToJson(Color color) {
+        JsonObject jsonObject = new JsonObject();
+        jsonObject.addProperty("r", color.getRed());
+        jsonObject.addProperty("g", color.getGreen());
+        jsonObject.addProperty("b", color.getBlue());
+        return jsonObject;
     }
 }

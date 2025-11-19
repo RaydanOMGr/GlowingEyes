@@ -94,7 +94,7 @@ public class PresetManager {
     }
 
     public void savePresets() {
-        String json = this.serializePresets();
+        String json = this.serializePresets().toString();
         LOGGER.info("Saving presets file");
         LOGGER.debug("Saving presets file with content: {}", json);
         try {
@@ -104,7 +104,7 @@ public class PresetManager {
         }
     }
 
-    public String serializePresets() {
+    public JsonElement serializePresets() {
         PresetFile presets = new PresetFile(DATA_VERSION, new ArrayList<>(this.presets));
         DataResult<JsonElement> serializedPresets = PresetFile.CODEC.encodeStart(JsonOps.INSTANCE, presets);
         if(serializedPresets.error().isPresent()) {
@@ -113,7 +113,7 @@ public class PresetManager {
         if(serializedPresets.result().isEmpty()) {
             throw new RuntimeException("Couldn't serialize presets for unknown reason");
         }
-        return serializedPresets.result().get().toString();
+        return serializedPresets.result().get();
     }
 
     public void saveDefaultPresets() {
