@@ -45,10 +45,11 @@ public class DynamicTextureCache {
             image.setPixel(point.getX(), point.getY(), color.getRGB());
         }
 
-        ResourceLocation id = Util.id(GlowingEyes.MOD_ID, "dyntex_" + UUID.randomUUID());
+        String label = "dyntex_" + UUID.randomUUID();
+        ResourceLocation id = Util.id(GlowingEyes.MOD_ID, label);
         Minecraft.getInstance().getTextureManager().register(
                 id,
-                new DynamicTexture(image)
+                new DynamicTexture(() -> label, image)
         );
         return id;
     }

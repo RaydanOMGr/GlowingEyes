@@ -39,7 +39,7 @@ public class Util {
 
     public static <K, V> Map<K, V> toMap(Codec<K> codecK, Codec<V> codecV, CompoundTag tag) {
         Map<K, V> map = new LinkedHashMap<>();
-        tag.getAllKeys().forEach((key) -> {
+        tag.keySet().forEach((key) -> {
             K decodedKey = codecK.decode(JsonOps.INSTANCE, JsonParser.parseString(key)).map(Pair::getFirst).result().orElseThrow();
             V decodedValue = codecV.decode(NbtOps.INSTANCE, tag.get(key)).map(Pair::getFirst).result().orElseThrow();
             map.put(decodedKey, decodedValue);
