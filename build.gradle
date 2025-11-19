@@ -14,7 +14,7 @@ publishMods {
     def fabricProject = project(":fabric")
     def neoforgeProject = project(":neoforge")
 
-    def mcVersions = ["1.21.5"]
+    def mcVersions = ["1.21.5"] // it literally only works on 1.21.5, 1.21.4 and 1.21.6 require a separate build ;-;
 
     def cfOptions = curseforgeOptions {
         accessToken = System.getenv("CURSEFORGE_TOKEN")

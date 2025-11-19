@@ -51,13 +51,13 @@ public class GlowingEyesImpl implements IGlowingEyes {
 
     @Override
     public void deserializeNBT(HolderLookup.@NotNull Provider provider, CompoundTag compoundTag) {
-        this.setToggledOn(compoundTag.getBoolean("toggledOn"));
+        this.setToggledOn(compoundTag.getBoolean("toggledOn").orElse(true));
         if (compoundTag.get("glowingEyesMap") instanceof ByteArrayTag) {
             this.setGlowingEyesMap(new HashMap<>());
             LOGGER.warn("Detected glowing eyes map of old format!");
             LOGGER.warn("Your current eyes will be erased.");
             return;
         }
-        this.setGlowingEyesMap(Util.toMap(Point.CODEC_STRING, Color.CODEC, compoundTag.getCompound("glowingEyesMap")));
+        this.setGlowingEyesMap(Util.toMap(Point.CODEC_STRING, Color.CODEC, compoundTag.getCompound("glowingEyesMap").orElse(new CompoundTag())));
     }
 }
