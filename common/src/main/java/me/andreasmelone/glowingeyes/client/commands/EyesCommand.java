@@ -82,7 +82,7 @@ public class EyesCommand<T extends SharedSuggestionProvider> extends AbstractCli
 
             obj.addProperty("mod_version", LoaderUtils.MOD_VERSION);
             obj.addProperty("loader", LoaderUtils.LOADER_NAME);
-            obj.addProperty("minecraft_version", SharedConstants.getCurrentVersion().getName());
+            obj.addProperty("minecraft_version", SharedConstants.getCurrentVersion().name());
 
             obj.addProperty("optifine_present", OptifineUtils.IS_OPTIFINE_PRESENT);
             obj.addProperty("iris_present", IrisUtils.IS_IRIS_PRESENT);

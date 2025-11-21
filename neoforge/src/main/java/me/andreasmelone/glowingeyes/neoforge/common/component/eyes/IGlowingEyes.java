@@ -1,13 +1,12 @@
 package me.andreasmelone.glowingeyes.neoforge.common.component.eyes;
 
+import me.andreasmelone.glowingeyes.common.util.Color;
+import me.andreasmelone.glowingeyes.common.util.Point;
+import net.neoforged.neoforge.common.util.ValueIOSerializable;
+
 import java.util.Map;
 
-import me.andreasmelone.glowingeyes.common.util.Point;
-import me.andreasmelone.glowingeyes.common.util.Color;
-import net.minecraft.nbt.CompoundTag;
-import net.neoforged.neoforge.common.util.INBTSerializable;
-
-public interface IGlowingEyes extends INBTSerializable<CompoundTag> {
+public interface IGlowingEyes extends ValueIOSerializable {
     Map<Point, Color> getGlowingEyesMap();
     void setGlowingEyesMap(Map<Point, Color> glowingEyesMap);
     boolean isToggledOn();

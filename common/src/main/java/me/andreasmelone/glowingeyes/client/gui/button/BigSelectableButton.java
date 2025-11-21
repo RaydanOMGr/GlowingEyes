@@ -5,7 +5,7 @@ import me.andreasmelone.glowingeyes.common.util.Color;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
-import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.ARGB;
@@ -34,7 +34,7 @@ public class BigSelectableButton extends Button {
             Minecraft mc = Minecraft.getInstance();
             ResourceLocation sprite = TextureLocations.BIG_BUTTON.get(!this.isSelected() && this.isActive(), this.isHoveredOrFocused());
             ctx.blitSprite(
-                    RenderType::guiTextured,
+                    RenderPipelines.GUI_TEXTURED,
                     sprite,
                     this.getX(), this.getY(),
                     WIDTH, HEIGHT,

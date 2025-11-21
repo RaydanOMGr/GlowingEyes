@@ -1,8 +1,8 @@
 package me.andreasmelone.glowingeyes.fabric.common.component.data;
 
-import net.minecraft.core.HolderLookup;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashSet;
@@ -38,12 +38,12 @@ public class PlayerDataImpl implements IPlayerData {
     }
 
     @Override
-    public void readFromNbt(@NotNull CompoundTag tag, HolderLookup.@NotNull Provider registryLookup) {
+    public void readData(@NotNull ValueInput valueInput) {
         // we don't want to save this data
     }
 
     @Override
-    public void writeToNbt(@NotNull CompoundTag tag, HolderLookup.@NotNull Provider registryLookup) {
+    public void writeData(@NotNull ValueOutput valueOutput) {
         // we don't want to save this data
     }
 }

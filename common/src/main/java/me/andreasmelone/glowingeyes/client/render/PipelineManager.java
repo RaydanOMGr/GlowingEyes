@@ -11,18 +11,16 @@ import net.minecraft.client.renderer.RenderPipelines;
 import java.util.function.Consumer;
 
 public class PipelineManager {
-    public static final RenderPipeline.Snippet COLOR_SQUARE_SNIPPET = RenderPipeline.builder(RenderPipelines.MATRICES_COLOR_SNIPPET)
+    public static final RenderPipeline.Snippet COLOR_SQUARE_SNIPPET = RenderPipeline.builder(RenderPipelines.GUI_TEXTURED_SNIPPET)
             .withVertexShader(Util.id(GlowingEyes.MOD_ID, "core/color_square"))
             .withFragmentShader(Util.id(GlowingEyes.MOD_ID, "core/color_square"))
-            .withSampler("Sampler0")
             .withBlend(BlendFunction.TRANSLUCENT)
             .withVertexFormat(DefaultVertexFormat.POSITION_TEX_COLOR, VertexFormat.Mode.QUADS)
             .buildSnippet();
 
-    public static final RenderPipeline.Snippet HUE_BAR_SNIPPET = RenderPipeline.builder(RenderPipelines.MATRICES_COLOR_SNIPPET)
+    public static final RenderPipeline.Snippet HUE_BAR_SNIPPET = RenderPipeline.builder(RenderPipelines.GUI_TEXTURED_SNIPPET)
             .withVertexShader(Util.id(GlowingEyes.MOD_ID, "core/hue_bar"))
             .withFragmentShader(Util.id(GlowingEyes.MOD_ID, "core/hue_bar"))
-            .withSampler("Sampler0")
             .withBlend(BlendFunction.TRANSLUCENT)
             .withVertexFormat(DefaultVertexFormat.POSITION_TEX_COLOR, VertexFormat.Mode.QUADS)
             .buildSnippet();

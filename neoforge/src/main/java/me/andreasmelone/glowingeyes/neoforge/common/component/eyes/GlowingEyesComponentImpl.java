@@ -9,7 +9,11 @@ import me.andreasmelone.glowingeyes.neoforge.common.packets.PacketHandler;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.util.ProblemReporter;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.storage.TagValueInput;
+import net.minecraft.world.level.storage.TagValueOutput;
+import net.minecraft.world.level.storage.ValueInput;
 import net.neoforged.neoforge.attachment.AttachmentType;
 import net.neoforged.neoforge.registries.DeferredHolder;
 
@@ -70,11 +74,14 @@ public class GlowingEyesComponentImpl implements IGlowingEyesComponent {
 
     @Override
     public CompoundTag serialize(Player player, HolderLookup.Provider provider) {
-        return this.getComponent(player).serializeNBT(provider);
+        TagValueOutput output = TagValueOutput.createWithContext(ProblemReporter.DISCARDING, provider);
+        this.getComponent(player).serialize(output);
+        return output.buildResult();
     }
 
     @Override
     public void load(Player player, HolderLookup.Provider provider, CompoundTag tag) {
-        this.getComponent(player).deserializeNBT(provider, tag);
+        ValueInput input = TagValueInput.create(ProblemReporter.DISCARDING, provider, tag);
+        this.getComponent(player).deserialize(input);
     }
 }

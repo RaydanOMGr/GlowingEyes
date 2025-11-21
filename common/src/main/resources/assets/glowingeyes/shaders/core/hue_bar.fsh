@@ -1,7 +1,19 @@
 #version 150
 
+// Can't moj_import in things used during startup, when resource packs don't exist.
+// This is a copy of dynamicimports.glsl
+layout(std140) uniform DynamicTransforms {
+    mat4 ModelViewMat;
+    vec4 ColorModulator;
+    vec3 ModelOffset;
+    mat4 TextureMat;
+    float LineWidth;
+};
+
+uniform sampler2D Sampler0;
+
+in vec2 texCoord0;
 in vec4 vertexColor;
-in vec2 texCoord;
 
 out vec4 fragColor;
 
@@ -29,7 +41,7 @@ void main() {
     float saturation = hsvcolor.g;
     float brightness = hsvcolor.b;
 
-    float hue = 1.0f - texCoord.y;
+    float hue = 1.0f - texCoord0.y;
     vec3 rgb = hsv2rgb(vec3(hue, saturation, brightness));
 
     fragColor = vec4(rgb, color.a);

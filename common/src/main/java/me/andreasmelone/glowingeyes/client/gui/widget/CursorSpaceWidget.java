@@ -6,7 +6,7 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
-import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.network.chat.Component;
 import org.intellij.lang.annotations.MagicConstant;
 import org.jetbrains.annotations.NotNull;
@@ -51,18 +51,18 @@ public class CursorSpaceWidget extends AbstractWidget implements GuiEventListene
     @Override
     protected void renderWidget(@NotNull GuiGraphics ctx, int mouseX, int mouseY, float partialTick) {
         if(!this.isUsed()) return;
-        ctx.pose().pushPose();
-        ctx.pose().translate(this.cursorX, this.cursorY, 0.0);
-        ctx.pose().translate(-CURSOR_OFFSET, -CURSOR_OFFSET, 0.0);
+        ctx.pose().pushMatrix();
+        ctx.pose().translate((float) this.cursorX, (float) this.cursorY);
+        ctx.pose().translate(-CURSOR_OFFSET, -CURSOR_OFFSET);
         ctx.blit(
-                RenderType::crosshair,
+                RenderPipelines.CROSSHAIR,
                 TextureLocations.CURSOR,
                 0, 0,
                 0, 0,
                 CURSOR_SIZE, CURSOR_SIZE,
                 CURSOR_SIZE, CURSOR_SIZE
         );
-        ctx.pose().popPose();
+        ctx.pose().popMatrix();
     }
 
     @Override

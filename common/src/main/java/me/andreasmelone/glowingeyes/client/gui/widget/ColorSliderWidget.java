@@ -7,7 +7,7 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
-import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.network.chat.Component;
 import org.jetbrains.annotations.NotNull;
 import org.lwjgl.glfw.GLFW;
@@ -62,19 +62,19 @@ public class ColorSliderWidget extends AbstractWidget implements GuiEventListene
         float xScale = Math.abs((float) this.width / newSpriteWidth);
         float yScale = Math.abs((float) (Math.floor((float) this.width / spriteRatio) / SPRITE_HEIGHT));
 
-        ctx.pose().pushPose();
-        ctx.pose().translate(this.getX(), this.getCursor(), 0.0f);
-        ctx.pose().scale(xScale, yScale, 1.0f);
-        ctx.pose().translate(SPRITE_OFFSET_X, -1 * (CURSOR_OFFSET_Y + (1 - CURSOR_OFFSET_Y) * this.hue), 0);
+        ctx.pose().pushMatrix();
+        ctx.pose().translate(this.getX(), this.getCursor());
+        ctx.pose().scale(xScale, yScale);
+        ctx.pose().translate(SPRITE_OFFSET_X, -1 * (CURSOR_OFFSET_Y + (1 - CURSOR_OFFSET_Y) * this.hue));
         ctx.blit(
-                RenderType::guiTextured,
+                RenderPipelines.GUI_TEXTURED,
                 TextureLocations.BRIGHTNESS_CURSOR,
                 0, 0,
                 0, 0,
                 SPRITE_WIDTH, SPRITE_HEIGHT,
                 TEXTURE_WIDTH, TEXTURE_HEIGHT
         );
-        ctx.pose().popPose();
+        ctx.pose().popMatrix();
     }
 
     @Override

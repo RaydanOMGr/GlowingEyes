@@ -30,7 +30,7 @@ public abstract class Wildfire_genderGenderLayerMixin<S extends HumanoidRenderSt
     protected abstract void renderBreast(S state, PoseStack matrixStack, MultiBufferSource vertexConsumerProvider, int light, int overlay, BreastSide side);
 
     @Unique
-    private boolean isGlowingEyesRender = false;
+    private boolean glowingEyes$isGlowingEyesRender = false;
 
     @Inject(
             method = "render(Lcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/MultiBufferSource;ILnet/minecraft/client/renderer/entity/state/HumanoidRenderState;FF)V",
@@ -43,13 +43,13 @@ public abstract class Wildfire_genderGenderLayerMixin<S extends HumanoidRenderSt
     @SuppressWarnings("unchecked")
     public void renderInject(PoseStack matrixStack, MultiBufferSource vertexConsumerProvider, int light, S state, float limbAngle, float limbDistance, CallbackInfo ci) {
         int overlay = LivingEntityRenderer.getOverlayCoords(state, 0.0F);
-        this.isGlowingEyesRender = true;
+        this.glowingEyes$isGlowingEyesRender = true;
         this.renderSides(
                 state,
                 ((GenderLayer<S, M>) (Object) this).getParentModel(),
                 matrixStack, (side) -> this.renderBreast(state, matrixStack, vertexConsumerProvider, light, overlay, side)
         );
-        this.isGlowingEyesRender = false;
+        this.glowingEyes$isGlowingEyesRender = false;
     }
 
     @Inject(
@@ -58,7 +58,7 @@ public abstract class Wildfire_genderGenderLayerMixin<S extends HumanoidRenderSt
             cancellable = true
     )
     public void renderGlowingBoobs(S state, CallbackInfoReturnable<RenderType> cir) {
-        if (this.isGlowingEyesRender && state instanceof IGlowingEyesRenderState eyesState) {
+        if (this.glowingEyes$isGlowingEyesRender && state instanceof IGlowingEyesRenderState eyesState) {
             ResourceLocation eyeOverlayResource = DynamicTextureCache.getTexture(eyesState.glowingEyes$getGlowingEyesMap());
             cir.setReturnValue(RenderType.eyes(eyeOverlayResource));
         }

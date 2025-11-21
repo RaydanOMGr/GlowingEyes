@@ -2,6 +2,7 @@ package me.andreasmelone.glowingeyes.client.gui.preset;
 
 import me.andreasmelone.glowingeyes.client.util.GuiUtil;
 import me.andreasmelone.glowingeyes.client.util.TextureLocations;
+import me.andreasmelone.glowingeyes.common.util.Color;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
@@ -27,7 +28,6 @@ public class ConfirmDeletionScreen extends Screen {
     int guiLeft, guiTop;
 
     private String deletedElement;
-    private Component labelComponent;
     private CompletableFuture<Boolean> future;
     private final Screen parent;
     public ConfirmDeletionScreen() {
@@ -83,19 +83,14 @@ public class ConfirmDeletionScreen extends Screen {
                         .size(buttonWidth, BUTTON_HEIGHT)
                         .build()
         );
-
-        this.labelComponent = Component.translatable("gui.glowingeyes.delete.confirm", this.deletedElement);
     }
 
     @Override
     public void render(@NotNull GuiGraphics ctx, int mouseX, int mouseY, float partialTicks) {
         if (this.parent != null) {
-            ctx.pose().pushPose();
-            ctx.pose().translate(0, 0, -100);
             this.parent.render(ctx, 0, 0, partialTicks);
-            ctx.pose().popPose();
-        }
-        super.renderBackground(ctx, mouseX, mouseY, partialTicks);
+            GuiUtil.drawTransparentBlack(ctx);
+        } else super.renderBackground(ctx, mouseX, mouseY, partialTicks);
 
         GuiUtil.drawBackground(
                 ctx, TextureLocations.UI_BACKGROUND_SLIM,
@@ -106,10 +101,10 @@ public class ConfirmDeletionScreen extends Screen {
         GuiUtil.drawWrappedText(
                 ctx,
                 this.font,
-                this.labelComponent,
+                Component.translatable("gui.glowingeyes.delete.confirm", this.deletedElement),
                 this.width / 2, (this.height / 2) - TEXT_Y,
                 UI_WIDTH - TEXT_PADDING * 2,
-                0xFFFFFF
+                Color.WHITE.getRGB()
         );
 
         super.render(ctx, mouseX, mouseY, partialTicks);

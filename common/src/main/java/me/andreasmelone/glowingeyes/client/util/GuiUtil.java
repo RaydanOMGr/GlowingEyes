@@ -1,6 +1,7 @@
 package me.andreasmelone.glowingeyes.client.util;
 
-import me.andreasmelone.glowingeyes.client.render.RenderTypes;
+import com.mojang.blaze3d.pipeline.RenderPipeline;
+import me.andreasmelone.glowingeyes.client.render.PipelineManager;
 import me.andreasmelone.glowingeyes.common.util.Color;
 import me.andreasmelone.glowingeyes.common.util.Util;
 import me.andreasmelone.glowingeyes.mixin.client.GuiGraphicsAccessor;
@@ -9,14 +10,13 @@ import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.GuiSpriteManager;
 import net.minecraft.client.gui.components.WidgetSprites;
-import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.FormattedCharSequence;
 
 import java.util.List;
-import java.util.function.Function;
 
 public class GuiUtil {
     /**
@@ -28,7 +28,11 @@ public class GuiUtil {
      */
     public static void drawBackground(GuiGraphics guiGraphics, ResourceLocation backgroundTexture, int x, int y, int width, int height) {
         // Draw the background texture
-        guiGraphics.blit(RenderType::guiTextured, backgroundTexture, x, y, 0, 0, width, height, 256, 256);
+        guiGraphics.blit(RenderPipelines.GUI_TEXTURED, backgroundTexture, x, y, 0, 0, width, height, 256, 256);
+    }
+
+    public static void drawTransparentBlack(GuiGraphics ctx) {
+        ctx.fill(0, 0, ctx.guiWidth(), ctx.guiHeight(), 0xBB000000);
     }
 
     public static WidgetSprites createSprites(String namespace, String location1, String location2) {
@@ -58,12 +62,12 @@ public class GuiUtil {
         ctx.drawString(font, "x: " + mouseX + ", y: " + mouseY, 10, 10, Color.WHITE.getRGB());
     }
 
-    public static void blitTintedSprite(GuiGraphics ctx, Function<ResourceLocation, RenderType> renderTypeGetter, ResourceLocation spriteLocation, int x, int y, int width, int height, int color) {
+    public static void blitTintedSprite(GuiGraphics ctx, RenderPipeline pipeline, ResourceLocation spriteLocation, int x, int y, int width, int height, int color) {
         Minecraft mc = Minecraft.getInstance();
         GuiSpriteManager sprites = mc.getGuiSprites();
 
         TextureAtlasSprite sprite = sprites.getSprite(spriteLocation);
-        ((GuiGraphicsAccessor)ctx).invokeInnerBlit(renderTypeGetter, sprite.atlasLocation(), x, x + width, y, y + height, sprite.getU0(), sprite.getU1(), sprite.getV0(), sprite.getV1(), color);
+        ((GuiGraphicsAccessor)ctx).invokeInnerBlit(pipeline, sprite.atlasLocation(), x, x + width, y, y + height, sprite.getU0(), sprite.getU1(), sprite.getV0(), sprite.getV1(), color);
     }
 
     /**
@@ -86,7 +90,7 @@ public class GuiUtil {
      */
     public static void drawColorSquare(GuiGraphics ctx, int x, int y, int width, int height, int color) {
         ctx.blit(
-                RenderTypes::colorSquare,
+                PipelineManager.COLOR_SQUARE_SHADER,
                 TextureLocations.CURSOR,    // random texture, it will never get rendered anyway
                 x, y, 0, 0,  // this is a dirty hack to acquire normalized coordinates in the shader
                 width, height, width, height,
@@ -110,7 +114,7 @@ public class GuiUtil {
      */
     public static void drawHueBar(GuiGraphics ctx, int x, int y, int width, int height, int color) {
         ctx.blit(
-                RenderTypes::hueBar,
+                PipelineManager.HUE_BAR_SHADER,
                 TextureLocations.CURSOR, // similarly to the color square, just a random texture, never used or rendered by the actual shader
                 x, y, 0, 0,
                 width, height, width, height,

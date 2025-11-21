@@ -1,12 +1,11 @@
 package me.andreasmelone.glowingeyes.fabric.common.component.eyes;
 
 import com.mojang.logging.LogUtils;
+import com.mojang.serialization.Codec;
 import me.andreasmelone.glowingeyes.common.util.Color;
 import me.andreasmelone.glowingeyes.common.util.Point;
-import me.andreasmelone.glowingeyes.common.util.Util;
-import net.minecraft.core.HolderLookup;
-import net.minecraft.nbt.ByteArrayTag;
-import net.minecraft.nbt.CompoundTag;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 
@@ -15,6 +14,7 @@ import java.util.Map;
 
 public class GlowingEyesImpl implements IGlowingEyes {
     private static final Logger LOGGER = LogUtils.getLogger();
+    private static final Codec<Map<Point, Color>> MAP_CODEC = Codec.unboundedMap(Point.CODEC_STRING, Color.CODEC);
 
     private boolean toggledOn = true;
     private Map<Point, Color> glowingEyesMap = new HashMap<>();
@@ -48,21 +48,15 @@ public class GlowingEyesImpl implements IGlowingEyes {
     }
 
     @Override
-    public void readFromNbt(CompoundTag tag, HolderLookup.@NotNull Provider registryLookup) {
-        this.setToggledOn(tag.getBoolean("toggledOn").orElse(true));
-        if(tag.get("glowingEyesMap") instanceof ByteArrayTag) {
-            this.setGlowingEyesMap(new HashMap<>());
-            LOGGER.warn("Detected glowing eyes map of old format!");
-            LOGGER.warn("Your current eyes will be erased.");
-            return;
-        }
-        this.setGlowingEyesMap(Util.toMap(Point.CODEC_STRING, Color.CODEC, tag.getCompound("glowingEyesMap").orElse(new CompoundTag())));
+    public void readData(@NotNull ValueInput tag) {
+        this.setToggledOn(tag.getBooleanOr("toggledOn", true));
+        this.setGlowingEyesMap(tag.read("glowingEyesMap", MAP_CODEC).orElse(new HashMap<>()));
     }
 
     @Override
-    public void writeToNbt(CompoundTag tag, HolderLookup.@NotNull Provider registryLookup) {
+    public void writeData(@NotNull ValueOutput tag) {
         tag.putBoolean("toggledOn", this.isToggledOn());
-        tag.put("glowingEyesMap", Util.toCompoundTag(Point.CODEC_STRING, Color.CODEC, this.getGlowingEyesMap()));
+        tag.store("glowingEyesMap", MAP_CODEC, this.glowingEyesMap);
     }
 
     @Override

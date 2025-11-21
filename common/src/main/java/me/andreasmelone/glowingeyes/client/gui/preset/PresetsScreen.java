@@ -15,7 +15,7 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.inventory.InventoryScreen;
-import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.network.chat.Component;
 import net.minecraft.util.Mth;
 import org.jetbrains.annotations.NotNull;
@@ -230,12 +230,9 @@ public class PresetsScreen extends Screen {
     @Override
     public void render(@NotNull GuiGraphics ctx, int mouseX, int mouseY, float partialTicks) {
         if(this.parent != null) {
-            ctx.pose().pushPose();
-            ctx.pose().translate(0, 0, -100);
             this.parent.render(ctx, 0, 0, partialTicks);
-            ctx.pose().popPose();
-        }
-        super.renderBackground(ctx, mouseX, mouseY, partialTicks);
+            GuiUtil.drawTransparentBlack(ctx);
+        } else super.renderBackground(ctx, mouseX, mouseY, partialTicks);
         GuiUtil.drawBackground(
                 ctx, TextureLocations.UI_BACKGROUND_BROAD,
                 this.guiLeft, this.guiTop,
@@ -249,7 +246,7 @@ public class PresetsScreen extends Screen {
         final int middleY = playerBoxY + (PLAYERBOX_FINAL_HEIGHT / 2);
 
         ctx.blit(
-                RenderType::guiTextured,
+                RenderPipelines.GUI_TEXTURED,
                 TextureLocations.UI_PLAYERBOX,
                 playerBoxX, playerBoxY,
                 0, 0,
@@ -272,7 +269,7 @@ public class PresetsScreen extends Screen {
         );
 
         ctx.blit(
-                RenderType::guiTextured,
+                RenderPipelines.GUI_TEXTURED,
                 TextureLocations.UI_PRESETBOX,
                 this.guiLeft + PRESETS_OFFSET_X + PRESETBOX_OFFSET_X, this.guiTop + PRESETS_OFFSET_Y + PRESETBOX_OFFSET_Y,
                 0, 0,

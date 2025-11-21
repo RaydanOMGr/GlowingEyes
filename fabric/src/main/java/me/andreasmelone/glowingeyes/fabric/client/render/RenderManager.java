@@ -13,7 +13,9 @@ public class RenderManager {
     public static void init() {
         LivingEntityFeatureRendererRegistrationCallback.EVENT.register((entityType, entityRenderer, registrationHelper, context) -> {
             if(entityType == EntityType.PLAYER) {
-                registrationHelper.register(new GlowingEyesHeadLayer<>((LivingEntityRenderer<? extends Player, PlayerRenderState, EntityModel<PlayerRenderState>>) entityRenderer));
+                registrationHelper.register(
+                        new GlowingEyesHeadLayer<>((LivingEntityRenderer<? extends Player, PlayerRenderState, EntityModel<PlayerRenderState>>) entityRenderer)
+                );
             }
         });
     }

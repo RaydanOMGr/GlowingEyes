@@ -5,7 +5,7 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.ImageButton;
 import net.minecraft.client.gui.components.WidgetSprites;
-import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
@@ -35,17 +35,18 @@ public class TintedOverlayImageButton extends ImageButton {
     public void renderWidget(@NotNull GuiGraphics ctx, int mouseX, int mouseY, float partialTick) {
         ResourceLocation sprite = this.sprites.get(this.isActive(), this.isHoveredOrFocused());
         ctx.blitSprite(
-                RenderType::guiTextured, sprite,
+                RenderPipelines.GUI_TEXTURED, sprite,
                 this.getX(), this.getY(),
                 this.width, this.height
         );
         if(this.colorSupplier == null || this.overlaySprite == null) return;
+        int color = this.colorSupplier.getAsInt();
         GuiUtil.blitTintedSprite(
                 ctx,
-                RenderType::guiTextured, this.overlaySprite,
+                RenderPipelines.GUI_TEXTURED, this.overlaySprite,
                 this.getX(), this.getY(),
                 this.width, this.height,
-                this.colorSupplier.getAsInt()
+                color
         );
     }
 

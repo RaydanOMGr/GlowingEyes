@@ -1,7 +1,5 @@
 package me.andreasmelone.glowingeyes.client.gui;
 
-import com.mojang.blaze3d.buffers.BufferType;
-import com.mojang.blaze3d.buffers.BufferUsage;
 import com.mojang.blaze3d.buffers.GpuBuffer;
 import com.mojang.blaze3d.platform.NativeImage;
 import com.mojang.blaze3d.systems.CommandEncoder;
@@ -24,6 +22,7 @@ import me.andreasmelone.glowingeyes.client.util.color.ColorType;
 import me.andreasmelone.glowingeyes.common.component.eyes.GlowingEyesComponent;
 import me.andreasmelone.glowingeyes.common.util.Color;
 import me.andreasmelone.glowingeyes.common.util.Point;
+import me.andreasmelone.glowingeyes.mixin.client.GpuTextureAccessor;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
@@ -31,7 +30,7 @@ import net.minecraft.client.gui.components.ImageButton;
 import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.client.gui.components.WidgetSprites;
 import net.minecraft.client.gui.screens.Screen;
-import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
@@ -204,13 +203,12 @@ public class EyesEditorScreen extends Screen {
         GuiUtil.drawBackground(ctx,
                 TextureLocations.UI_BACKGROUND_BROAD, this.guiLeft, this.guiTop, UI_WIDTH, UI_HEIGHT);
 
-        ctx.pose().pushPose();
+        ctx.pose().pushMatrix();
         ctx.pose().translate(
                 (this.width - (this.width * this.scale)) / 2f,
-                (this.height - (this.height * this.scale)) / 2f,
-                0.0f
+                (this.height - (this.height * this.scale)) / 2f
         );
-        ctx.pose().scale(this.scale, this.scale, 1.0f);
+        ctx.pose().scale(this.scale, this.scale);
         ctx.fill(
                 this.headX - SPACE_BETWEEN_PIXELS, this.headY - SPACE_BETWEEN_PIXELS,
                 this.endHeadX + SPACE_BETWEEN_PIXELS, this.endHeadY + SPACE_BETWEEN_PIXELS,
@@ -241,7 +239,7 @@ public class EyesEditorScreen extends Screen {
             for (int x = 0; x < this.headSizeX; x++) {
                 Point point = new Point(x + this.skinPart.getX(), y + this.skinPart.getY());
                 ctx.blit(
-                        RenderType::guiTextured,
+                        RenderPipelines.GUI_TEXTURED,
                         playerSkin,
                         this.headX + x * PIXEL_SIZE + x * SPACE_BETWEEN_PIXELS,
                         this.headY + y * PIXEL_SIZE + y * SPACE_BETWEEN_PIXELS,
@@ -262,7 +260,7 @@ public class EyesEditorScreen extends Screen {
                 }
             }
         }
-        ctx.pose().popPose();
+        ctx.pose().popMatrix();
 
         if (this.mode == Mode.PICKER && this.checkBounds(mouseX, mouseY, this.headX, this.endHeadX, this.headY, this.endHeadY)) {
             Point convertedMouse = this.calculatePoint(mouseX, mouseY);
@@ -343,18 +341,20 @@ public class EyesEditorScreen extends Screen {
             long startTime = System.currentTimeMillis();
 
             GpuTexture gpuTexture = this.minecraft.getTextureManager().getTexture(texture).getTexture();
-            GpuBuffer gpuBuffer = RenderSystem.getDevice().createBuffer(
-                    () -> "Skin copy buffer", BufferType.PIXEL_PACK, BufferUsage.STATIC_READ, texSizeX * texSizeY * gpuTexture.getFormat().pixelSize()
-            );
+            int initialUsage = gpuTexture.usage();
+            // Is this hacky? yes. Should I be doing this? no. Will I still do it? yes.
+            ((GpuTextureAccessor)gpuTexture).setUsage(initialUsage | GpuTexture.USAGE_COPY_SRC);
+
+            GpuBuffer gpuBuffer = RenderSystem.getDevice().createBuffer(() -> "Skin copy buffer", 9, texSizeX * texSizeY * gpuTexture.getFormat().pixelSize());
             CommandEncoder commandEncoder = RenderSystem.getDevice().createCommandEncoder();
             NativeImage nativeImage = new NativeImage(texSizeX, texSizeY, false);
-            RenderSystem.getDevice().createCommandEncoder().copyTextureToBuffer(gpuTexture, gpuBuffer, 0, () -> {
-                try (GpuBuffer.ReadView readView = commandEncoder.readBuffer(gpuBuffer)) {
+            commandEncoder.copyTextureToBuffer(gpuTexture, gpuBuffer, 0, () -> {
+                try (GpuBuffer.MappedView mappedView = commandEncoder.mapBuffer(gpuBuffer, true, false)) {
 
                     for(int ty = 0; ty < texSizeY; ++ty) {
                         for(int tx = 0; tx < texSizeX; ++tx) {
-                            int m = readView.data().getInt((tx + ty * texSizeX) * gpuTexture.getFormat().pixelSize());
-                            nativeImage.setPixelABGR(tx, texSizeY - ty - 1, m | 0xFF000000);
+                            int m = mappedView.data().getInt((tx + ty * texSizeX) * gpuTexture.getFormat().pixelSize());
+                            nativeImage.setPixelABGR(tx, ty, m);
                         }
                     }
                 }
@@ -362,6 +362,7 @@ public class EyesEditorScreen extends Screen {
                 gpuBuffer.close();
             }, 0);
 
+            ((GpuTextureAccessor)gpuTexture).setUsage(initialUsage);
             LogUtils.getLogger().debug("Reading texture {} took {}ms", texture, System.currentTimeMillis() - startTime);
 
             this.allocatedTextures.put(texture, nativeImage);
@@ -434,7 +435,7 @@ public class EyesEditorScreen extends Screen {
                     button.active = false;
                 }
         );
-        imageButton.setColorSupplier(this.mod.getModVariables().getFinalColor()::getRGB);
+        imageButton.setColorSupplier(() -> this.mod.getModVariables().getFinalColor().getRGB());
         imageButton.setTooltip(Tooltip.create(Component.translatable("tooltip.glowingeyes.editor." + buttonMode.name().toLowerCase())));
 
         this.modeButtons.put(buttonMode, imageButton);

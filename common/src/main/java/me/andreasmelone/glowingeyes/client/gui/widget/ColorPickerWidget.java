@@ -7,7 +7,7 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
-import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.network.chat.Component;
 import org.jetbrains.annotations.NotNull;
 import org.lwjgl.glfw.GLFW;
@@ -55,18 +55,18 @@ public class ColorPickerWidget extends AbstractWidget implements GuiEventListene
                 this.isHoveredOrFocused() ? HOVERED_COLOR : INACTIVE_COLOR
         );
 
-        ctx.pose().pushPose();
-        ctx.pose().translate(this.getCursorX(), this.getCursorY(), 0.0f);
-        ctx.pose().translate(-CURSOR_OFFSET_X + (2 * (1.0f - this.saturation)), - CURSOR_OFFSET_Y + (2 * (this.brightness)), 0);
+        ctx.pose().pushMatrix();
+        ctx.pose().translate(this.getCursorX(), this.getCursorY());
+        ctx.pose().translate(-CURSOR_OFFSET_X + (2 * (1.0f - this.saturation)), - CURSOR_OFFSET_Y + (2 * (this.brightness)));
         ctx.blit(
-                RenderType::guiTextured,
+                RenderPipelines.GUI_TEXTURED,
                 TextureLocations.CURSOR,
                 0, 0,
                 0, 0,
                 8, 8,
                 8, 8
         );
-        ctx.pose().popPose();
+        ctx.pose().popMatrix();
     }
 
     @Override

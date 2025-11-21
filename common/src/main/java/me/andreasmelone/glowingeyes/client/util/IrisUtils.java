@@ -13,6 +13,7 @@ public class IrisUtils {
 
     public static boolean IS_IRIS_PRESENT = false;
 
+    private static Object config = null;
     private static Method getShaderPackName = null;
 
     @SuppressWarnings("unchecked")
@@ -21,12 +22,12 @@ public class IrisUtils {
 
         for (String irisClass : irisMainClass) {
             try {
-                if (getShaderPackName != null) return (String) getShaderPackName.invoke(null);
+                if (getShaderPackName != null && config != null) return ((Optional<String>) getShaderPackName.invoke(config)).orElse(null);
 
                 Class<?> clazz = Class.forName(irisClass);
                 Field configField = clazz.getDeclaredField("irisConfig");
                 configField.setAccessible(true);
-                Object config = configField.get(null);
+                config = configField.get(null);
                 getShaderPackName = config.getClass().getDeclaredMethod("getShaderPackName");
                 return ((Optional<String>) getShaderPackName.invoke(config)).orElse(null);
             } catch (NoSuchMethodException | InvocationTargetException |

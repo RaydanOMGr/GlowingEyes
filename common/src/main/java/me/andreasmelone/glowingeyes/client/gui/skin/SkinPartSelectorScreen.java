@@ -9,11 +9,14 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.screens.Screen;
-import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipComponent;
+import net.minecraft.client.gui.screens.inventory.tooltip.DefaultTooltipPositioner;
+import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
 public class SkinPartSelectorScreen extends Screen {
@@ -106,12 +109,9 @@ public class SkinPartSelectorScreen extends Screen {
     @Override
     public void render(@NotNull GuiGraphics ctx, int mouseX, int mouseY, float partialTicks) {
         if (this.parent != null) {
-            ctx.pose().pushPose();
-            ctx.pose().translate(0, 0, -10000);
             this.parent.render(ctx, 0, 0, partialTicks);
-            ctx.pose().popPose();
-        }
-        super.renderBackground(ctx, mouseX, mouseY, partialTicks);
+            GuiUtil.drawTransparentBlack(ctx);
+        } else super.renderBackground(ctx, mouseX, mouseY, partialTicks);
         GuiUtil.drawBackground(
                 ctx, TextureLocations.UI_BACKGROUND_BIG,
                 this.guiLeft, this.guiTop,
@@ -125,10 +125,10 @@ public class SkinPartSelectorScreen extends Screen {
                 Color.WHITE.getRGB()
         );
 
-        ctx.pose().pushPose();
-        ctx.pose().translate(this.textureX, this.textureY, 0);
+        ctx.pose().pushMatrix();
+        ctx.pose().translate(this.textureX, this.textureY);
         ctx.blit(
-                RenderType::guiTextured,
+                RenderPipelines.GUI_TEXTURED,
                 this.skinTexture,
                 0, 0,
                 0, 0,
@@ -136,7 +136,7 @@ public class SkinPartSelectorScreen extends Screen {
                 64, ISkinPart.getRowY(this.rows, this.selected.isSlim()),
                 64, 64
         );
-        ctx.pose().popPose();
+        ctx.pose().popMatrix();
 
         double cursorX = (this.cursorSpaceWidget.isUsed() ? this.cursorSpaceWidget.getCursorX() : mouseX);
         double cursorY = (this.cursorSpaceWidget.isUsed() ? this.cursorSpaceWidget.getCursorY() : mouseY);
@@ -144,35 +144,9 @@ public class SkinPartSelectorScreen extends Screen {
         int textureMouseX = (int) ((cursorX - this.textureX) * this.factorX);
         int textureMouseY = (int) ((cursorY - this.textureY) * this.factorY);
 
-        if (textureMouseX >= 0 && textureMouseX <= 63 && textureMouseY >= 0 && textureMouseY <= 63) {
-            ISkinPart part = ISkinPart.getFromCoordinates(textureMouseX, textureMouseY, this.selected.isSlim());
-            if (part != null && part.containsData() && part.getRow() < this.rows) {
-                int x = part.getX();
-                int y = part.getY();
-
-                ctx.pose().pushPose();
-                ctx.pose().translate(this.textureX, this.textureY, 0);
-                ctx.pose().scale(1.0f / this.factorX, 1.0f / this.factorY, 1.0f);
-                ctx.fill(
-                        x,
-                        y,
-                        (x + part.getSizeX()),
-                        (y + part.getSizeY()),
-                        this.overlayColor.getRGB()
-                );
-                ctx.pose().popPose();
-
-                ctx.renderTooltip(
-                        this.minecraft.font,
-                        Component.translatable(part.getTranslationKey()),
-                        (int) cursorX, (int) cursorY
-                );
-            }
-        }
-
         if (this.selected != null) {
-            ctx.pose().pushPose();
-            ctx.pose().translate(this.textureX + (this.selected.getX() / this.factorX) - 0.25, this.textureY + (this.selected.getY() / this.factorY) - 0.25, 0);
+            ctx.pose().pushMatrix();
+            ctx.pose().translate((float) (this.textureX + (this.selected.getX() / this.factorX) - 0.25), (float) (this.textureY + (this.selected.getY() / this.factorY) - 0.25));
             ctx.fill(
                     0,
                     0,
@@ -187,7 +161,36 @@ public class SkinPartSelectorScreen extends Screen {
                     (int) (this.selected.getSizeY() / this.factorX) + 1,
                     Color.BLACK.getRGB()
             );
-            ctx.pose().popPose();
+            ctx.pose().popMatrix();
+        }
+
+        if (textureMouseX >= 0 && textureMouseX <= 63 && textureMouseY >= 0 && textureMouseY <= 63) {
+            ISkinPart part = ISkinPart.getFromCoordinates(textureMouseX, textureMouseY, this.selected.isSlim());
+            if (part != null && part.containsData() && part.getRow() < this.rows) {
+                int x = part.getX();
+                int y = part.getY();
+
+                ctx.pose().pushMatrix();
+                ctx.pose().translate(this.textureX, this.textureY);
+                ctx.pose().scale(1.0f / this.factorX, 1.0f / this.factorY);
+                ctx.fill(
+                        x,
+                        y,
+                        (x + part.getSizeX()),
+                        (y + part.getSizeY()),
+                        this.overlayColor.getRGB()
+                );
+                ctx.pose().popMatrix();
+
+                List<ClientTooltipComponent> tooltipList = List.of(ClientTooltipComponent.create(Component.translatable(part.getTranslationKey()).getVisualOrderText()));
+                ctx.renderTooltip(
+                        this.minecraft.font,
+                        tooltipList,
+                        (int) cursorX, (int) cursorY,
+                        DefaultTooltipPositioner.INSTANCE,
+                        null
+                );
+            }
         }
 
         super.render(ctx, mouseX, mouseY, partialTicks);

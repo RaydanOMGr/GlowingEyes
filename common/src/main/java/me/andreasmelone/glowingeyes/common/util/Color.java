@@ -91,6 +91,15 @@ public class Color implements Serializable, Cloneable {
         return new Color(this.getRed(), this.getGreen(), this.getBlue(), alpha);
     }
 
+    public static int rgbaToArgb(int rgba) {
+        int r = (rgba >> 24) & 0xFF;
+        int g = (rgba >> 16) & 0xFF;
+        int b = (rgba >> 8) & 0xFF;
+        int a = rgba & 0xFF;
+
+        return (a << 24) | (r << 16) | (g << 8) | b;
+    }
+
     private static void testColorValueRange(int r, int g, int b, int a) {
         boolean rangeError = false;
         String badComponentString = "";

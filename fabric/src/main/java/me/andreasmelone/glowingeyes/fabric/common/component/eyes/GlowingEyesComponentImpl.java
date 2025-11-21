@@ -9,7 +9,11 @@ import me.andreasmelone.glowingeyes.fabric.common.packet.ServerPacketRegistrar;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.util.ProblemReporter;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.storage.TagValueInput;
+import net.minecraft.world.level.storage.TagValueOutput;
+import net.minecraft.world.level.storage.ValueInput;
 
 import java.util.Map;
 
@@ -56,13 +60,14 @@ public class GlowingEyesComponentImpl implements IGlowingEyesComponent {
 
     @Override
     public CompoundTag serialize(Player player, HolderLookup.Provider provider) {
-        CompoundTag tag = new CompoundTag();
-        this.getComponent(player).writeToNbt(tag, provider);
-        return tag;
+        TagValueOutput output = TagValueOutput.createWithContext(ProblemReporter.DISCARDING, provider);
+        this.getComponent(player).writeData(output);
+        return output.buildResult();
     }
 
     @Override
     public void load(Player player, HolderLookup.Provider provider, CompoundTag tag) {
-        this.getComponent(player).readFromNbt(tag, provider);
+        ValueInput input = TagValueInput.create(ProblemReporter.DISCARDING, provider, tag);
+        this.getComponent(player).readData(input);
     }
 }
