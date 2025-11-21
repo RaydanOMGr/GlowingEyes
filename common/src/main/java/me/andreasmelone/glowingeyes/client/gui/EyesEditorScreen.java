@@ -354,7 +354,7 @@ public class EyesEditorScreen extends Screen {
                     for(int ty = 0; ty < texSizeY; ++ty) {
                         for(int tx = 0; tx < texSizeX; ++tx) {
                             int m = readView.data().getInt((tx + ty * texSizeX) * gpuTexture.getFormat().pixelSize());
-                            nativeImage.setPixelABGR(tx, texSizeY - ty - 1, m | 0xFF000000);
+                            nativeImage.setPixelABGR(tx, ty, m | 0xFF000000);
                         }
                     }
                 }
@@ -434,7 +434,7 @@ public class EyesEditorScreen extends Screen {
                     button.active = false;
                 }
         );
-        imageButton.setColorSupplier(this.mod.getModVariables().getFinalColor()::getRGB);
+        imageButton.setColorSupplier(() -> this.mod.getModVariables().getFinalColor().getRGB());
         imageButton.setTooltip(Tooltip.create(Component.translatable("tooltip.glowingeyes.editor." + buttonMode.name().toLowerCase())));
 
         this.modeButtons.put(buttonMode, imageButton);

@@ -83,8 +83,8 @@ public class CreatePresetScreen extends Screen {
             ctx.pose().translate(0, 0, -100);
             this.parent.render(ctx, 0, 0, partialTicks);
             ctx.pose().popPose();
-        }
-        super.renderBackground(ctx, mouseX, mouseY, partialTicks);
+            GuiUtil.drawTransparentBlack(ctx);
+        } else super.renderBackground(ctx, mouseX, mouseY, partialTicks);
         GuiUtil.drawBackground(ctx, TextureLocations.UI_BACKGROUND_SLIM, this.guiLeft, this.guiTop, UI_WIDTH, UI_HEIGHT);
 
         ctx.drawCenteredString(this.font, Component.translatable("gui.glowingeyes.create.title"), this.width / 2, this.guiTop + TEXT_Y, 0xFFFFFF);

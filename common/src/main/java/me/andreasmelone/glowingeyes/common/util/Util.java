@@ -3,6 +3,7 @@ package me.andreasmelone.glowingeyes.common.util;
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
+import com.google.gson.JsonSyntaxException;
 import com.mojang.datafixers.util.Pair;
 import com.mojang.logging.LogUtils;
 import com.mojang.serialization.Codec;
@@ -40,7 +41,14 @@ public class Util {
     public static <K, V> Map<K, V> toMap(Codec<K> codecK, Codec<V> codecV, CompoundTag tag) {
         Map<K, V> map = new LinkedHashMap<>();
         tag.keySet().forEach((key) -> {
-            K decodedKey = codecK.decode(JsonOps.INSTANCE, JsonParser.parseString(key)).map(Pair::getFirst).result().orElseThrow();
+            JsonElement input;
+            try {
+                input = JsonParser.parseString(key);
+            } catch (JsonSyntaxException e) {
+                LOGGER.error("Failed to parse key {}", key, e);
+                return;
+            }
+            K decodedKey = codecK.decode(JsonOps.INSTANCE, input).map(Pair::getFirst).result().orElseThrow();
             V decodedValue = codecV.decode(NbtOps.INSTANCE, tag.get(key)).map(Pair::getFirst).result().orElseThrow();
             map.put(decodedKey, decodedValue);
         });

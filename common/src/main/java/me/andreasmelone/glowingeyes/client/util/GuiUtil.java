@@ -31,6 +31,10 @@ public class GuiUtil {
         guiGraphics.blit(RenderType::guiTextured, backgroundTexture, x, y, 0, 0, width, height, 256, 256);
     }
 
+    public static void drawTransparentBlack(GuiGraphics ctx) {
+        ctx.fill(0, 0, ctx.guiWidth(), ctx.guiHeight(), 0xBB000000);
+    }
+
     public static WidgetSprites createSprites(String namespace, String location1, String location2) {
         return new WidgetSprites(Util.id(namespace, location1), Util.id(namespace, location2));
     }

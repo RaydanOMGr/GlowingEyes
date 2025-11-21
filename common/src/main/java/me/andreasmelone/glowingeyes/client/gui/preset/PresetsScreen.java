@@ -166,8 +166,8 @@ public class PresetsScreen extends Screen {
                                             if (result) {
                                                 this.presetManager.removePreset(this.selectedPreset);
                                                 this.movePresets(-2);
+                                                this.unselectPreset();
                                             }
-                                            this.unselectPreset();
                                         });
                                     }
                                 })
@@ -234,8 +234,8 @@ public class PresetsScreen extends Screen {
             ctx.pose().translate(0, 0, -100);
             this.parent.render(ctx, 0, 0, partialTicks);
             ctx.pose().popPose();
-        }
-        super.renderBackground(ctx, mouseX, mouseY, partialTicks);
+            GuiUtil.drawTransparentBlack(ctx);
+        } else super.renderBackground(ctx, mouseX, mouseY, partialTicks);
         GuiUtil.drawBackground(
                 ctx, TextureLocations.UI_BACKGROUND_BROAD,
                 this.guiLeft, this.guiTop,
