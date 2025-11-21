@@ -7,6 +7,8 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
+import net.minecraft.client.input.KeyEvent;
+import net.minecraft.client.input.MouseButtonEvent;
 import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.network.chat.Component;
 import org.jetbrains.annotations.NotNull;
@@ -49,7 +51,8 @@ public class ColorPickerWidget extends AbstractWidget implements GuiEventListene
                 this.width, this.height,
                 Color.HSBtoRGB(this.hue, 1.0f, 1.0f)
         );
-        ctx.renderOutline(
+        GuiUtil.drawOutline(
+                ctx,
                 this.getX() - 1, this.getY() - 1,
                 this.width + 2, this.height + 2,
                 this.isHoveredOrFocused() ? HOVERED_COLOR : INACTIVE_COLOR
@@ -70,29 +73,28 @@ public class ColorPickerWidget extends AbstractWidget implements GuiEventListene
     }
 
     @Override
-    public boolean mouseClicked(double mouseX, double mouseY, int button) {
-        if(button == 0 && this.isInbounds((int) mouseX, (int) mouseY))
-            return this.mouseDragged(mouseX, mouseY, button, 0, 0);
-        return super.mouseClicked(mouseX, mouseY, button);
+    public boolean mouseClicked(MouseButtonEvent event, boolean isDoubleClick) {
+        if(event.button() == 0 && this.isInbounds((int) event.x(), (int) event.y()))
+            return this.mouseDragged(event, 0, 0);
+        return super.mouseClicked(event, isDoubleClick);
     }
 
     @Override
-    public boolean mouseDragged(double mouseX, double mouseY, int button, double dragX, double dragY) {
-        if(this.isInbounds((int) mouseX, (int) mouseY)) {
-            this.setCursorX((float) mouseX);
-            this.setCursorY((float) mouseY);
+    public boolean mouseDragged(MouseButtonEvent event, double mouseX, double mouseY) {
+        if(this.isInbounds((int) event.x(), (int) event.y())) {
+            this.setCursorX((float) event.x());
+            this.setCursorY((float) event.y());
 
             this.triggerChange();
         } else {
-            float newX = (float) Math.max(this.getX(), Math.min(mouseX, this.getX() + this.width));
-            float newY = (float) Math.max(this.getY(), Math.min(mouseY, this.getY() + this.height));
+            float newX = (float) Math.max(this.getX(), Math.min(event.x(), this.getX() + this.width));
+            float newY = (float) Math.max(this.getY(), Math.min(event.y(), this.getY() + this.height));
             this.setCursorX(newX);
             this.setCursorY(newY);
 
             this.triggerChange();
         }
-
-        return super.mouseDragged(mouseX, mouseY, button, dragX, dragY);
+        return super.mouseDragged(event, mouseX, mouseY);
     }
 
     @Override
@@ -110,7 +112,9 @@ public class ColorPickerWidget extends AbstractWidget implements GuiEventListene
     }
 
     @Override
-    public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
+    public boolean keyPressed(KeyEvent event) {
+        int keyCode = event.key();
+        int modifiers = event.modifiers();
         if(keyCode == GLFW.GLFW_KEY_LEFT_SHIFT) {
             this.isShiftPressed = true;
         }
@@ -136,15 +140,15 @@ public class ColorPickerWidget extends AbstractWidget implements GuiEventListene
             this.triggerChange();
             return true;
         }
-        return super.keyPressed(keyCode, scanCode, modifiers);
+        return super.keyPressed(event);
     }
 
     @Override
-    public boolean keyReleased(int keyCode, int scanCode, int modifiers) {
-        if(keyCode == GLFW.GLFW_KEY_LEFT_SHIFT) {
+    public boolean keyReleased(KeyEvent event) {
+        if(event.key() == GLFW.GLFW_KEY_LEFT_SHIFT) {
             this.isShiftPressed = false;
         }
-        return super.keyReleased(keyCode, scanCode, modifiers);
+        return super.keyReleased(event);
     }
 
     public float getCursorX() {

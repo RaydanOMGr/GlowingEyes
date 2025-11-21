@@ -30,6 +30,8 @@ import net.minecraft.client.gui.components.ImageButton;
 import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.client.gui.components.WidgetSprites;
 import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.input.MouseButtonEvent;
+import net.minecraft.client.input.MouseButtonInfo;
 import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
@@ -120,7 +122,8 @@ public class EyesEditorScreen extends Screen {
             this.addRenderableWidget(this.createModeButton(this.guiLeft + MODE_BUTTON_X, posY, Mode.values()[i]));
         }
 
-        this.modeButtons.get(Mode.BRUSH).onPress();
+        Button brushButton = this.modeButtons.get(Mode.BRUSH);
+        brushButton.onClick(new MouseButtonEvent(brushButton.getX() + 1, brushButton.getY() + 1, new MouseButtonInfo(0, 0)), false);
 
         this.cursorSpaceWidget = new CursorSpaceWidget(this.headX, this.headY, this.endHeadX - this.headX, this.endHeadY - this.headY, this::mouseMoved, this::mouseClicked);
         this.addRenderableWidget(this.cursorSpaceWidget);
@@ -143,7 +146,7 @@ public class EyesEditorScreen extends Screen {
                 this.guiLeft + MENU_BUTTONS_X, 0,
                 BUTTON_WIDTH, BUTTON_HEIGHT,
                 TextureLocations.SKIN_PART_PICKER_BUTTON,
-                button -> SkinPartSelectorScreen.create(this, this.minecraft.player.getSkin().texture(), this.skinPart).thenAccept((part) -> {
+                button -> SkinPartSelectorScreen.create(this, this.minecraft.player.getSkin().body().texturePath(), this.skinPart).thenAccept((part) -> {
                     if (part != null) {
                         this.skinPart = part;
                         this.headSizeX = this.skinPart.getSizeX();
@@ -234,7 +237,7 @@ public class EyesEditorScreen extends Screen {
             );
         }
 
-        ResourceLocation playerSkin = Minecraft.getInstance().player.getSkin().texture();
+        ResourceLocation playerSkin = Minecraft.getInstance().player.getSkin().body().texturePath();
         for (int y = 0; y < this.headSizeY; y++) {
             for (int x = 0; x < this.headSizeX; x++) {
                 Point point = new Point(x + this.skinPart.getX(), y + this.skinPart.getY());
@@ -285,18 +288,19 @@ public class EyesEditorScreen extends Screen {
     }
 
     @Override
-    public boolean mouseClicked(double mouseX, double mouseY, int button) {
+    public boolean mouseClicked(MouseButtonEvent event, boolean isDoubleClick) {
+        double mouseX = event.x();
+        double mouseY = event.y();
         if (System.currentTimeMillis() < this.openedAt + CLICK_DELAY) return false;
         if (this.checkBounds((float) mouseX, (float) mouseY, this.headX, this.endHeadX, this.headY, this.endHeadY)) {
-            this.mode.onButtonPress(this, mouseX, mouseY, button);
+            this.mode.onButtonPress(this, mouseX, mouseY, event.button());
         }
-
-        return super.mouseClicked(mouseX, mouseY, button);
+        return super.mouseClicked(event, isDoubleClick);
     }
 
     @Override
-    public boolean mouseDragged(double mouseX, double mouseY, int button, double dragX, double dragY) {
-        return this.mouseClicked(mouseX, mouseY, button);
+    public boolean mouseDragged(MouseButtonEvent event, double mouseX, double mouseY) {
+        return this.mouseClicked(event, false);
     }
 
     @Override
@@ -453,7 +457,7 @@ public class EyesEditorScreen extends Screen {
                 screen.pixels.remove(new Point(point.getX(), point.getY()));
             } else if (button == 2) {
                 screen.mod.getModVariables().setFinalColor(
-                        screen.getTexturePixelColor(screen.minecraft.player.getSkin().texture(), 64, 64, point.getX(), point.getY())
+                        screen.getTexturePixelColor(screen.minecraft.player.getSkin().body().texturePath(), 64, 64, point.getX(), point.getY())
                 );
                 screen.openedAt = System.currentTimeMillis();
             }
@@ -465,16 +469,17 @@ public class EyesEditorScreen extends Screen {
         PICKER(TextureLocations.PIPETTE_BUTTON, TextureLocations.PIPETTE_COLOR_OVERLAY, (screen, mouseX, mouseY, button) -> {
             Point point = screen.calculatePoint(mouseX, mouseY);
 
-            Color color = screen.getTexturePixelColor(screen.minecraft.player.getSkin().texture(), 64, 64, point.getX(), point.getY());
+            Color color = screen.getTexturePixelColor(screen.minecraft.player.getSkin().body().texturePath(), 64, 64, point.getX(), point.getY());
             screen.mod.getModVariables().setFinalColor(color);
 
-            screen.modeButtons.get(Mode.BRUSH).onPress();
+            Button brushButton = screen.modeButtons.get(Mode.BRUSH);
+            brushButton.onPress(new MouseButtonEvent(brushButton.getX() + 1, brushButton.getY() + 1, new MouseButtonInfo(0, 0)));
             screen.modeButtons.forEach((mode, b) -> b.setFocused(false));
             screen.openedAt = System.currentTimeMillis();
         }),
         FILL(TextureLocations.FILL_BUCKET_BUTTON, TextureLocations.FILL_BUCKET_COLOR_OVERLAY, (screen, mouseX, mouseY, button) -> {
             Point point = screen.calculatePoint(mouseX, mouseY);
-            Color color = screen.getTexturePixelColor(screen.minecraft.player.getSkin().texture(), 64, 64, point.getX(), point.getY());
+            Color color = screen.getTexturePixelColor(screen.minecraft.player.getSkin().body().texturePath(), 64, 64, point.getX(), point.getY());
             Color finalColor = screen.mod.getModVariables().getFinalColor().withAlpha(200);
 
             Stack<Point> stack = new Stack<>();
@@ -493,7 +498,7 @@ public class EyesEditorScreen extends Screen {
                 int y = p.getY();
 
                 if (x < minX || x >= maxX || y < minY || y >= maxY) continue;
-                Color pixelColor = screen.getTexturePixelColor(screen.minecraft.player.getSkin().texture(), 64, 64, x, y);
+                Color pixelColor = screen.getTexturePixelColor(screen.minecraft.player.getSkin().body().texturePath(), 64, 64, x, y);
                 if (!pixelColor.equals(color)) continue;
 
                 screen.pixels.put(new Point(p.getX(), p.getY()), finalColor);

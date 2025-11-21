@@ -6,6 +6,9 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
+import net.minecraft.client.input.KeyEvent;
+import net.minecraft.client.input.MouseButtonEvent;
+import net.minecraft.client.input.MouseButtonInfo;
 import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.network.chat.Component;
 import org.intellij.lang.annotations.MagicConstant;
@@ -37,7 +40,7 @@ public class CursorSpaceWidget extends AbstractWidget implements GuiEventListene
     }
 
     public CursorSpaceWidget(int x, int y, int width, int height, MouseMovedCallback mouseMovedCallback) {
-        this(x, y, width, height, mouseMovedCallback, (mouseX, mouseY, button) -> false);
+        this(x, y, width, height, mouseMovedCallback, (event, button) -> false);
     }
 
     public CursorSpaceWidget(int x, int y, int width, int height, MouseClickedCallback mouseClickedCallback) {
@@ -45,7 +48,7 @@ public class CursorSpaceWidget extends AbstractWidget implements GuiEventListene
     }
 
     public CursorSpaceWidget(int x, int y, int width, int height) {
-        this(x, y, width, height, (mouseX, mouseY) -> {}, (mouseX, mouseY, button) -> false);
+        this(x, y, width, height, (mouseX, mouseY) -> {}, (event, button) -> false);
     }
 
     @Override
@@ -70,7 +73,9 @@ public class CursorSpaceWidget extends AbstractWidget implements GuiEventListene
     }
 
     @Override
-    public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
+    public boolean keyPressed(KeyEvent event) {
+        int keyCode = event.key();
+        int modifiers = event.modifiers();
         if(keyCode == GLFW.GLFW_KEY_ENTER || keyCode == GLFW.GLFW_KEY_SPACE) {
             boolean isAltPressed = (modifiers & GLFW.GLFW_MOD_ALT) != 0;
             return this.triggerClick(isAltPressed ? SECONDARY_MOUSE_BUTTON : PRIMARY_MOUSE_BUTTON);
@@ -95,7 +100,7 @@ public class CursorSpaceWidget extends AbstractWidget implements GuiEventListene
             this.triggerChange();
             return true;
         }
-        return super.keyPressed(keyCode, scanCode, modifiers);
+        return super.keyPressed(event);
     }
 
     public double getCursorY() {
@@ -115,7 +120,7 @@ public class CursorSpaceWidget extends AbstractWidget implements GuiEventListene
     }
 
     private boolean triggerClick(@MagicConstant(flags = { PRIMARY_MOUSE_BUTTON, SECONDARY_MOUSE_BUTTON, MIDDLE_MOUSE_BUTTON }) int button) {
-        return this.mouseClickedCallback.mouseClicked(this.cursorX, this.cursorY, button);
+        return this.mouseClickedCallback.mouseClicked(new MouseButtonEvent(this.cursorX, this.cursorY, new MouseButtonInfo(button, 0)), false);
     }
 
     @FunctionalInterface
@@ -125,6 +130,6 @@ public class CursorSpaceWidget extends AbstractWidget implements GuiEventListene
 
     @FunctionalInterface
     public interface MouseClickedCallback {
-        boolean mouseClicked(double mouseX, double mouseY, int button);
+        boolean mouseClicked(MouseButtonEvent event, boolean doubleClick);
     }
 }

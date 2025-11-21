@@ -3,13 +3,13 @@ package me.andreasmelone.glowingeyes.mixin.client;
 import me.andreasmelone.glowingeyes.client.render.IGlowingEyesRenderState;
 import me.andreasmelone.glowingeyes.common.util.Color;
 import me.andreasmelone.glowingeyes.common.util.Point;
-import net.minecraft.client.renderer.entity.state.PlayerRenderState;
+import net.minecraft.client.renderer.entity.state.AvatarRenderState;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 
 import java.util.Map;
 
-@Mixin(PlayerRenderState.class)
+@Mixin(AvatarRenderState.class)
 public class PlayerRenderStateMixin implements IGlowingEyesRenderState {
     @Unique
     private Map<Point, Color> glowingEyes$glowingEyesMap;

@@ -15,6 +15,7 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.inventory.InventoryScreen;
+import net.minecraft.client.input.MouseButtonEvent;
 import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.network.chat.Component;
 import net.minecraft.util.Mth;
@@ -297,7 +298,10 @@ public class PresetsScreen extends Screen {
     }
 
     @Override
-    public boolean mouseClicked(double mouseX, double mouseY, int button) {
+    public boolean mouseClicked(MouseButtonEvent event, boolean isDoubleClick) {
+        double mouseX = event.x();
+        double mouseY = event.y();
+
         int heightThumb = this.calculateThumbHeight();
         float yThumb = this.guiTop + PRESETS_OFFSET_Y + (PRESET_BUTTONS_LIST_TOTAL_HEIGHT * (float) this.page / this.presetManager.getPresets().size());
         float xThumb = this.guiLeft + PRESETS_OFFSET_X + BigSelectableButton.WIDTH + THUMB_X_OFFSET;
@@ -305,25 +309,25 @@ public class PresetsScreen extends Screen {
             this.isDraggingThumb = true;
             return true;
         }
-        return super.mouseClicked(mouseX, mouseY, button);
+        return super.mouseClicked(event, isDoubleClick);
     }
 
     @Override
-    public boolean mouseReleased(double mouseX, double mouseY, int button) {
+    public boolean mouseReleased(MouseButtonEvent event) {
         this.isDraggingThumb = false;
-        return super.mouseReleased(mouseX, mouseY, button);
+        return super.mouseReleased(event);
     }
 
     @Override
-    public boolean mouseDragged(double mouseX, double mouseY, int button, double dragX, double dragY) {
+    public boolean mouseDragged(MouseButtonEvent event, double mouseX, double mouseY) {
         if(this.isDraggingThumb) {
             int presets = this.presetManager.getPresets().size();
             int heightThumb = this.calculateThumbHeight();
 
-            double scaledMouse = (mouseY - this.guiTop - PRESETS_OFFSET_Y - ((double) heightThumb / 2));
+            double scaledMouse = (event.y() - this.guiTop - PRESETS_OFFSET_Y - ((double) heightThumb / 2));
             this.movePresets(Mth.floor((scaledMouse / PRESET_BUTTONS_LIST_TOTAL_HEIGHT) * presets) - this.page);
         }
-        return super.mouseDragged(mouseX, mouseY, button, dragX, dragY);
+        return super.mouseDragged(event, mouseX, mouseY);
     }
 
     @Override

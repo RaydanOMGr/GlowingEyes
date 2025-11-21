@@ -13,9 +13,9 @@ dependencies {
     include modApi("org.ladysnake.cardinal-components-api:cardinal-components-base:${cca_version}")
     include modImplementation("org.ladysnake.cardinal-components-api:cardinal-components-entity:${cca_version}")
 
-    modCompileOnly "maven.modrinth:flashback:aYbDLPnW"
-    modCompileOnly "maven.modrinth:female-gender:Z3yx6MPE"
-    modCompileOnly "maven.modrinth:replaymod:TUHG3lET"
+    modCompileOnly "maven.modrinth:flashback:AwyE5yQ2"
+    modCompileOnly "maven.modrinth:female-gender:PLVJzXdR"
+    modCompileOnly "maven.modrinth:replaymod:Xl13rxnj"
 
     modImplementation "net.fabricmc:fabric-loader:${fabric_loader_version}"
     modImplementation "net.fabricmc.fabric-api:fabric-api:${fabric_version}"

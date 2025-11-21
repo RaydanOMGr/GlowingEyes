@@ -4,14 +4,10 @@ import com.mojang.blaze3d.pipeline.RenderPipeline;
 import me.andreasmelone.glowingeyes.client.render.PipelineManager;
 import me.andreasmelone.glowingeyes.common.util.Color;
 import me.andreasmelone.glowingeyes.common.util.Util;
-import me.andreasmelone.glowingeyes.mixin.client.GuiGraphicsAccessor;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.client.gui.GuiSpriteManager;
 import net.minecraft.client.gui.components.WidgetSprites;
 import net.minecraft.client.renderer.RenderPipelines;
-import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.FormattedCharSequence;
@@ -63,11 +59,7 @@ public class GuiUtil {
     }
 
     public static void blitTintedSprite(GuiGraphics ctx, RenderPipeline pipeline, ResourceLocation spriteLocation, int x, int y, int width, int height, int color) {
-        Minecraft mc = Minecraft.getInstance();
-        GuiSpriteManager sprites = mc.getGuiSprites();
-
-        TextureAtlasSprite sprite = sprites.getSprite(spriteLocation);
-        ((GuiGraphicsAccessor)ctx).invokeInnerBlit(pipeline, sprite.atlasLocation(), x, x + width, y, y + height, sprite.getU0(), sprite.getU1(), sprite.getV0(), sprite.getV1(), color);
+        ctx.blitSprite(pipeline, spriteLocation, x, y, width, height, color);
     }
 
     /**
@@ -120,5 +112,12 @@ public class GuiUtil {
                 width, height, width, height,
                 color
         );
+    }
+
+    public static void drawOutline(GuiGraphics ctx, int x, int y, int width, int height, int color) {
+        ctx.fill(x, y, x + width, y + 1, color);
+        ctx.fill(x, y + height - 1, x + width, y + height, color);
+        ctx.fill(x, y + 1, x + 1, y + height - 1, color);
+        ctx.fill(x + width - 1, y + 1, x + width, y + height - 1, color);
     }
 }

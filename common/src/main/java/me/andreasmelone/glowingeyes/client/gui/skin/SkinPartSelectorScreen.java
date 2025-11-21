@@ -11,6 +11,7 @@ import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipComponent;
 import net.minecraft.client.gui.screens.inventory.tooltip.DefaultTooltipPositioner;
+import net.minecraft.client.input.MouseButtonEvent;
 import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
@@ -154,7 +155,8 @@ public class SkinPartSelectorScreen extends Screen {
                     (int) ((this.selected.getSizeY()) / this.factorY),
                     this.overlayColor.getRGB()
             );
-            ctx.renderOutline(
+            GuiUtil.drawOutline(
+                    ctx,
                     0,
                     0,
                     (int) (this.selected.getSizeX() / this.factorY) + 1,
@@ -197,15 +199,18 @@ public class SkinPartSelectorScreen extends Screen {
     }
 
     @Override
-    public boolean mouseClicked(double mouseX, double mouseY, int button) {
+    public boolean mouseClicked(MouseButtonEvent event, boolean isDoubleClick) {
+        double mouseX = event.x();
+        double mouseY = event.y();
+        int button = event.button();
+
         int textureMouseX = (int) ((mouseX - this.textureX) * this.factorX);
         int textureMouseY = (int) ((mouseY - this.textureY) * this.factorY);
         ISkinPart part = ISkinPart.getFromCoordinates(textureMouseX, textureMouseY, this.selected.isSlim());
         if (part != null && part.containsData() && part.getRow() < this.rows) {
             if (button == 0) this.selected = part;
         }
-
-        return super.mouseClicked(mouseX, mouseY, button);
+        return super.mouseClicked(event, isDoubleClick);
     }
 
     @Override

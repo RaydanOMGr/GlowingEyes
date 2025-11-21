@@ -22,7 +22,7 @@ public class ServerPacketHandler {
     }
 
     public static void handleComponentUpdatePacket(ComponentUpdatePacket packet, ServerPlayer sender) {
-        MinecraftServer server = sender.getServer();
+        MinecraftServer server = sender.level().getServer();
         if (server == null) return;
 
         Player target = server.getPlayerList().getPlayer(packet.playerUUID());

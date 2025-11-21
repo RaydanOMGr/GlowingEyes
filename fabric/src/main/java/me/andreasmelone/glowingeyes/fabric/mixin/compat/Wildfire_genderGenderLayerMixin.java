@@ -6,8 +6,8 @@ import com.wildfire.render.GenderLayer;
 import me.andreasmelone.glowingeyes.client.render.IGlowingEyesRenderState;
 import me.andreasmelone.glowingeyes.client.util.DynamicTextureCache;
 import net.minecraft.client.model.HumanoidModel;
-import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.entity.LivingEntityRenderer;
 import net.minecraft.client.renderer.entity.state.HumanoidRenderState;
 import net.minecraft.resources.ResourceLocation;
@@ -27,13 +27,13 @@ public abstract class Wildfire_genderGenderLayerMixin<S extends HumanoidRenderSt
     protected abstract void renderSides(S state, M model, PoseStack matrixStack, Consumer<BreastSide> renderer);
 
     @Shadow
-    protected abstract void renderBreast(S state, PoseStack matrixStack, MultiBufferSource vertexConsumerProvider, int light, int overlay, BreastSide side);
+    protected abstract void renderBreast(S state, PoseStack matrixStack, SubmitNodeCollector queue, int overlay, BreastSide side);
 
     @Unique
     private boolean glowingEyes$isGlowingEyesRender = false;
 
     @Inject(
-            method = "render(Lcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/MultiBufferSource;ILnet/minecraft/client/renderer/entity/state/HumanoidRenderState;FF)V",
+            method = "render",
             at = @At(
                     value = "INVOKE",
                     target = "Lcom/wildfire/render/GenderLayer;renderSides(Lnet/minecraft/client/renderer/entity/state/HumanoidRenderState;Lnet/minecraft/client/model/HumanoidModel;Lcom/mojang/blaze3d/vertex/PoseStack;Ljava/util/function/Consumer;)V",
@@ -41,13 +41,13 @@ public abstract class Wildfire_genderGenderLayerMixin<S extends HumanoidRenderSt
             )
     )
     @SuppressWarnings("unchecked")
-    public void renderInject(PoseStack matrixStack, MultiBufferSource vertexConsumerProvider, int light, S state, float limbAngle, float limbDistance, CallbackInfo ci) {
+    public void renderInject(PoseStack matrixStack, SubmitNodeCollector queue, int light, S state, float limbAngle, float limbDistance, CallbackInfo ci) {
         int overlay = LivingEntityRenderer.getOverlayCoords(state, 0.0F);
         this.glowingEyes$isGlowingEyesRender = true;
         this.renderSides(
                 state,
                 ((GenderLayer<S, M>) (Object) this).getParentModel(),
-                matrixStack, (side) -> this.renderBreast(state, matrixStack, vertexConsumerProvider, light, overlay, side)
+                matrixStack, (side) -> this.renderBreast(state, matrixStack, queue, overlay, side)
         );
         this.glowingEyes$isGlowingEyesRender = false;
     }
