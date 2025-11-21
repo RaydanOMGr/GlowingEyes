@@ -2,6 +2,7 @@ package me.andreasmelone.glowingeyes.client.gui.preset;
 
 import me.andreasmelone.glowingeyes.client.util.GuiUtil;
 import me.andreasmelone.glowingeyes.client.util.TextureLocations;
+import me.andreasmelone.glowingeyes.common.util.Color;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
@@ -98,8 +99,8 @@ public class EditPresetScreen extends Screen {
             ctx.pose().translate(0, 0, -100);
             this.parent.render(ctx, 0, 0, partialTicks);
             ctx.pose().popPose();
-        }
-        super.renderBackground(ctx, mouseX, mouseY, partialTicks);
+            GuiUtil.drawTransparentBlack(ctx);
+        } else super.renderBackground(ctx, mouseX, mouseY, partialTicks);
         GuiUtil.drawBackground(
                 ctx, TextureLocations.UI_BACKGROUND_SLIM,
                 this.guiLeft, this.guiTop,
@@ -112,7 +113,7 @@ public class EditPresetScreen extends Screen {
                 Component.translatable("gui.glowingeyes.edit.title"),
                 this.width / 2, this.guiTop + TITLE_Y,
                 UI_WIDTH - TITLE_PADDING * 2, // multiply by two because the text is padded on both sides
-                0xFFFFFF
+                Color.WHITE.getRGB()
         );
 
         super.render(ctx, mouseX, mouseY, partialTicks);

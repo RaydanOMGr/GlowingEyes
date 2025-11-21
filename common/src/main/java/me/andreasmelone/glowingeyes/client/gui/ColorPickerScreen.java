@@ -136,9 +136,9 @@ public class ColorPickerScreen extends Screen {
             ctx.pose().translate(0, 0, -100);
             this.parent.render(ctx, 0, 0, delta);
             ctx.pose().popPose();
-        }
+            GuiUtil.drawTransparentBlack(ctx);
+        } else super.renderBackground(ctx, mouseX, mouseY, delta);
 
-        super.renderBackground(ctx, mouseX, mouseY, delta);
         GuiUtil.drawBackground(ctx,
                 TextureLocations.UI_BACKGROUND_BROAD, this.guiLeft, this.guiTop, UI_WIDTH, UI_HEIGHT);
 

@@ -1,7 +1,7 @@
 package me.andreasmelone.glowingeyes.client.gui;
 
-import com.mojang.blaze3d.platform.GlConst;
-import com.mojang.blaze3d.platform.GlStateManager;
+import com.mojang.blaze3d.platform.NativeImage;
+import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.logging.LogUtils;
 import me.andreasmelone.glowingeyes.client.component.eyes.ClientGlowingEyesComponent;
@@ -27,13 +27,13 @@ import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.client.gui.components.WidgetSprites;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.texture.AbstractTexture;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
 import org.jetbrains.annotations.NotNull;
 import org.joml.Vector2f;
 import org.joml.Vector3f;
-import org.lwjgl.system.MemoryUtil;
 
 import java.util.*;
 
@@ -80,7 +80,7 @@ public class EyesEditorScreen extends Screen {
 
     private CursorSpaceWidget cursorSpaceWidget;
     private final Map<Mode, Button> modeButtons = new EnumMap<>(Mode.class);
-    private final Map<ResourceLocation, Long> allocatedTextures = new HashMap<>();
+    private final Map<ResourceLocation, NativeImage> allocatedTextures = new HashMap<>();
     private final ClientModContext mod;
     public EyesEditorScreen(ClientModContext mod) {
         super(Component.empty());
@@ -306,7 +306,7 @@ public class EyesEditorScreen extends Screen {
         } else {
             LogUtils.getLogger().error("Could not save glowing eyes map to player capability");
         }
-        this.allocatedTextures.forEach((rl, ptr) -> MemoryUtil.nmemFree(ptr));
+        this.allocatedTextures.forEach((rl, ptr) -> ptr.close());
         this.allocatedTextures.clear();
         super.onClose();
     }
@@ -335,26 +335,22 @@ public class EyesEditorScreen extends Screen {
             return color.withAlpha(255);
         }
 
-        int pixelSize = 4; // 4 channels: red, green, blue, alpha; just make sure the format is set to GL_RGBA
         if (!this.allocatedTextures.containsKey(texture)) {
-            long adr = MemoryUtil.nmemCalloc((long) texSizeX * texSizeY * pixelSize, 1);
             long startTime = System.currentTimeMillis();
 
-            this.minecraft.getTextureManager().getTexture(texture).bind();
-            // could save memory by using GL_RGB instead of GL_RGBA, but that messes up pojavlauncher compatibility
-            GlStateManager._getTexImage(GlConst.GL_TEXTURE_2D, 0, GlConst.GL_RGBA, GlConst.GL_UNSIGNED_BYTE, adr);
+            AbstractTexture gpuTexture = this.minecraft.getTextureManager().getTexture(texture);
+
+            NativeImage nativeImage = new NativeImage(texSizeX, texSizeY, false);
+            RenderSystem.bindTexture(gpuTexture.getId());
+            nativeImage.downloadTexture(0, true);
+
             LogUtils.getLogger().debug("Reading texture {} took {}ms", texture, System.currentTimeMillis() - startTime);
 
-            this.allocatedTextures.put(texture, adr);
-            return this.getTexturePixelColor(texture, texSizeX, texSizeY, x, y);
+            this.allocatedTextures.put(texture, nativeImage);
+            return new Color(nativeImage.getPixel(x, y));
         } else {
-            long adr = this.allocatedTextures.get(texture);
-            int index = (y * texSizeX + x) * pixelSize;
-            return new Color(
-                    MemoryUtil.memGetByte(adr + index) & 0xFF,
-                    MemoryUtil.memGetByte(adr + index + 1) & 0xFF,
-                    MemoryUtil.memGetByte(adr + index + 2) & 0xFF
-            );
+            NativeImage img = this.allocatedTextures.get(texture);
+            return new Color(img.getPixel(x, y));
         }
     }
 
@@ -420,7 +416,7 @@ public class EyesEditorScreen extends Screen {
                     button.active = false;
                 }
         );
-        imageButton.setColorSupplier(this.mod.getModVariables().getFinalColor()::getRGB);
+        imageButton.setColorSupplier(() -> this.mod.getModVariables().getFinalColor().getRGB());
         imageButton.setTooltip(Tooltip.create(Component.translatable("tooltip.glowingeyes.editor." + buttonMode.name().toLowerCase())));
 
         this.modeButtons.put(buttonMode, imageButton);

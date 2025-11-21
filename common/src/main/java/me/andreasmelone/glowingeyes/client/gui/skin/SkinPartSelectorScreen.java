@@ -110,8 +110,9 @@ public class SkinPartSelectorScreen extends Screen {
             ctx.pose().translate(0, 0, -10000);
             this.parent.render(ctx, 0, 0, partialTicks);
             ctx.pose().popPose();
-        }
-        super.renderBackground(ctx, mouseX, mouseY, partialTicks);
+            GuiUtil.drawTransparentBlack(ctx);
+        } else super.renderBackground(ctx, mouseX, mouseY, partialTicks);
+
         GuiUtil.drawBackground(
                 ctx, TextureLocations.UI_BACKGROUND_BIG,
                 this.guiLeft, this.guiTop,
@@ -144,6 +145,26 @@ public class SkinPartSelectorScreen extends Screen {
         int textureMouseX = (int) ((cursorX - this.textureX) * this.factorX);
         int textureMouseY = (int) ((cursorY - this.textureY) * this.factorY);
 
+        if (this.selected != null) {
+            ctx.pose().pushPose();
+            ctx.pose().translate(this.textureX + (this.selected.getX() / this.factorX) - 0.25, this.textureY + (this.selected.getY() / this.factorY) - 0.25, 0);
+            ctx.fill(
+                    0,
+                    0,
+                    (int) ((this.selected.getSizeX()) / this.factorX),
+                    (int) ((this.selected.getSizeY()) / this.factorY),
+                    this.overlayColor.getRGB()
+            );
+            ctx.renderOutline(
+                    0,
+                    0,
+                    (int) (this.selected.getSizeX() / this.factorY) + 1,
+                    (int) (this.selected.getSizeY() / this.factorX) + 1,
+                    Color.BLACK.getRGB()
+            );
+            ctx.pose().popPose();
+        }
+
         if (textureMouseX >= 0 && textureMouseX <= 63 && textureMouseY >= 0 && textureMouseY <= 63) {
             ISkinPart part = ISkinPart.getFromCoordinates(textureMouseX, textureMouseY, this.selected.isSlim());
             if (part != null && part.containsData() && part.getRow() < this.rows) {
@@ -168,26 +189,6 @@ public class SkinPartSelectorScreen extends Screen {
                         (int) cursorX, (int) cursorY
                 );
             }
-        }
-
-        if (this.selected != null) {
-            ctx.pose().pushPose();
-            ctx.pose().translate(this.textureX + (this.selected.getX() / this.factorX) - 0.25, this.textureY + (this.selected.getY() / this.factorY) - 0.25, 0);
-            ctx.fill(
-                    0,
-                    0,
-                    (int) ((this.selected.getSizeX()) / this.factorX),
-                    (int) ((this.selected.getSizeY()) / this.factorY),
-                    this.overlayColor.getRGB()
-            );
-            ctx.renderOutline(
-                    0,
-                    0,
-                    (int) (this.selected.getSizeX() / this.factorY) + 1,
-                    (int) (this.selected.getSizeY() / this.factorX) + 1,
-                    Color.BLACK.getRGB()
-            );
-            ctx.pose().popPose();
         }
 
         super.render(ctx, mouseX, mouseY, partialTicks);
