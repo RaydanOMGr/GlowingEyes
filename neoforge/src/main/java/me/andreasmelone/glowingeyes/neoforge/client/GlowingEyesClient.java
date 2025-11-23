@@ -6,6 +6,7 @@ import me.andreasmelone.glowingeyes.client.mod.ClientModContext;
 import me.andreasmelone.glowingeyes.client.mod.ClientModVariables;
 import me.andreasmelone.glowingeyes.client.presets.PresetManager;
 import me.andreasmelone.glowingeyes.client.render.ShaderManager;
+import me.andreasmelone.glowingeyes.neoforge.client.compat.NeoForgeCompatPlugins;
 import me.andreasmelone.glowingeyes.neoforge.client.component.data.ClientPlayerDataComponentImpl;
 import me.andreasmelone.glowingeyes.neoforge.client.component.eyes.ClientGlowingEyesComponentImpl;
 import me.andreasmelone.glowingeyes.neoforge.client.render.RenderManager;
@@ -39,6 +40,8 @@ public class GlowingEyesClient implements ClientModContext {
         this.modEventBus.addListener(RenderManager::onAddLayers);
         NeoForge.EVENT_BUS.register(new Commands(this));
         NeoForge.EVENT_BUS.register(new GlowingEyesClientEvents(this));
+
+        NeoForgeCompatPlugins.init();
 
         PresetManager.getInstance().loadPresets();
     }

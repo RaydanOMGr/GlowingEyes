@@ -1,6 +1,5 @@
 package me.andreasmelone.glowingeyes.neoforge;
 
-import com.mojang.logging.LogUtils;
 import me.andreasmelone.glowingeyes.GlowingEyes;
 import me.andreasmelone.glowingeyes.client.util.IrisUtils;
 import me.andreasmelone.glowingeyes.common.util.LoaderUtils;
@@ -16,10 +15,11 @@ import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.neoforged.neoforge.common.NeoForge;
 import org.apache.maven.artifact.versioning.ArtifactVersion;
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Mod(GlowingEyes.MOD_ID)
 public class GlowingEyesNeoForge {
-    private static final Logger LOGGER = LogUtils.getLogger();
+    private static final Logger LOGGER = LoggerFactory.getLogger(GlowingEyesNeoForge.class);
 
     public GlowingEyesNeoForge(IEventBus modEventBus) {
         modEventBus.addListener(this::commonSetup);
