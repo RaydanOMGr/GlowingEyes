@@ -9,7 +9,6 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.screens.Screen;
-import net.minecraft.client.renderer.RenderType;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.NotNull;
@@ -129,11 +128,10 @@ public class SkinPartSelectorScreen extends Screen {
         ctx.pose().pushPose();
         ctx.pose().translate(this.textureX, this.textureY, 0);
         ctx.blit(
-                RenderType::guiTextured,
                 this.skinTexture,
                 0, 0,
-                0, 0,
                 this.maxTextureWidth, this.maxTextureHeight,
+                0, 0,
                 64, ISkinPart.getRowY(this.rows, this.selected.isSlim()),
                 64, 64
         );

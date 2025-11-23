@@ -42,7 +42,7 @@ public class DynamicTextureCache {
         for (Map.Entry<Point, Color> entry : glowingEyesMap.entrySet()) {
             Point point = entry.getKey();
             Color color = entry.getValue();
-            image.setPixel(point.getX(), point.getY(), color.getRGB());
+            image.setPixelRGBA(point.getX(), point.getY(), new Color(color.getBlue(), color.getGreen(), color.getRed(), color.getAlpha()).getRGB());
         }
 
         ResourceLocation id = Util.id(GlowingEyes.MOD_ID, "dyntex_" + UUID.randomUUID());

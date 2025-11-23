@@ -1,7 +1,8 @@
 {
-  "vertex": "glowingeyes:core/color_square",
-  "fragment": "glowingeyes:core/color_square",
+  "vertex": "glowingeyes:color_square",
+  "fragment": "glowingeyes:color_square",
   "samplers": [
+    { "name": "Sampler0" }
   ],
   "uniforms": [
     { "name": "ModelViewMat", "type": "matrix4x4", "count": 16, "values": [ 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0 ] },

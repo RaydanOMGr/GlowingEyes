@@ -1,6 +1,6 @@
 {
-  "vertex": "glowingeyes:core/hue_bar",
-  "fragment": "glowingeyes:core/hue_bar",
+  "vertex": "glowingeyes:hue_bar",
+  "fragment": "glowingeyes:hue_bar",
   "samplers": [
   ],
   "uniforms": [

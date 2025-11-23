@@ -7,7 +7,6 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
-import net.minecraft.client.renderer.RenderType;
 import net.minecraft.network.chat.Component;
 import org.jetbrains.annotations.NotNull;
 import org.lwjgl.glfw.GLFW;
@@ -59,7 +58,6 @@ public class ColorPickerWidget extends AbstractWidget implements GuiEventListene
         ctx.pose().translate(this.getCursorX(), this.getCursorY(), 0.0f);
         ctx.pose().translate(-CURSOR_OFFSET_X + (2 * (1.0f - this.saturation)), - CURSOR_OFFSET_Y + (2 * (this.brightness)), 0);
         ctx.blit(
-                RenderType::guiTextured,
                 TextureLocations.CURSOR,
                 0, 0,
                 0, 0,

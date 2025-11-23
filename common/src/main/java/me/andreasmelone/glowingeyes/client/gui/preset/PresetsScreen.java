@@ -15,7 +15,6 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.inventory.InventoryScreen;
-import net.minecraft.client.renderer.RenderType;
 import net.minecraft.network.chat.Component;
 import net.minecraft.util.Mth;
 import org.jetbrains.annotations.NotNull;
@@ -249,11 +248,10 @@ public class PresetsScreen extends Screen {
         final int middleY = playerBoxY + (PLAYERBOX_FINAL_HEIGHT / 2);
 
         ctx.blit(
-                RenderType::guiTextured,
                 TextureLocations.UI_PLAYERBOX,
                 playerBoxX, playerBoxY,
-                0, 0,
                 PLAYERBOX_FINAL_WIDTH, PLAYERBOX_FINAL_HEIGHT,
+                0, 0,
                 PLAYERBOX_WIDTH, PLAYERBOX_HEIGHT,
                 64, 64
         );
@@ -272,9 +270,9 @@ public class PresetsScreen extends Screen {
         );
 
         ctx.blit(
-                RenderType::guiTextured,
                 TextureLocations.UI_PRESETBOX,
                 this.guiLeft + PRESETS_OFFSET_X + PRESETBOX_OFFSET_X, this.guiTop + PRESETS_OFFSET_Y + PRESETBOX_OFFSET_Y,
+                TextureLocations.UI_PRESETBOX_WIDTH, TextureLocations.UI_PRESETBOX_HEIGHT,
                 0, 0,
                 TextureLocations.UI_PRESETBOX_WIDTH, TextureLocations.UI_PRESETBOX_HEIGHT,
                 256, 256

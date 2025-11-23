@@ -1,7 +1,6 @@
 package me.andreasmelone.glowingeyes.fabric.client;
 
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
-import com.mojang.logging.LogUtils;
 import me.andreasmelone.glowingeyes.client.commands.EyesCommand;
 import me.andreasmelone.glowingeyes.client.component.data.ClientPlayerDataComponent;
 import me.andreasmelone.glowingeyes.client.component.eyes.ClientGlowingEyesComponent;
@@ -18,11 +17,14 @@ import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandManager;
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandRegistrationCallback;
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
-import net.minecraft.client.renderer.CoreShaders;
+import net.fabricmc.fabric.api.client.rendering.v1.CoreShaderRegistrationCallback;
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.io.IOException;
 
 public class GlowingEyesClient implements ClientModInitializer, ClientModContext {
-    private static final Logger LOGGER = LogUtils.getLogger();
+    private static final Logger LOGGER = LoggerFactory.getLogger(GlowingEyesClient.class);
     private final ClientModVariables variables = new ClientModVariables();
 
     @Override
@@ -43,7 +45,15 @@ public class GlowingEyesClient implements ClientModInitializer, ClientModContext
 
         FabricCompatPlugins.init();
 
-        ShaderManager.register(CoreShaders.getProgramsToPreload()::add);
+        CoreShaderRegistrationCallback.EVENT.register(ctx -> {
+            ShaderManager.register((id, format, consumer) -> {
+                try {
+                    ctx.register(id, format, consumer);
+                } catch (IOException e) {
+                    LOGGER.error("Failed to register shader {}!", id, e);
+                }
+            });
+        });
 
         PresetManager.getInstance().loadPresets();
     }

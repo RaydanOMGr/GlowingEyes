@@ -1,22 +1,23 @@
 package me.andreasmelone.glowingeyes.client.util;
 
-import me.andreasmelone.glowingeyes.client.render.RenderTypes;
+import com.mojang.blaze3d.systems.RenderSystem;
+import com.mojang.blaze3d.vertex.*;
+import me.andreasmelone.glowingeyes.client.render.ShaderManager;
 import me.andreasmelone.glowingeyes.common.util.Color;
 import me.andreasmelone.glowingeyes.common.util.Util;
-import me.andreasmelone.glowingeyes.mixin.client.GuiGraphicsAccessor;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.GuiSpriteManager;
 import net.minecraft.client.gui.components.WidgetSprites;
-import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.FormattedCharSequence;
+import org.joml.Matrix4f;
 
 import java.util.List;
-import java.util.function.Function;
 
 public class GuiUtil {
     /**
@@ -28,7 +29,7 @@ public class GuiUtil {
      */
     public static void drawBackground(GuiGraphics guiGraphics, ResourceLocation backgroundTexture, int x, int y, int width, int height) {
         // Draw the background texture
-        guiGraphics.blit(RenderType::guiTextured, backgroundTexture, x, y, 0, 0, width, height, 256, 256);
+        guiGraphics.blit(backgroundTexture, x, y, 0, 0, width, height, 256, 256);
     }
 
     public static void drawTransparentBlack(GuiGraphics ctx) {
@@ -62,12 +63,21 @@ public class GuiUtil {
         ctx.drawString(font, "x: " + mouseX + ", y: " + mouseY, 10, 10, Color.WHITE.getRGB());
     }
 
-    public static void blitTintedSprite(GuiGraphics ctx, Function<ResourceLocation, RenderType> renderTypeGetter, ResourceLocation spriteLocation, int x, int y, int width, int height, int color) {
+    public static void blitTintedSprite(GuiGraphics ctx, ResourceLocation spriteLocation, int x, int y, int width, int height, int color) {
         Minecraft mc = Minecraft.getInstance();
         GuiSpriteManager sprites = mc.getGuiSprites();
 
         TextureAtlasSprite sprite = sprites.getSprite(spriteLocation);
-        ((GuiGraphicsAccessor)ctx).invokeInnerBlit(renderTypeGetter, sprite.atlasLocation(), x, x + width, y, y + height, sprite.getU0(), sprite.getU1(), sprite.getV0(), sprite.getV1(), color);
+
+        RenderSystem.setShaderTexture(0, sprite.atlasLocation());
+        RenderSystem.setShader(GameRenderer::getPositionTexColorShader);
+        Matrix4f matrix4f = ctx.pose().last().pose();
+        BufferBuilder bufferbuilder = Tesselator.getInstance().begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_TEX_COLOR);
+        bufferbuilder.addVertex(matrix4f, (float)x, (float)y, 0f).setUv(sprite.getU0(), sprite.getV0()).setColor(color);
+        bufferbuilder.addVertex(matrix4f, (float)x, (float)y + height, 0f).setUv(sprite.getU0(), sprite.getV1()).setColor(color);
+        bufferbuilder.addVertex(matrix4f, (float)x + width, (float)y + height, 0f).setUv(sprite.getU1(), sprite.getV1()).setColor(color);
+        bufferbuilder.addVertex(matrix4f, (float)x + width, (float)y, 0f).setUv(sprite.getU1(), sprite.getV0()).setColor(color);
+        BufferUploader.drawWithShader(bufferbuilder.buildOrThrow());
     }
 
     /**
@@ -89,13 +99,21 @@ public class GuiUtil {
      *              The saturation and brightness are ignored.
      */
     public static void drawColorSquare(GuiGraphics ctx, int x, int y, int width, int height, int color) {
-        ctx.blit(
-                RenderTypes::colorSquare,
-                TextureLocations.CURSOR,    // random texture, it will never get rendered anyway
-                x, y, 0, 0,  // this is a dirty hack to acquire normalized coordinates in the shader
-                width, height, width, height,
-                color
-        );
+        Minecraft mc = Minecraft.getInstance();
+        GuiSpriteManager sprites = mc.getGuiSprites();
+
+        TextureAtlasSprite sprite = sprites.getSprite(TextureLocations.CURSOR);
+
+        RenderSystem.setShaderTexture(0, sprite.atlasLocation());
+        RenderSystem.setShader(ShaderManager::colorSquare);
+        Matrix4f matrix4f = ctx.pose().last().pose();
+        BufferBuilder bufferbuilder = Tesselator.getInstance().begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_TEX_COLOR);
+        bufferbuilder.addVertex(matrix4f, (float)x, (float)y, 0f).setUv(0, 0).setColor(color);
+        bufferbuilder.addVertex(matrix4f, (float)x, (float)y + height, 0f).setUv(0, 1).setColor(color);
+        bufferbuilder.addVertex(matrix4f, (float)x + width, (float)y + height, 0f).setUv(1, 1).setColor(color);
+        bufferbuilder.addVertex(matrix4f, (float)x + width, (float)y, 0f).setUv(1, 0).setColor(color);
+        BufferUploader.drawWithShader(bufferbuilder.buildOrThrow());
+        RenderSystem.setShaderColor(1.0f, 1.0f, 1.0f, 1.0f);
     }
 
     /**
@@ -113,12 +131,20 @@ public class GuiUtil {
      *              The hue of this color does not affect the final output, meaning that 0xFFFF0000 and 0xFF00FF00 draw the exact same thing.
      */
     public static void drawHueBar(GuiGraphics ctx, int x, int y, int width, int height, int color) {
-        ctx.blit(
-                RenderTypes::hueBar,
-                TextureLocations.CURSOR, // similarly to the color square, just a random texture, never used or rendered by the actual shader
-                x, y, 0, 0,
-                width, height, width, height,
-                color
-        );
+        Minecraft mc = Minecraft.getInstance();
+        GuiSpriteManager sprites = mc.getGuiSprites();
+
+        TextureAtlasSprite sprite = sprites.getSprite(TextureLocations.CURSOR);
+
+        RenderSystem.setShaderTexture(0, sprite.atlasLocation());
+        RenderSystem.setShader(ShaderManager::hueBar);
+        Matrix4f matrix4f = ctx.pose().last().pose();
+        BufferBuilder bufferbuilder = Tesselator.getInstance().begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_TEX_COLOR);
+        bufferbuilder.addVertex(matrix4f, (float)x, (float)y, 0f).setUv(0, 0).setColor(color);
+        bufferbuilder.addVertex(matrix4f, (float)x, (float)y + height, 0f).setUv(0, 1).setColor(color);
+        bufferbuilder.addVertex(matrix4f, (float)x + width, (float)y + height, 0f).setUv(1, 1).setColor(color);
+        bufferbuilder.addVertex(matrix4f, (float)x + width, (float)y, 0f).setUv(1, 0).setColor(color);
+        BufferUploader.drawWithShader(bufferbuilder.buildOrThrow());
+        RenderSystem.setShaderColor(1.0f, 1.0f, 1.0f, 1.0f);
     }
 }

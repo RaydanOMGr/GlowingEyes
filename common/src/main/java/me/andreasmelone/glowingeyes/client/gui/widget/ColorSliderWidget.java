@@ -7,7 +7,6 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
-import net.minecraft.client.renderer.RenderType;
 import net.minecraft.network.chat.Component;
 import org.jetbrains.annotations.NotNull;
 import org.lwjgl.glfw.GLFW;
@@ -67,7 +66,6 @@ public class ColorSliderWidget extends AbstractWidget implements GuiEventListene
         ctx.pose().scale(xScale, yScale, 1.0f);
         ctx.pose().translate(SPRITE_OFFSET_X, -1 * (CURSOR_OFFSET_Y + (1 - CURSOR_OFFSET_Y) * this.hue), 0);
         ctx.blit(
-                RenderType::guiTextured,
                 TextureLocations.BRIGHTNESS_CURSOR,
                 0, 0,
                 0, 0,

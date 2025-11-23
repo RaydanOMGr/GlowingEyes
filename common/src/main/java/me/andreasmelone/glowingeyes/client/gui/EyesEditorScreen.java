@@ -3,7 +3,6 @@ package me.andreasmelone.glowingeyes.client.gui;
 import com.mojang.blaze3d.platform.NativeImage;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.logging.LogUtils;
 import me.andreasmelone.glowingeyes.client.component.eyes.ClientGlowingEyesComponent;
 import me.andreasmelone.glowingeyes.client.gui.button.TintedOverlayImageButton;
 import me.andreasmelone.glowingeyes.client.gui.preset.PresetsScreen;
@@ -26,7 +25,6 @@ import net.minecraft.client.gui.components.ImageButton;
 import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.client.gui.components.WidgetSprites;
 import net.minecraft.client.gui.screens.Screen;
-import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.texture.AbstractTexture;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
@@ -34,10 +32,14 @@ import net.minecraft.world.entity.player.Player;
 import org.jetbrains.annotations.NotNull;
 import org.joml.Vector2f;
 import org.joml.Vector3f;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.*;
 
 public class EyesEditorScreen extends Screen {
+    private static final Logger LOGGER = LoggerFactory.getLogger(EyesEditorScreen.class);
+
     private static final int UI_WIDTH = TextureLocations.UI_BACKGROUND_BROAD_WIDTH;
     private static final int UI_HEIGHT = TextureLocations.UI_BACKGROUND_BROAD_HEIGHT;
 
@@ -102,7 +104,7 @@ public class EyesEditorScreen extends Screen {
         if (player != null) {
             this.pixels = GlowingEyesComponent.getGlowingEyesMap(player);
         } else {
-            LogUtils.getLogger().error("Could not load glowing eyes map from player capability");
+            LOGGER.error("Could not load glowing eyes map from player capability");
         }
 
         this.modeButtons.clear();
@@ -237,12 +239,11 @@ public class EyesEditorScreen extends Screen {
             for (int x = 0; x < this.headSizeX; x++) {
                 Point point = new Point(x + this.skinPart.getX(), y + this.skinPart.getY());
                 ctx.blit(
-                        RenderType::guiTextured,
                         playerSkin,
                         this.headX + x * PIXEL_SIZE + x * SPACE_BETWEEN_PIXELS,
                         this.headY + y * PIXEL_SIZE + y * SPACE_BETWEEN_PIXELS,
-                        this.skinPart.getX() + x, this.skinPart.getY() + y,
                         PIXEL_SIZE, PIXEL_SIZE,
+                        this.skinPart.getX() + x, this.skinPart.getY() + y,
                         1, 1,
                         64, 64
                 );
@@ -304,7 +305,7 @@ public class EyesEditorScreen extends Screen {
             GlowingEyesComponent.setGlowingEyesMap(player, this.pixels);
             ClientGlowingEyesComponent.sendUpdate();
         } else {
-            LogUtils.getLogger().error("Could not save glowing eyes map to player capability");
+            LOGGER.error("Could not save glowing eyes map to player capability");
         }
         this.allocatedTextures.forEach((rl, ptr) -> ptr.close());
         this.allocatedTextures.clear();
@@ -344,13 +345,15 @@ public class EyesEditorScreen extends Screen {
             RenderSystem.bindTexture(gpuTexture.getId());
             nativeImage.downloadTexture(0, true);
 
-            LogUtils.getLogger().debug("Reading texture {} took {}ms", texture, System.currentTimeMillis() - startTime);
+            LOGGER.debug("Reading texture {} took {}ms", texture, System.currentTimeMillis() - startTime);
 
             this.allocatedTextures.put(texture, nativeImage);
-            return new Color(nativeImage.getPixel(x, y));
+            Color color = new Color(nativeImage.getPixelRGBA(x, y));
+            return new Color(color.getBlue(), color.getGreen(), color.getRed(), color.getAlpha());
         } else {
             NativeImage img = this.allocatedTextures.get(texture);
-            return new Color(img.getPixel(x, y));
+            Color color = new Color(img.getPixelRGBA(x, y));
+            return new Color(color.getBlue(), color.getGreen(), color.getRed(), color.getAlpha());
         }
     }
 

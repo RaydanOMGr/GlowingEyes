@@ -6,7 +6,6 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
-import net.minecraft.client.renderer.RenderType;
 import net.minecraft.network.chat.Component;
 import org.intellij.lang.annotations.MagicConstant;
 import org.jetbrains.annotations.NotNull;
@@ -55,7 +54,6 @@ public class CursorSpaceWidget extends AbstractWidget implements GuiEventListene
         ctx.pose().translate(this.cursorX, this.cursorY, 0.0);
         ctx.pose().translate(-CURSOR_OFFSET, -CURSOR_OFFSET, 0.0);
         ctx.blit(
-                RenderType::crosshair,
                 TextureLocations.CURSOR,
                 0, 0,
                 0, 0,
