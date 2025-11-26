@@ -44,4 +44,5 @@ sourceSets.main.resources { srcDir 'src/generated/resources' }
 
 dependencies {
     compileOnly "maven.modrinth:epic-fight:21.13.5-1.21.1"
+    compileOnly "maven.modrinth:female-gender:kKffHCGl"
 }

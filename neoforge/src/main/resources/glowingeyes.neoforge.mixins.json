@@ -1,6 +1,6 @@
 {
   "package": "me.andreasmelone.glowingeyes.neoforge.mixin",
-  "client": ["compat.EpicfightPPlayerRendererMixin"],
+  "client": ["compat.EpicfightPPlayerRendererMixin", "compat.Wildfire_genderGenderLayerMixin"],
   "required": true,
   "refmap": "${mod_id}.refmap.json",
   "plugin": "me.andreasmelone.glowingeyes.GlowingEyesMixinPlugin",

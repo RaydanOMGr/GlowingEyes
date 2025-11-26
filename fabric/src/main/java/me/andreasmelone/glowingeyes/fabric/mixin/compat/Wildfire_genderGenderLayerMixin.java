@@ -60,7 +60,7 @@ public abstract class Wildfire_genderGenderLayerMixin<T extends LivingEntity, M 
             cancellable = true
     )
     public void renderGlowingBoobs(T ent, CallbackInfoReturnable<RenderType> cir) {
-        if (this.isGlowingEyesRender && ent instanceof Player player) {
+        if (this.isGlowingEyesRender && ent instanceof Player player && GlowingEyesComponent.isToggledOn(player)) {
             ResourceLocation eyeOverlayResource = DynamicTextureCache.getTexture(GlowingEyesComponent.getGlowingEyesMap(player));
             cir.setReturnValue(RenderType.eyes(eyeOverlayResource));
         }
