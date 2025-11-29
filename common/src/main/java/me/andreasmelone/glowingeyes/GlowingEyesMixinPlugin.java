@@ -1,7 +1,6 @@
-package me.andreasmelone.glowingeyes.fabric;
+package me.andreasmelone.glowingeyes;
 
-import me.andreasmelone.glowingeyes.GlowingEyes;
-import net.fabricmc.loader.api.FabricLoader;
+import me.andreasmelone.glowingeyes.common.util.LoaderUtils;
 import org.objectweb.asm.tree.ClassNode;
 import org.spongepowered.asm.mixin.extensibility.IMixinConfigPlugin;
 import org.spongepowered.asm.mixin.extensibility.IMixinInfo;
@@ -9,7 +8,7 @@ import org.spongepowered.asm.mixin.extensibility.IMixinInfo;
 import java.util.List;
 import java.util.Set;
 
-public class GlowingEyesFabricMixinPlugin implements IMixinConfigPlugin {
+public class GlowingEyesMixinPlugin implements IMixinConfigPlugin {
     @Override
     public void onLoad(String mixinPackage) {
     }
@@ -24,7 +23,7 @@ public class GlowingEyesFabricMixinPlugin implements IMixinConfigPlugin {
         String[] splitPackage = mixinClassName.split("\\.");
         String[] splitWords = splitPackage[splitPackage.length - 1].split("(?<=[a-z])(?=[A-Z])|(?<=[A-Z])(?=[A-Z][a-z])");
         if ("compat".equalsIgnoreCase(splitPackage[splitPackage.length - 2])) {
-            return FabricLoader.getInstance().isModLoaded(splitWords[0].toLowerCase());
+            return LoaderUtils.Service.INSTANCE.isModLoaded(splitWords[0].toLowerCase());
         }
         return true;
     }
