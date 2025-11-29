@@ -3,7 +3,7 @@
   "client": [
     "compat.FlashbackRecorderMixin", "compat.Wildfire_genderGenderLayerMixin"
   ],
-  "plugin": "me.andreasmelone.glowingeyes.fabric.GlowingEyesFabricMixinPlugin",
+  "plugin": "me.andreasmelone.glowingeyes.GlowingEyesMixinPlugin",
   "required": true,
   "refmap": "${mod_id}.refmap.json",
   "compatibilityLevel": "JAVA_17",
