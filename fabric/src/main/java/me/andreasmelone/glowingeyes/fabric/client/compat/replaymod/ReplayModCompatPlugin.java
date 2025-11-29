@@ -1,5 +1,6 @@
 package me.andreasmelone.glowingeyes.fabric.client.compat.replaymod;
 
+import com.replaymod.core.ReplayMod;
 import com.replaymod.core.versions.MCVer;
 import com.replaymod.recording.handler.RecordingEventHandler;
 import me.andreasmelone.glowingeyes.GlowingEyes;
@@ -12,7 +13,7 @@ import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 public class ReplayModCompatPlugin extends CompatPlugin {
     public static final Info INFO = new Info(Util.id(GlowingEyes.MOD_ID, "replaymod_compat_plugin"), "ReplayMod Compat Plugin", "1.0.0");
     @SuppressWarnings("unused")
-    private final RecordingEventHandler handler = this.getRecordingEventHandler(); // this field is never used,
+    private final ReplayMod replayMod = ReplayMod.instance; // this field is never used,
     // but it makes the class throw an exception when loaded forcing the plugin not to get registered
 
     @Override
@@ -31,6 +32,6 @@ public class ReplayModCompatPlugin extends CompatPlugin {
     }
 
     public RecordingEventHandler getRecordingEventHandler() {
-        return ((RecordingEventHandler.RecordingEventSender) MCVer.getMinecraft()).getRecordingEventHandler();
+        return ((RecordingEventHandler.RecordingEventSender) MCVer.getMinecraft().levelRenderer).getRecordingEventHandler();
     }
 }
