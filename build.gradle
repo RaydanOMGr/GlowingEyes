@@ -66,21 +66,6 @@ publishMods {
         file(neoforgeProject)
         modLoaders.add("neoforge")
     }
-
-    discord {
-        username = "The Update Watcher"
-        webhookUrl = "https://discord.com/api/webhooks/${System.getenv("WEBHOOK_ENDPOINT")}"
-
-        content = changelog.map {
-            "# GlowingEyes ${minecraft_version}-${project.version} \n" + it
-        }
-
-        style {
-            thumbnailUrl = "https://cdn.modrinth.com/data/9i2aYUyi/6872ffbf197f245564beb6ff4466a368f8a7a2f9_96.webp"
-        }
-
-        setPlatformsAllFrom(fabricProject)
-    }
 }
 
 def String getChangelogText() {
