@@ -44,3 +44,7 @@ neoForge {
 }
 
 sourceSets.main.resources { srcDir 'src/generated/resources' }
+
+dependencies {
+    compileOnly "maven.modrinth:female-gender:kKffHCGl"
+}
