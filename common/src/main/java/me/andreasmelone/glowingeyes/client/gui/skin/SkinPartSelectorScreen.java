@@ -221,7 +221,7 @@ public class SkinPartSelectorScreen extends Screen {
         int textureMouseX = (int) ((mouseX - this.textureX) * this.factorX);
         int textureMouseY = (int) ((mouseY - this.textureY) * this.factorY);
         ISkinPart part = ISkinPart.getFromCoordinates(textureMouseX, textureMouseY, this.selected.isSlim());
-        if (part != null && part.containsData() && part.getRow() < this.rows) {
+        if (part != null && part.containsData() && part.getRow() <= this.rows) {
             if (button == 0) this.selected = part;
         }
         return super.mouseClicked(event, isDoubleClick);
