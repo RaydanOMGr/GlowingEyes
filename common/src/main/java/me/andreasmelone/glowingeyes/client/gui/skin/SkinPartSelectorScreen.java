@@ -21,9 +21,14 @@ public class SkinPartSelectorScreen extends Screen {
     private static final int TEXTURE_HEIGHT = TextureLocations.UI_BACKGROUND_BIG_HEIGHT;
     private static final int BUTTON_X = TEXTURE_HEIGHT - 25;
 
-    private static final int PADDING_X = 5;
-    private static final int PADDING_Y = 5;
+    private static final int PADDING_X = 25;
+    private static final int PADDING_Y = 25;
     private static final int BUTTON_HEIGHT = 20;
+
+    private static final int TEXTURE_PADDING_Y = 5;
+
+    private static final int SKINBOX_PADDING_Y = 3;
+    private static final int SKINBOX_PADDING_X = 3;
 
     private int maxTextureWidth;
     private int maxTextureHeight;
@@ -67,17 +72,17 @@ public class SkinPartSelectorScreen extends Screen {
         int paddedHeight = TEXTURE_HEIGHT - 2 * PADDING_Y;
 
         float scaleX = (float) paddedWidth / 64.0f;
-        float scaleY = (float) paddedHeight / ISkinPart.getRowY(this.rows, this.selected.isSlim());
+        float scaleY = (float) paddedHeight / (ISkinPart.getRowY(this.rows, this.selected.isSlim()) + 12);
         float scaleFactor = Math.min(scaleX, scaleY);
 
         this.maxTextureWidth = (int) (64 * scaleFactor);
-        this.maxTextureHeight = (int) (ISkinPart.getRowY(this.rows, this.selected.isSlim()) * scaleFactor);
+        this.maxTextureHeight = (int) ((ISkinPart.getRowY(this.rows, this.selected.isSlim()) + 12) * scaleFactor);
 
         this.textureX = this.guiLeft + (float) (TEXTURE_WIDTH - this.maxTextureWidth) / 2;
-        this.textureY = this.guiTop + (float) (TEXTURE_HEIGHT - this.maxTextureHeight) / 2 - 3;
+        this.textureY = this.guiTop + (float) (TEXTURE_HEIGHT - this.maxTextureHeight) / 2 - TEXTURE_PADDING_Y;
 
         this.factorX = 64.0f / this.maxTextureWidth;
-        this.factorY = (float) ISkinPart.getRowY(this.rows, this.selected.isSlim()) / this.maxTextureHeight;
+        this.factorY = (float) (ISkinPart.getRowY(this.rows, this.selected.isSlim()) + 12) / this.maxTextureHeight;
 
         this.middle = this.guiLeft + (TEXTURE_WIDTH / 2);
 
@@ -126,6 +131,15 @@ public class SkinPartSelectorScreen extends Screen {
                 Color.WHITE.getRGB()
         );
 
+        ctx.blit(
+                RenderType::guiTextured,
+                TextureLocations.UI_SKINBOX,
+                (int) (this.textureX - SKINBOX_PADDING_X), (int) (this.textureY - SKINBOX_PADDING_Y),
+                0, 0,
+                TextureLocations.UI_SKINBOX_WIDTH, TextureLocations.UI_SKINBOX_HEIGHT,
+                256, 256
+        );
+
         ctx.pose().pushPose();
         ctx.pose().translate(this.textureX, this.textureY, 0);
         ctx.blit(
@@ -134,7 +148,7 @@ public class SkinPartSelectorScreen extends Screen {
                 0, 0,
                 0, 0,
                 this.maxTextureWidth, this.maxTextureHeight,
-                64, ISkinPart.getRowY(this.rows, this.selected.isSlim()),
+                64, ISkinPart.getRowY(this.rows, this.selected.isSlim()) + 12,
                 64, 64
         );
         ctx.pose().popPose();
@@ -167,7 +181,7 @@ public class SkinPartSelectorScreen extends Screen {
 
         if (textureMouseX >= 0 && textureMouseX <= 63 && textureMouseY >= 0 && textureMouseY <= 63) {
             ISkinPart part = ISkinPart.getFromCoordinates(textureMouseX, textureMouseY, this.selected.isSlim());
-            if (part != null && part.containsData() && part.getRow() < this.rows) {
+            if (part != null && part.containsData() && part.getRow() <= this.rows) {
                 int x = part.getX();
                 int y = part.getY();
 
@@ -199,7 +213,7 @@ public class SkinPartSelectorScreen extends Screen {
         int textureMouseX = (int) ((mouseX - this.textureX) * this.factorX);
         int textureMouseY = (int) ((mouseY - this.textureY) * this.factorY);
         ISkinPart part = ISkinPart.getFromCoordinates(textureMouseX, textureMouseY, this.selected.isSlim());
-        if (part != null && part.containsData() && part.getRow() < this.rows) {
+        if (part != null && part.containsData() && part.getRow() <= this.rows) {
             if (button == 0) this.selected = part;
         }
 
