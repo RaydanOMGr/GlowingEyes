@@ -49,8 +49,12 @@ public class GlowingEyesImpl implements IGlowingEyes {
 
     @Override
     public void readData(@NotNull ValueInput tag) {
-        this.setToggledOn(tag.getBooleanOr("toggledOn", true));
-        this.setGlowingEyesMap(tag.read("glowingEyesMap", MAP_CODEC).orElse(new HashMap<>()));
+        try {
+            this.setToggledOn(tag.getBooleanOr("toggledOn", true));
+            this.setGlowingEyesMap(tag.read("glowingEyesMap", MAP_CODEC).orElse(new HashMap<>()));
+        } catch (Exception e) {
+            LOGGER.error("Failed to load player data! Data will be reset", e);
+        }
     }
 
     @Override
