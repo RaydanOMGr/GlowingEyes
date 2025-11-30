@@ -49,14 +49,18 @@ public class GlowingEyesImpl implements IGlowingEyes {
 
     @Override
     public void readFromNbt(CompoundTag tag, HolderLookup.@NotNull Provider registryLookup) {
-        this.setToggledOn(tag.getBoolean("toggledOn").orElse(true));
-        if(tag.get("glowingEyesMap") instanceof ByteArrayTag) {
-            this.setGlowingEyesMap(new HashMap<>());
-            LOGGER.warn("Detected glowing eyes map of old format!");
-            LOGGER.warn("Your current eyes will be erased.");
-            return;
+        try {
+            this.setToggledOn(tag.getBoolean("toggledOn").orElse(true));
+            if (tag.get("glowingEyesMap") instanceof ByteArrayTag) {
+                this.setGlowingEyesMap(new HashMap<>());
+                LOGGER.warn("Detected glowing eyes map of old format!");
+                LOGGER.warn("Your current eyes will be erased.");
+                return;
+            }
+            this.setGlowingEyesMap(Util.toMap(Point.CODEC_STRING, Color.CODEC, tag.getCompound("glowingEyesMap").orElse(new CompoundTag())));
+        } catch (Exception e) {
+            LOGGER.error("Failed to load player data! Data will be reset", e);
         }
-        this.setGlowingEyesMap(Util.toMap(Point.CODEC_STRING, Color.CODEC, tag.getCompound("glowingEyesMap").orElse(new CompoundTag())));
     }
 
     @Override
