@@ -72,6 +72,9 @@ public class TextureLocations {
     public static final ResourceLocation UI_PRESETBOX = Util.id(GlowingEyes.MOD_ID, "textures/gui/presetbox.png");
     public static final int UI_PRESETBOX_WIDTH = 147;
     public static final int UI_PRESETBOX_HEIGHT = 163;
+    public static final ResourceLocation UI_SKINBOX = Util.id(GlowingEyes.MOD_ID, "textures/gui/skinbox.png");
+    public static final int UI_SKINBOX_WIDTH = 179;
+    public static final int UI_SKINBOX_HEIGHT = 179;
 
     // 128x29
     public static final WidgetSprites BIG_BUTTON = GuiUtil.createSprites(
