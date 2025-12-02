@@ -28,7 +28,7 @@ public class GlowingEyesImpl implements IGlowingEyes {
 
     @Override
     public void setGlowingEyesMap(@Nonnull Map<Point, Color> glowingEyesMap) {
-        this.glowingEyesMap = glowingEyesMap;
+        this.glowingEyesMap = new HashMap<>(glowingEyesMap);
     }
 
     @Override
