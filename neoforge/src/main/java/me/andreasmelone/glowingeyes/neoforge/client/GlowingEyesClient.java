@@ -1,5 +1,6 @@
 package me.andreasmelone.glowingeyes.neoforge.client;
 
+import me.andreasmelone.glowingeyes.GlowingEyes;
 import me.andreasmelone.glowingeyes.client.component.data.ClientPlayerDataComponent;
 import me.andreasmelone.glowingeyes.client.component.eyes.ClientGlowingEyesComponent;
 import me.andreasmelone.glowingeyes.client.mod.ClientModContext;
@@ -11,8 +12,10 @@ import me.andreasmelone.glowingeyes.neoforge.client.component.data.ClientPlayerD
 import me.andreasmelone.glowingeyes.neoforge.client.component.eyes.ClientGlowingEyesComponentImpl;
 import me.andreasmelone.glowingeyes.neoforge.client.render.RenderManager;
 import net.minecraft.client.renderer.ShaderInstance;
+import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
 import net.neoforged.neoforge.client.event.RegisterKeyMappingsEvent;
 import net.neoforged.neoforge.client.event.RegisterShadersEvent;
@@ -22,6 +25,7 @@ import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 
+@Mod(value = GlowingEyes.MOD_ID, dist = Dist.CLIENT)
 public class GlowingEyesClient implements ClientModContext {
     private static final Logger LOGGER = LoggerFactory.getLogger(GlowingEyesClient.class);
     private final ClientModVariables variables = new ClientModVariables();
@@ -29,6 +33,7 @@ public class GlowingEyesClient implements ClientModContext {
 
     public GlowingEyesClient(IEventBus modEventBus) {
         this.modEventBus = modEventBus;
+        modEventBus.register(this);
     }
 
     @SubscribeEvent

@@ -3,7 +3,6 @@ package me.andreasmelone.glowingeyes.neoforge;
 import me.andreasmelone.glowingeyes.GlowingEyes;
 import me.andreasmelone.glowingeyes.client.util.IrisUtils;
 import me.andreasmelone.glowingeyes.common.util.LoaderUtils;
-import me.andreasmelone.glowingeyes.neoforge.client.GlowingEyesClient;
 import me.andreasmelone.glowingeyes.neoforge.common.GlowingEyesEvents;
 import me.andreasmelone.glowingeyes.neoforge.common.component.ComponentHandler;
 import me.andreasmelone.glowingeyes.neoforge.common.packets.PacketHandler;
@@ -24,7 +23,6 @@ public class GlowingEyesNeoForge {
     public GlowingEyesNeoForge(IEventBus modEventBus) {
         modEventBus.addListener(this::commonSetup);
         modEventBus.addListener(PacketHandler::registerPackets);
-        modEventBus.register(new GlowingEyesClient(modEventBus));
 
         ComponentHandler.register(modEventBus);
     }
