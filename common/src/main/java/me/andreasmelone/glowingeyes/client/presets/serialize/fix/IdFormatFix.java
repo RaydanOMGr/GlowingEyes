@@ -8,7 +8,7 @@ import com.mojang.datafixers.types.Type;
 import me.andreasmelone.glowingeyes.GlowingEyes;
 import me.andreasmelone.glowingeyes.client.presets.serialize.GlowingEyesReferences;
 import me.andreasmelone.glowingeyes.common.util.Util;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 import java.util.Optional;
 
@@ -26,7 +26,7 @@ public class IdFormatFix extends DataFix {
         return this.fixTypeEverywhereTyped(this.name, type, typed -> typed.update(DSL.remainderFinder(), dynamic -> {
             Optional<String> name = dynamic.get("name").asString().result();
             if(dynamic.get("id").result().isPresent() && name.isPresent()) {
-                ResourceLocation newId = Util.id(GlowingEyes.MOD_ID, name.get().toLowerCase().replace(" ", "_"));
+                Identifier newId = Util.id(GlowingEyes.MOD_ID, name.get().toLowerCase().replace(" ", "_"));
                 dynamic = dynamic.remove("id").set("id", dynamic.createString(newId.toString()));
             }
             return dynamic;

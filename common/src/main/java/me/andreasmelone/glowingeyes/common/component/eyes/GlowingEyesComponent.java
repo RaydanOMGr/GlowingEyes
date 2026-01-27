@@ -7,14 +7,14 @@ import me.andreasmelone.glowingeyes.common.util.Util;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
 
 import java.util.Map;
 
 public class GlowingEyesComponent {
-    public static final ResourceLocation IDENTIFIER = Util.id(GlowingEyes.MOD_ID, "glowingeyes");
+    public static final Identifier IDENTIFIER = Util.id(GlowingEyes.MOD_ID, "glowingeyes");
     private static IGlowingEyesComponent instance;
 
     /**

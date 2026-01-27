@@ -8,7 +8,7 @@ import net.minecraft.client.gui.components.WidgetSprites;
 import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.function.IntSupplier;
@@ -17,23 +17,23 @@ import java.util.function.Supplier;
 public class TintedOverlayImageButton extends ImageButton {
     protected IntSupplier colorSupplier = () -> 0xFFFFFFFF;
 
-    protected final ResourceLocation overlaySprite;
-    public TintedOverlayImageButton(int x, int y, int width, int height, WidgetSprites sprites, ResourceLocation overlaySprite, Button.OnPress onPress) {
+    protected final Identifier overlaySprite;
+    public TintedOverlayImageButton(int x, int y, int width, int height, WidgetSprites sprites, Identifier overlaySprite, Button.OnPress onPress) {
         this(x, y, width, height, sprites, overlaySprite, onPress, CommonComponents.EMPTY);
     }
 
-    public TintedOverlayImageButton(int x, int y, int width, int height, WidgetSprites sprites, ResourceLocation overlaySprite, Button.OnPress onPress, Component message) {
+    public TintedOverlayImageButton(int x, int y, int width, int height, WidgetSprites sprites, Identifier overlaySprite, Button.OnPress onPress, Component message) {
         super(x, y, width, height, sprites, onPress, message);
         this.overlaySprite = overlaySprite;
     }
 
-    public TintedOverlayImageButton(int width, int height, WidgetSprites sprites, ResourceLocation overlaySprite, Button.OnPress onPress, Component message) {
+    public TintedOverlayImageButton(int width, int height, WidgetSprites sprites, Identifier overlaySprite, Button.OnPress onPress, Component message) {
         this(0, 0, width, height, sprites, overlaySprite, onPress, message);
     }
 
     @Override
-    public void renderWidget(@NotNull GuiGraphics ctx, int mouseX, int mouseY, float partialTick) {
-        ResourceLocation sprite = this.sprites.get(this.isActive(), this.isHoveredOrFocused());
+    public void renderContents(@NotNull GuiGraphics ctx, int mouseX, int mouseY, float partialTick) {
+        Identifier sprite = this.sprites.get(this.isActive(), this.isHoveredOrFocused());
         ctx.blitSprite(
                 RenderPipelines.GUI_TEXTURED, sprite,
                 this.getX(), this.getY(),

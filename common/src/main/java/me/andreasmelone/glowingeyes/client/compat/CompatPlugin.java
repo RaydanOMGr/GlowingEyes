@@ -1,7 +1,7 @@
 package me.andreasmelone.glowingeyes.client.compat;
 
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 public abstract class CompatPlugin {
     private boolean loaded = false;
@@ -47,6 +47,6 @@ public abstract class CompatPlugin {
     public <T extends CustomPacketPayload> void onPacketSendToServer(T packet) {
     }
 
-    public record Info(ResourceLocation id, String name, String version) {
+    public record Info(Identifier id, String name, String version) {
     }
 }

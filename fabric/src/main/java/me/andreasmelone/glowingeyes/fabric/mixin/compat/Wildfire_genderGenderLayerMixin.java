@@ -6,11 +6,12 @@ import com.wildfire.render.GenderLayer;
 import me.andreasmelone.glowingeyes.client.render.IGlowingEyesRenderState;
 import me.andreasmelone.glowingeyes.client.util.DynamicTextureCache;
 import net.minecraft.client.model.HumanoidModel;
-import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.entity.LivingEntityRenderer;
 import net.minecraft.client.renderer.entity.state.HumanoidRenderState;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.client.renderer.rendertype.RenderType;
+import net.minecraft.client.renderer.rendertype.RenderTypes;
+import net.minecraft.resources.Identifier;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
@@ -33,7 +34,7 @@ public abstract class Wildfire_genderGenderLayerMixin<S extends HumanoidRenderSt
     private boolean glowingEyes$isGlowingEyesRender = false;
 
     @Inject(
-            method = "render",
+            method = "submit(Lcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/SubmitNodeCollector;ILnet/minecraft/client/renderer/entity/state/HumanoidRenderState;FF)V",
             at = @At(
                     value = "INVOKE",
                     target = "Lcom/wildfire/render/GenderLayer;renderSides(Lnet/minecraft/client/renderer/entity/state/HumanoidRenderState;Lnet/minecraft/client/model/HumanoidModel;Lcom/mojang/blaze3d/vertex/PoseStack;Ljava/util/function/Consumer;)V",
@@ -59,8 +60,8 @@ public abstract class Wildfire_genderGenderLayerMixin<S extends HumanoidRenderSt
     )
     public void renderGlowingBoobs(S state, CallbackInfoReturnable<RenderType> cir) {
         if (this.glowingEyes$isGlowingEyesRender && state instanceof IGlowingEyesRenderState eyesState) {
-            ResourceLocation eyeOverlayResource = DynamicTextureCache.getTexture(eyesState.glowingEyes$getGlowingEyesMap());
-            cir.setReturnValue(RenderType.eyes(eyeOverlayResource));
+            Identifier eyeOverlayResource = DynamicTextureCache.getTexture(eyesState.glowingEyes$getGlowingEyesMap());
+            cir.setReturnValue(RenderTypes.eyes(eyeOverlayResource));
         }
     }
 }

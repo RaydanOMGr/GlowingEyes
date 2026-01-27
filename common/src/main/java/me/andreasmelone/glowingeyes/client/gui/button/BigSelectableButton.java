@@ -1,13 +1,12 @@
 package me.andreasmelone.glowingeyes.client.gui.button;
 
 import me.andreasmelone.glowingeyes.client.util.TextureLocations;
-import me.andreasmelone.glowingeyes.common.util.Color;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.util.ARGB;
 import org.jetbrains.annotations.NotNull;
 
@@ -29,10 +28,10 @@ public class BigSelectableButton extends Button {
     }
 
     @Override
-    public void renderWidget(@NotNull GuiGraphics ctx, int mouseX, int mouseY, float partialTicks) {
+    public void renderContents(@NotNull GuiGraphics ctx, int mouseX, int mouseY, float partialTicks) {
         if(this.visible) {
             Minecraft mc = Minecraft.getInstance();
-            ResourceLocation sprite = TextureLocations.BIG_BUTTON.get(!this.isSelected() && this.isActive(), this.isHoveredOrFocused());
+            Identifier sprite = TextureLocations.BIG_BUTTON.get(!this.isSelected() && this.isActive(), this.isHoveredOrFocused());
             ctx.blitSprite(
                     RenderPipelines.GUI_TEXTURED,
                     sprite,
@@ -41,8 +40,9 @@ public class BigSelectableButton extends Button {
                     ARGB.white(this.alpha)
             );
 
-            Color color = new Color(this.active ? ACTIVE_COLOR : NOT_ACTIVE_COLOR);
-            this.renderString(ctx, mc.font, color.withAlpha(this.alpha).getRGB());
+//            Color color = new Color(this.active ? ACTIVE_COLOR : NOT_ACTIVE_COLOR);
+//            this.renderString(ctx, mc.font, color.withAlpha(this.alpha).getRGB());
+            this.renderDefaultLabel(ctx.textRendererForWidget(this, GuiGraphics.HoveredTextEffects.NONE));
         }
     }
 

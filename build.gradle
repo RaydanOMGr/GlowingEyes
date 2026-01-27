@@ -1,8 +1,8 @@
 plugins {
     // see https://fabricmc.net/develop/ for new versions
-    id 'fabric-loom' version '1.13-SNAPSHOT' apply false
+    id 'fabric-loom' version '1.14-SNAPSHOT' apply false
     // see https://projects.neoforged.net/neoforged/moddevgradle for new versions
-    id 'net.neoforged.moddev' version '2.0.116' apply false
+    id 'net.neoforged.moddev' version '2.0.140' apply false
 
     id "me.modmuss50.mod-publish-plugin" version "0.8.4"
 }
@@ -14,7 +14,7 @@ publishMods {
     def fabricProject = project(":fabric")
     def neoforgeProject = project(":neoforge")
 
-    def mcVersions = ["1.21.9", "1.21.10"]
+    def mcVersions = ["1.21.11"]
 
     def cfOptions = curseforgeOptions {
         accessToken = System.getenv("CURSEFORGE_TOKEN")

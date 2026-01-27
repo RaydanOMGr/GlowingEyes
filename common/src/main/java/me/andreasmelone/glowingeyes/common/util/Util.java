@@ -11,7 +11,7 @@ import io.netty.buffer.ByteBuf;
 import net.minecraft.nbt.*;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 
@@ -63,8 +63,8 @@ public class Util {
         return name.toLowerCase(Locale.ROOT).replaceAll("[^a-z0-9_]", "_");
     }
 
-    public static ResourceLocation id(String namespace, String path) {
-        return ResourceLocation.fromNamespaceAndPath(namespace, path);
+    public static Identifier id(String namespace, String path) {
+        return Identifier.fromNamespaceAndPath(namespace, path);
     }
 
     public static <T, U> StreamCodec<T, U> emptyStreamCodec(Supplier<U> constructor) {

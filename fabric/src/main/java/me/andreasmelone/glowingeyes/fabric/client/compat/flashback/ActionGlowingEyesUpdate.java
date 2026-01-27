@@ -11,20 +11,20 @@ import me.andreasmelone.glowingeyes.common.util.Util;
 import me.andreasmelone.glowingeyes.fabric.common.packet.ServerPacketRegistrar;
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.RegistryFriendlyByteBuf;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.player.Player;
 
 import java.util.UUID;
 
 public class ActionGlowingEyesUpdate implements Action {
-    private static final ResourceLocation NAME = Util.id(GlowingEyes.MOD_ID, "action/glowing_eyes_update");
+    private static final Identifier NAME = Util.id(GlowingEyes.MOD_ID, "action/glowing_eyes_update");
     public static final ActionGlowingEyesUpdate INSTANCE = new ActionGlowingEyesUpdate();
 
     private ActionGlowingEyesUpdate() {
     }
 
     @Override
-    public ResourceLocation name() {
+    public Identifier name() {
         return NAME;
     }
 

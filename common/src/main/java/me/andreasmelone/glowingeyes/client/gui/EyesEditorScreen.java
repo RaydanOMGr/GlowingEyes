@@ -34,7 +34,7 @@ import net.minecraft.client.input.MouseButtonEvent;
 import net.minecraft.client.input.MouseButtonInfo;
 import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.player.Player;
 import org.jetbrains.annotations.NotNull;
 import org.joml.Vector2f;
@@ -85,7 +85,7 @@ public class EyesEditorScreen extends Screen {
 
     private CursorSpaceWidget cursorSpaceWidget;
     private final Map<Mode, Button> modeButtons = new EnumMap<>(Mode.class);
-    private final Map<ResourceLocation, NativeImage> allocatedTextures = new HashMap<>();
+    private final Map<Identifier, NativeImage> allocatedTextures = new HashMap<>();
     private final ClientModContext mod;
     public EyesEditorScreen(ClientModContext mod) {
         super(Component.empty());
@@ -237,7 +237,7 @@ public class EyesEditorScreen extends Screen {
             );
         }
 
-        ResourceLocation playerSkin = Minecraft.getInstance().player.getSkin().body().texturePath();
+        Identifier playerSkin = Minecraft.getInstance().player.getSkin().body().texturePath();
         for (int y = 0; y < this.headSizeY; y++) {
             for (int x = 0; x < this.headSizeX; x++) {
                 Point point = new Point(x + this.skinPart.getX(), y + this.skinPart.getY());
@@ -326,7 +326,7 @@ public class EyesEditorScreen extends Screen {
     public void renderBackground(@NotNull GuiGraphics ctx, int mouseX, int mouseY, float partialTick) {
     }
 
-    private Color getTexturePixelColor(ResourceLocation texture, int texSizeX, int texSizeY, int x, int y) {
+    private Color getTexturePixelColor(Identifier texture, int texSizeX, int texSizeY, int x, int y) {
         if (x < 0 || x >= texSizeX) {
             throw new IllegalArgumentException("x must be within the screen width: 0 to " + (texSizeX - 1) + ". Provided: " + x);
         }
@@ -528,9 +528,9 @@ public class EyesEditorScreen extends Screen {
 
         private final WidgetSprites sprites;
         private final ButtonPressCallback onButtonPress;
-        private final ResourceLocation colorOverlay;
+        private final Identifier colorOverlay;
 
-        Mode(final WidgetSprites sprites, final ResourceLocation colorOverlay, final ButtonPressCallback onButtonPress) {
+        Mode(final WidgetSprites sprites, final Identifier colorOverlay, final ButtonPressCallback onButtonPress) {
             this.sprites = sprites;
             this.onButtonPress = onButtonPress;
             this.colorOverlay = colorOverlay;
@@ -544,7 +544,7 @@ public class EyesEditorScreen extends Screen {
             this.onButtonPress.onButtonPress(screen, mouseX, mouseY, button);
         }
 
-        public ResourceLocation getColorOverlay() {
+        public Identifier getColorOverlay() {
             return this.colorOverlay;
         }
 

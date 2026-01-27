@@ -14,7 +14,7 @@ import net.minecraft.client.gui.screens.inventory.tooltip.DefaultTooltipPosition
 import net.minecraft.client.input.MouseButtonEvent;
 import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -52,10 +52,10 @@ public class SkinPartSelectorScreen extends Screen {
 
     private final int rows = 7;
     private final Screen parent;
-    private final ResourceLocation skinTexture;
+    private final Identifier skinTexture;
     private final Color overlayColor = new Color(255, 255, 255, 120);
 
-    protected SkinPartSelectorScreen(Screen parent, ResourceLocation skinTexture, @NotNull ISkinPart selected) {
+    protected SkinPartSelectorScreen(Screen parent, Identifier skinTexture, @NotNull ISkinPart selected) {
         super(Component.empty());
         this.parent = parent;
         this.skinTexture = skinTexture;
@@ -66,7 +66,7 @@ public class SkinPartSelectorScreen extends Screen {
     protected void init() {
         super.init();
         if (this.parent != null) {
-            this.parent.init(this.minecraft, this.minecraft.getWindow().getGuiScaledWidth(), this.minecraft.getWindow().getGuiScaledHeight());
+            this.parent.init(this.minecraft.getWindow().getGuiScaledWidth(), this.minecraft.getWindow().getGuiScaledHeight());
             this.parent.clearFocus();
         }
         this.guiLeft = (this.width - TEXTURE_WIDTH) / 2;
@@ -239,7 +239,7 @@ public class SkinPartSelectorScreen extends Screen {
         }
     }
 
-    public static CompletableFuture<ISkinPart> create(Screen parent, ResourceLocation skin, ISkinPart selected) {
+    public static CompletableFuture<ISkinPart> create(Screen parent, Identifier skin, ISkinPart selected) {
         CompletableFuture<ISkinPart> future = new CompletableFuture<>();
         SkinPartSelectorScreen screen = new SkinPartSelectorScreen(parent, skin, selected);
         screen.future = future;
@@ -247,7 +247,7 @@ public class SkinPartSelectorScreen extends Screen {
         return future;
     }
 
-    public static CompletableFuture<ISkinPart> create(Screen parent, ResourceLocation skin) {
+    public static CompletableFuture<ISkinPart> create(Screen parent, Identifier skin) {
         return create(parent, skin, SkinUtil.isSlim() ? SlimSkinPart.HEAD_FRONT : ClassicSkinPart.HEAD_FRONT);
     }
 }

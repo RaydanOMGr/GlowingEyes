@@ -70,7 +70,7 @@ public class ColorPickerScreen extends Screen {
     protected void init() {
         super.init();
         if(this.parent != null) {
-            this.parent.init(this.minecraft, this.minecraft.getWindow().getGuiScaledWidth(), this.minecraft.getWindow().getGuiScaledHeight());
+            this.parent.init(this.minecraft.getWindow().getGuiScaledWidth(), this.minecraft.getWindow().getGuiScaledHeight());
             this.parent.clearFocus();
         }
         this.guiLeft = (this.width - UI_WIDTH) / 2;

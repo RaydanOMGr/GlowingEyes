@@ -2,14 +2,14 @@ package me.andreasmelone.glowingeyes.common.component.data;
 
 import me.andreasmelone.glowingeyes.GlowingEyes;
 import me.andreasmelone.glowingeyes.common.util.Util;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
 
 import java.util.Set;
 
 public class PlayerDataComponent {
-    public static final ResourceLocation IDENTIFIER = Util.id(GlowingEyes.MOD_ID, "playerdata");
+    public static final Identifier IDENTIFIER = Util.id(GlowingEyes.MOD_ID, "playerdata");
     private static IPlayerDataComponent instance;
 
     private PlayerDataComponent() {

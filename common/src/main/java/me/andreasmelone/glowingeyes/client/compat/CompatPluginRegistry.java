@@ -2,7 +2,7 @@ package me.andreasmelone.glowingeyes.client.compat;
 
 import com.mojang.logging.LogUtils;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import org.jetbrains.annotations.ApiStatus;
 import org.slf4j.Logger;
 
@@ -13,7 +13,7 @@ import java.util.Set;
 
 public class CompatPluginRegistry {
     private static final Logger LOGGER = LogUtils.getLogger();
-    private static final Map<ResourceLocation, CompatPlugin> PLUGINS = new HashMap<>();
+    private static final Map<Identifier, CompatPlugin> PLUGINS = new HashMap<>();
 
     public static void register(CompatPlugin plugin, boolean load) {
         if (PLUGINS.containsKey(plugin.getPluginInfo().id()))
@@ -24,7 +24,7 @@ public class CompatPluginRegistry {
         if (load) loadPlugin(plugin.getPluginInfo().id());
     }
 
-    public static void loadPlugin(ResourceLocation id) {
+    public static void loadPlugin(Identifier id) {
         CompatPlugin plugin = getById(id);
         if (plugin == null) throw new IllegalArgumentException("Plugin " + id + " not found");
         if (plugin.isLoaded()) return;
@@ -32,7 +32,7 @@ public class CompatPluginRegistry {
         plugin.onLoad();
     }
 
-    public static void unloadPlugin(ResourceLocation id) {
+    public static void unloadPlugin(Identifier id) {
         CompatPlugin plugin = getById(id);
         if (plugin == null) throw new IllegalArgumentException("Plugin " + id + " not found");
         if (!plugin.isLoaded()) return;
@@ -40,7 +40,7 @@ public class CompatPluginRegistry {
         plugin.onUnload();
     }
 
-    public static CompatPlugin getById(ResourceLocation id) {
+    public static CompatPlugin getById(Identifier id) {
         return PLUGINS.get(id);
     }
 

@@ -9,7 +9,7 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.WidgetSprites;
 import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.util.FormattedCharSequence;
 
 import java.util.List;
@@ -22,7 +22,7 @@ public class GuiUtil {
      * @param width The width of the texture (usually named xSize)
      * @param height The height of the texture (usually named ySize)
      */
-    public static void drawBackground(GuiGraphics guiGraphics, ResourceLocation backgroundTexture, int x, int y, int width, int height) {
+    public static void drawBackground(GuiGraphics guiGraphics, Identifier backgroundTexture, int x, int y, int width, int height) {
         // Draw the background texture
         guiGraphics.blit(RenderPipelines.GUI_TEXTURED, backgroundTexture, x, y, 0, 0, width, height, 256, 256);
     }
@@ -58,7 +58,7 @@ public class GuiUtil {
         ctx.drawString(font, "x: " + mouseX + ", y: " + mouseY, 10, 10, Color.WHITE.getRGB());
     }
 
-    public static void blitTintedSprite(GuiGraphics ctx, RenderPipeline pipeline, ResourceLocation spriteLocation, int x, int y, int width, int height, int color) {
+    public static void blitTintedSprite(GuiGraphics ctx, RenderPipeline pipeline, Identifier spriteLocation, int x, int y, int width, int height, int color) {
         ctx.blitSprite(pipeline, spriteLocation, x, y, width, height, color);
     }
 
