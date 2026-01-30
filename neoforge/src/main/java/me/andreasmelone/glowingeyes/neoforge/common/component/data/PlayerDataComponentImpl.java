@@ -2,7 +2,7 @@ package me.andreasmelone.glowingeyes.neoforge.common.component.data;
 
 import me.andreasmelone.glowingeyes.common.component.data.IPlayerDataComponent;
 import me.andreasmelone.glowingeyes.common.packet.HasModPacket;
-import me.andreasmelone.glowingeyes.neoforge.common.packets.PacketHandler;
+import me.andreasmelone.glowingeyes.neoforge.common.packets.ServerPacketRegistrar;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
 import net.neoforged.neoforge.attachment.AttachmentType;
@@ -52,6 +52,6 @@ public class PlayerDataComponentImpl implements IPlayerDataComponent {
 
     @Override
     public void sendUpdate(ServerPlayer player) {
-        PacketHandler.sendTo(player, new HasModPacket());
+        ServerPacketRegistrar.sendTo(player, new HasModPacket());
     }
 }

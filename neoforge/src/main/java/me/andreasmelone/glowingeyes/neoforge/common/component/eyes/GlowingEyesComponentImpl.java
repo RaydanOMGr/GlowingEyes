@@ -5,7 +5,7 @@ import me.andreasmelone.glowingeyes.common.component.eyes.IGlowingEyesComponent;
 import me.andreasmelone.glowingeyes.common.packet.ComponentUpdatePacket;
 import me.andreasmelone.glowingeyes.common.util.Color;
 import me.andreasmelone.glowingeyes.common.util.Point;
-import me.andreasmelone.glowingeyes.neoforge.common.packets.PacketHandler;
+import me.andreasmelone.glowingeyes.neoforge.common.packets.ServerPacketRegistrar;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerPlayer;
@@ -69,7 +69,7 @@ public class GlowingEyesComponentImpl implements IGlowingEyesComponent {
 
     @Override
     public void sendUpdate(ServerPlayer updatedPlayer, ServerPlayer receivingPlayer) {
-        PacketHandler.sendTo(receivingPlayer, new ComponentUpdatePacket(updatedPlayer.getUUID(), GlowingEyesComponent.isToggledOn(updatedPlayer), GlowingEyesComponent.getGlowingEyesMap(updatedPlayer)));
+        ServerPacketRegistrar.sendTo(receivingPlayer, new ComponentUpdatePacket(updatedPlayer.getUUID(), GlowingEyesComponent.isToggledOn(updatedPlayer), GlowingEyesComponent.getGlowingEyesMap(updatedPlayer)));
     }
 
     @Override
